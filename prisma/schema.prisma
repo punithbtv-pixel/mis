@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// One row per calendar day = the "PowerHouse Data" daily input.
+/// All numeric fields are cumulative meter readings unless noted.
+model DailyReading {
+  id   Int      @id @default(autoincrement())
+  date DateTime @unique @db.Date
+
+  // Diesel
+  dieselDipMm             Float? // dip stick reading (mm)
+  dieselReceivedLitres    Float? // diesel received that day (litres)
+  dieselDipAfterReceiveMm Float? // dip after receiving diesel (mm)
+  dieselFlowMeterReading  Float? // flow meter reading
+  dieselIssued            Float? // diesel issued that day (litres)
+
+  // Grid power
+  nepaMeterKwh Float? // NEPA (grid) main meter reading (KWH)
+  ebMillingKwh Float? // EB milling sub-meter reading (KWH)
+  ebUtilityKwh Float? // EB utility / parboiling sub-meter reading (KWH)
+
+  // Compressors (hour-meter readings)
+  compE75_1Hours Float?
+  compE75_2Hours Float?
+  compE75_3Hours Float?
+  compE55Hours   Float?
+
+  // Diesel generators (hour-meter readings)
+  millingDgHours    Float?
+  parboilingDgHours Float?
+
+  remarks String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([date])
+}
+
+/// Key/value config. Used for per-equipment "next service" hour targets.
+model Setting {
+  key   String @id
+  value Float
+}
+
+/// Tank calibration: dip stick reading (mm) -> volume (litres).
+model DipCalibration {
+  dipMm  Int   @id
+  litres Float
+}
