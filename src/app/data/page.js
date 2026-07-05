@@ -63,6 +63,9 @@ export default function DataPage() {
                 <th className="px-3 py-2 text-right">Diesel (L)</th>
                 <th className="px-3 py-2 text-right">Recv (L)</th>
                 <th className="px-3 py-2 text-right">Stock (L)</th>
+                <th className="px-3 py-2 text-right">Dip After (mm)</th>
+                <th className="px-3 py-2 text-right">Flow (L)</th>
+                <th className="px-3 py-2 text-right">Issued (L)</th>
                 <th className="px-3 py-2 text-right">NEPA (KWH)</th>
                 <th className="px-3 py-2 text-right">Milling</th>
                 <th className="px-3 py-2 text-right">Utility</th>
@@ -84,8 +87,9 @@ export default function DataPage() {
                   <td className="px-3 py-2 text-right">{fmt(r.raw.dieselDipMm)}</td>
                   <td className="px-3 py-2 text-right text-amber-600">{fmt(r.dieselConsumption)}</td>
                   <td className="px-3 py-2 text-right">{fmt(r.dieselReceived)}</td>
-                  <td className="px-3 py-2 text-right">{fmt(r.closingLitres)}</td>
-                  <td className="px-3 py-2 text-right text-sky-600">{fmt(r.nepaConsumption)}</td>
+                  <td className="px-3 py-2 text-right">{fmt(r.closingLitres)}</td>                  <td className="px-3 py-2 text-right">{fmt(r.raw.dieselDipAfterReceiveMm)}</td>
+                  <td className="px-3 py-2 text-right">{fmt(r.raw.dieselFlowMeterReading)}</td>
+                  <td className="px-3 py-2 text-right">{fmt(r.raw.dieselIssued)}</td>                  <td className="px-3 py-2 text-right text-sky-600">{fmt(r.nepaConsumption)}</td>
                   <td className="px-3 py-2 text-right">{fmt(r.ebMilling)}</td>
                   <td className="px-3 py-2 text-right">{fmt(r.ebUtility)}</td>
                   {RUN_HOUR_EQUIPMENT.map((eq) => (

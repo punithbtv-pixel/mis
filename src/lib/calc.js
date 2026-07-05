@@ -103,7 +103,7 @@ export function computeRows(readings, settings, calibration) {
       date: toDateStr(r.date),
       raw: r,
       dieselConsumption: round(dieselConsumption),
-      dieselReceived: received || null,
+      dieselReceived: received > 0 ? received : null,
       closingLitres: round(closingLitres),
       nepaConsumption: round(nepaConsumption),
       ebMilling: round(ebMilling),
