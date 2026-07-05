@@ -4,7 +4,7 @@ import {
   SERVICE_ALERT_THRESHOLD,
 } from "./equipment";
 
-// Format a Date (or date-like) to YYYY-MM-DD.
+// Format a Date (or date-like) to YYYY-MM-DD. test
 export function toDateStr(d) {
   const dt = d instanceof Date ? d : new Date(d);
   return dt.toISOString().slice(0, 10);
@@ -103,7 +103,7 @@ export function computeRows(readings, settings, calibration) {
       date: toDateStr(r.date),
       raw: r,
       dieselConsumption: round(dieselConsumption),
-      dieselReceived: received > 0 ? received : null,
+      dieselReceived: r.dieselReceivedLitres ?? null,
       closingLitres: round(closingLitres),
       nepaConsumption: round(nepaConsumption),
       ebMilling: round(ebMilling),
