@@ -60,7 +60,7 @@ export default function DataPage() {
               <tr className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wide">
                 <th className="sticky left-0 bg-slate-50 px-3 py-2 text-left">Date</th>
                 <th className="px-3 py-2 text-right">Dip (mm)</th>
-                <th className="px-3 py-2 text-right">Diesel (L)</th>
+                <th className="px-3 py-2 text-right">Diesel Consumption (LTRS)</th>
                 <th className="px-3 py-2 text-right">Recv (L)</th>
                 <th className="px-3 py-2 text-right">Stock (L)</th>
                 <th className="px-3 py-2 text-right">Dip After (mm)</th>
