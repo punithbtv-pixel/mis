@@ -17,8 +17,8 @@ export const DEFAULT_SERVICE_HOURS = {
   nextSer_compE75_2: 6000,
   nextSer_compE75_3: 6000,
   nextSer_compE55: 6000,
-  nextSer_millingDg: 6300,
-  nextSer_parboilingDg: 12700,
+  nextSer_millingDg: 5824,
+  nextSer_parboilingDg: 12643.5,
 };
 
 // Remaining-hours threshold below which we raise a "service due" alert.
