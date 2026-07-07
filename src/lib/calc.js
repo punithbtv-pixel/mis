@@ -2,6 +2,7 @@ import {
   RUN_HOUR_EQUIPMENT,
   DEFAULT_SERVICE_HOURS,
   SERVICE_ALERT_THRESHOLD,
+  THRESHOLD_SETTING_KEY,
 } from "./equipment";
 
 // Format a Date (or date-like) to YYYY-MM-DD. test
@@ -37,7 +38,10 @@ export function makeDipLookup(calibration) {
 }
 
 function settingsToMap(settings) {
-  const map = { ...DEFAULT_SERVICE_HOURS };
+  const map = {
+    ...DEFAULT_SERVICE_HOURS,
+    [THRESHOLD_SETTING_KEY]: SERVICE_ALERT_THRESHOLD,
+  };
   for (const s of settings ?? []) map[s.key] = Number(s.value);
   return map;
 }
@@ -139,6 +143,8 @@ export function buildSummary(rows, settings) {
     runHoursTotal[eq.field] = sum(rows.map((r) => r.runHours[eq.field]));
   }
 
+  const threshold = svc[THRESHOLD_SETTING_KEY] ?? SERVICE_ALERT_THRESHOLD;
+
   // Latest known remaining-hours per equipment + alert flag.
   const alerts = [];
   for (const eq of RUN_HOUR_EQUIPMENT) {
@@ -156,7 +162,7 @@ export function buildSummary(rows, settings) {
       remaining: latest,
       asOf: latestDate,
       target: svc[eq.serviceKey] ?? null,
-      due: latest != null && latest <= SERVICE_ALERT_THRESHOLD,
+      due: latest != null && latest <= threshold,
     });
   }
 

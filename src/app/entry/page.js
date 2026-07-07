@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { INPUT_GROUPS } from "@/lib/equipment";
 import { fmt } from "@/lib/format";
 
@@ -14,6 +14,7 @@ function isDateStr(s) {
 }
 
 function EntryForm() {
+  const router = useRouter();
   const search = useSearchParams();
   const initialDate = isDateStr(search.get("date")) ? search.get("date") : todayStr();
   const [date, setDate] = useState(initialDate);
@@ -21,6 +22,19 @@ function EntryForm() {
   const [previous, setPrevious] = useState(null);
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(true);
+  const [forbidden, setForbidden] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/me")
+      .then((r) => r.json())
+      .then((d) => {
+        const role = d.user?.role;
+        if (role !== "ADMIN" && role !== "OPERATOR") {
+          setForbidden(true);
+          router.replace("/");
+        }
+      });
+  }, [router]);
 
   useEffect(() => {
     let active = true;

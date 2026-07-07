@@ -43,6 +43,16 @@ model DailyReading {
   @@index([date])
 }
 
+/// Application users with role-based access.
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String
+  role         String // ADMIN | OPERATOR | ZYN
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 /// Key/value config. Used for per-equipment "next service" hour targets.
 model Setting {
   key   String @id

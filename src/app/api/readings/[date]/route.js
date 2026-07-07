@@ -4,6 +4,8 @@ import { parseDateOnly } from "@/lib/dates";
 import { toDateStr } from "@/lib/calc";
 import { isUiOnlyMode } from "@/lib/mode";
 import { deleteMockReading, getMockReadingWithPrevious } from "@/lib/mockData";
+import { requireSession } from "@/lib/apiAuth";
+import { ROLES } from "@/lib/roles";
 
 function serialize(r) {
   return r ? { ...r, date: toDateStr(r.date) } : null;
@@ -37,6 +39,11 @@ export async function GET(_request, { params }) {
 
 // DELETE /api/readings/2026-06-15
 export async function DELETE(_request, { params }) {
+  const auth = await requireSession(ROLES.ADMIN);
+  if (auth.error) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
+  }
+
   const { date: dateParam } = await params;
   const date = parseDateOnly(dateParam);
   if (!date) {

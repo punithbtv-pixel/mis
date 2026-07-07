@@ -1,17 +1,37 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { RUN_HOUR_EQUIPMENT } from "@/lib/equipment";
+import { useRouter } from "next/navigation";
+import { RUN_HOUR_EQUIPMENT, THRESHOLD_SETTING_KEY } from "@/lib/equipment";
 
 export default function SettingsPage() {
+  const router = useRouter();
   const [values, setValues] = useState({});
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(true);
+  const [forbidden, setForbidden] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/me")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.user?.role !== "ADMIN") {
+          setForbidden(true);
+          router.replace("/");
+        }
+      });
+  }, [router]);
 
   useEffect(() => {
     fetch("/api/settings")
-      .then((r) => r.json())
-      .then((d) => setValues(d.settings ?? {}))
+      .then((r) => {
+        if (r.status === 403) {
+          setForbidden(true);
+          return null;
+        }
+        return r.json();
+      })
+      .then((d) => d && setValues(d.settings ?? {}))
       .finally(() => setLoading(false));
   }, []);
 
@@ -33,13 +53,16 @@ export default function SettingsPage() {
     }
   }
 
+  if (forbidden) {
+    return <p className="text-slate-500">Redirecting…</p>;
+  }
+
   return (
     <div className="space-y-5 max-w-2xl">
       <h1 className="text-xl font-semibold text-slate-900">Settings</h1>
       <p className="text-sm text-slate-500">
-        Next-service hour target for each piece of equipment. &quot;Hours
-        remaining&quot; on the dashboard is this target minus the latest meter
-        reading.
+        Configure service alert threshold and next-service hour targets for each
+        piece of equipment.
       </p>
 
       {loading ? (
@@ -47,8 +70,31 @@ export default function SettingsPage() {
       ) : (
         <form
           onSubmit={save}
-          className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm space-y-4"
+          className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm space-y-6"
         >
+          <div>
+            <label className="block text-sm font-medium text-slate-600 mb-1">
+              Service alert threshold (hours remaining)
+            </label>
+            <input
+              type="number"
+              step="any"
+              min="0"
+              value={values[THRESHOLD_SETTING_KEY] ?? ""}
+              onChange={(e) =>
+                setValues((p) => ({
+                  ...p,
+                  [THRESHOLD_SETTING_KEY]: e.target.value,
+                }))
+              }
+              className="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+            />
+            <p className="text-xs text-slate-400 mt-1">
+              Equipment is flagged &quot;service due&quot; when remaining hours
+              fall at or below this value.
+            </p>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {RUN_HOUR_EQUIPMENT.map((eq) => (
               <div key={eq.serviceKey}>

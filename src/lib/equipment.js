@@ -23,6 +23,7 @@ export const DEFAULT_SERVICE_HOURS = {
 
 // Remaining-hours threshold below which we raise a "service due" alert.
 export const SERVICE_ALERT_THRESHOLD = 250;
+export const THRESHOLD_SETTING_KEY = "serviceAlertThreshold";
 
 // Grouped definition of everything entered on the daily form.
 export const INPUT_GROUPS = [

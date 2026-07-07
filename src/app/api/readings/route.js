@@ -10,6 +10,8 @@ import {
 import { toDateStr } from "@/lib/calc";
 import { isUiOnlyMode } from "@/lib/mode";
 import { getMockReadings, upsertMockReading } from "@/lib/mockData";
+import { requireSession } from "@/lib/apiAuth";
+import { ROLES } from "@/lib/roles";
 
 function serialize(r) {
   return { ...r, date: toDateStr(r.date) };
@@ -37,6 +39,11 @@ export async function GET(request) {
 
 // POST /api/readings  -> upsert a single day's reading.
 export async function POST(request) {
+  const auth = await requireSession(ROLES.ADMIN, ROLES.OPERATOR);
+  if (auth.error) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
+  }
+
   let body = {};
   try {
     body = await request.json();

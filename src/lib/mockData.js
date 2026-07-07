@@ -1,6 +1,6 @@
 import { buildSummary, computeRows } from "@/lib/calc";
 import { monthRange, parseDateOnly } from "@/lib/dates";
-import { DEFAULT_SERVICE_HOURS, NUMERIC_FIELDS, SERVICE_KEYS } from "@/lib/equipment";
+import { DEFAULT_SERVICE_HOURS, NUMERIC_FIELDS, SERVICE_KEYS, THRESHOLD_SETTING_KEY, SERVICE_ALERT_THRESHOLD } from "@/lib/equipment";
 
 function toDateStr(d) {
   return d.toISOString().slice(0, 10);
@@ -70,6 +70,7 @@ function toSettingsRows(map) {
 function buildInitialState() {
   const settings = {
     ...DEFAULT_SERVICE_HOURS,
+    [THRESHOLD_SETTING_KEY]: SERVICE_ALERT_THRESHOLD,
     nextSer_compE75_1: 6200,
     nextSer_compE75_2: 6150,
     nextSer_compE75_3: 6280,
@@ -193,7 +194,8 @@ export function getMockSettings() {
 
 export function updateMockSettings(body) {
   const state = getState();
-  for (const key of SERVICE_KEYS) {
+  const keys = [...SERVICE_KEYS, THRESHOLD_SETTING_KEY];
+  for (const key of keys) {
     if (key in body && body[key] !== "" && body[key] != null) {
       const value = Number(body[key]);
       if (!Number.isFinite(value)) {

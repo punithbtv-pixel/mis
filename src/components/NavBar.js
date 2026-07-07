@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { PAGE_ACCESS, roleLabel } from "@/lib/roles";
 
-const LINKS = [
+const ALL_LINKS = [
   { href: "/", label: "Dashboard" },
   { href: "/entry", label: "Daily Entry" },
   { href: "/data", label: "Data" },
@@ -13,8 +15,20 @@ const LINKS = [
 export default function NavBar() {
   const pathname = usePathname();
   const router = useRouter();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/me")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => d && setUser(d.user))
+      .catch(() => {});
+  }, [pathname]);
 
   if (pathname === "/login") return null;
+
+  const links = user
+    ? ALL_LINKS.filter((l) => PAGE_ACCESS[l.href]?.includes(user.role))
+    : ALL_LINKS;
 
   async function logout() {
     await fetch("/api/logout", { method: "POST" });
@@ -29,7 +43,7 @@ export default function NavBar() {
           PowerHouse <span className="text-sky-400">MIS</span>
         </span>
         <nav className="flex items-center gap-1 flex-1">
-          {LINKS.map((l) => {
+          {links.map((l) => {
             const active =
               l.href === "/" ? pathname === "/" : pathname.startsWith(l.href);
             return (
@@ -47,6 +61,12 @@ export default function NavBar() {
             );
           })}
         </nav>
+        {user && (
+          <span className="text-xs text-slate-400 hidden sm:inline">
+            {user.username}{" "}
+            <span className="text-sky-400">({roleLabel(user.role)})</span>
+          </span>
+        )}
         <button
           onClick={logout}
           className="text-sm text-slate-300 hover:text-white"

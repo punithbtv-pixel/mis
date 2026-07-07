@@ -9,13 +9,16 @@
     "lint": "eslint",
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
-    "db:seed": "node prisma/seed.mjs"
+    "db:seed": "node prisma/seed.mjs",
+    "db:seed-users": "node prisma/seed-users.mjs"
   },
   "prisma": {
     "seed": "node prisma/seed.mjs"
   },
   "dependencies": {
     "@prisma/client": "^6.1.0",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
