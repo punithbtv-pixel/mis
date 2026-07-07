@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { RUN_HOUR_EQUIPMENT, THRESHOLD_SETTING_KEY } from "@/lib/equipment";
+import { RUN_HOUR_EQUIPMENT, THRESHOLD_CATEGORIES } from "@/lib/equipment";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -73,25 +73,34 @@ export default function SettingsPage() {
           className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm space-y-6"
         >
           <div>
-            <label className="block text-sm font-medium text-slate-600 mb-1">
+            <span className="block text-sm font-medium text-slate-600 mb-1">
               Service alert threshold (hours remaining)
-            </label>
-            <input
-              type="number"
-              step="any"
-              min="0"
-              value={values[THRESHOLD_SETTING_KEY] ?? ""}
-              onChange={(e) =>
-                setValues((p) => ({
-                  ...p,
-                  [THRESHOLD_SETTING_KEY]: e.target.value,
-                }))
-              }
-              className="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
-            />
+            </span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {THRESHOLD_CATEGORIES.map((c) => (
+                <div key={c.settingKey}>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">
+                    {c.label}
+                  </label>
+                  <input
+                    type="number"
+                    step="any"
+                    min="0"
+                    value={values[c.settingKey] ?? ""}
+                    onChange={(e) =>
+                      setValues((p) => ({
+                        ...p,
+                        [c.settingKey]: e.target.value,
+                      }))
+                    }
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  />
+                </div>
+              ))}
+            </div>
             <p className="text-xs text-slate-400 mt-1">
               Equipment is flagged &quot;service due&quot; when remaining hours
-              fall at or below this value.
+              fall at or below its category&apos;s threshold.
             </p>
           </div>
 

@@ -3,12 +3,12 @@
 
 // Equipment that have hour-meters and a "next service" target.
 export const RUN_HOUR_EQUIPMENT = [
-  { field: "compE75_1Hours", label: "Comp E75 #1", serviceKey: "nextSer_compE75_1" },
-  { field: "compE75_2Hours", label: "Comp E75 #2", serviceKey: "nextSer_compE75_2" },
-  { field: "compE75_3Hours", label: "Comp E75 #3", serviceKey: "nextSer_compE75_3" },
-  { field: "compE55Hours", label: "Comp E55", serviceKey: "nextSer_compE55" },
-  { field: "millingDgHours", label: "Milling DG", serviceKey: "nextSer_millingDg" },
-  { field: "parboilingDgHours", label: "Parboiling DG", serviceKey: "nextSer_parboilingDg" },
+  { field: "compE75_1Hours", label: "Comp E75 #1", serviceKey: "nextSer_compE75_1", category: "comp" },
+  { field: "compE75_2Hours", label: "Comp E75 #2", serviceKey: "nextSer_compE75_2", category: "comp" },
+  { field: "compE75_3Hours", label: "Comp E75 #3", serviceKey: "nextSer_compE75_3", category: "comp" },
+  { field: "compE55Hours", label: "Comp E55", serviceKey: "nextSer_compE55", category: "comp" },
+  { field: "millingDgHours", label: "Milling DG", serviceKey: "nextSer_millingDg", category: "dg" },
+  { field: "parboilingDgHours", label: "Parboiling DG", serviceKey: "nextSer_parboilingDg", category: "dg" },
 ];
 
 // Default service interval target (hours) used when a Setting is missing.
@@ -21,9 +21,22 @@ export const DEFAULT_SERVICE_HOURS = {
   nextSer_parboilingDg: 12643.5,
 };
 
-// Remaining-hours threshold below which we raise a "service due" alert.
-export const SERVICE_ALERT_THRESHOLD = 250;
-export const THRESHOLD_SETTING_KEY = "serviceAlertThreshold";
+// Remaining-hours threshold below which we raise a "service due" alert, kept
+// separately per equipment category so Comp and DG can be tuned independently.
+export const THRESHOLD_CATEGORIES = [
+  { category: "comp", label: "Compressors", settingKey: "serviceAlertThresholdComp", default: 250 },
+  { category: "dg", label: "DG (Generators)", settingKey: "serviceAlertThresholdDg", default: 250 },
+];
+
+export const THRESHOLD_SETTING_KEYS = THRESHOLD_CATEGORIES.map((c) => c.settingKey);
+
+export const DEFAULT_SERVICE_ALERT_THRESHOLDS = Object.fromEntries(
+  THRESHOLD_CATEGORIES.map((c) => [c.settingKey, c.default])
+);
+
+export function thresholdSettingKeyForCategory(category) {
+  return THRESHOLD_CATEGORIES.find((c) => c.category === category)?.settingKey;
+}
 
 // Grouped definition of everything entered on the daily form.
 export const INPUT_GROUPS = [

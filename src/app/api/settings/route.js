@@ -3,8 +3,8 @@ import { prisma } from "@/lib/prisma";
 import {
   SERVICE_KEYS,
   DEFAULT_SERVICE_HOURS,
-  THRESHOLD_SETTING_KEY,
-  SERVICE_ALERT_THRESHOLD,
+  THRESHOLD_SETTING_KEYS,
+  DEFAULT_SERVICE_ALERT_THRESHOLDS,
 } from "@/lib/equipment";
 import { isUiOnlyMode } from "@/lib/mode";
 import { getMockSettings, updateMockSettings } from "@/lib/mockData";
@@ -14,7 +14,7 @@ import { ROLES } from "@/lib/roles";
 function mergeSettings(rows) {
   const map = {
     ...DEFAULT_SERVICE_HOURS,
-    [THRESHOLD_SETTING_KEY]: SERVICE_ALERT_THRESHOLD,
+    ...DEFAULT_SERVICE_ALERT_THRESHOLDS,
   };
   for (const r of rows) map[r.key] = Number(r.value);
   return map;
@@ -58,14 +58,14 @@ export async function POST(request) {
   }
 
   const updates = [];
-  const keys = [...SERVICE_KEYS, THRESHOLD_SETTING_KEY];
+  const keys = [...SERVICE_KEYS, ...THRESHOLD_SETTING_KEYS];
   for (const key of keys) {
     if (key in body && body[key] !== "" && body[key] != null) {
       const value = Number(body[key]);
       if (!Number.isFinite(value)) {
         return NextResponse.json({ error: `Invalid value for ${key}` }, { status: 400 });
       }
-      if (key === THRESHOLD_SETTING_KEY && value < 0) {
+      if (THRESHOLD_SETTING_KEYS.includes(key) && value < 0) {
         return NextResponse.json({ error: "Threshold must be zero or positive" }, { status: 400 });
       }
       updates.push(
