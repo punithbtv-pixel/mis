@@ -37,7 +37,7 @@ function LoginForm() {
         onSubmit={submit}
         className="w-full max-w-sm bg-white rounded-xl shadow-sm border border-slate-200 p-8"
       >
-        <h1 className="text-xl font-semibold text-slate-900">PowerHouse MIS</h1>
+        <h1 className="text-xl font-semibold text-slate-900">ZYN PowerHouse MIS</h1>
         <p className="text-sm text-slate-500 mt-1 mb-6">
           Sign in with your account.
         </p>

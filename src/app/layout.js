@@ -2,7 +2,7 @@ import "./globals.css";
 import NavBar from "@/components/NavBar";
 
 export const metadata = {
-  title: "PowerHouse MIS",
+  title: "ZYN PowerHouse MIS",
   description: "ZYN Electrical power house daily monitoring & dashboard",
 };
 
