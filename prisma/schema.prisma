@@ -19,6 +19,7 @@ model DailyReading {
   dieselDipAfterReceiveMm Float? // dip after receiving diesel (mm)
   dieselFlowMeterReading  Float? // flow meter reading
   dieselIssued            Float? // diesel issued that day (litres)
+  serviceTankLitres       Float? // service tank stock (litres); entered occasionally, held constant between entries
 
   // Grid power
   nepaMeterKwh Float? // NEPA (grid) main meter reading (KWH)

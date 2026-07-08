@@ -105,7 +105,9 @@ export default function DashboardPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
             <Card label="Diesel Consumed" value={fmt(t.dieselConsumed)} unit="L" accent="text-amber-600" />
             <Card label="Diesel Received" value={fmt(t.dieselReceived)} unit="L" />
-            <Card label="Current Stock" value={fmt(data.latestDieselStock)} unit="L" />
+            <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="L" />
+            <Card label="Service Tank Stock" value={fmt(data.latestServiceTank)} unit="L" />
+            <Card label="Current Total Stock" value={fmt(data.latestTotalStock)} unit="L" accent="text-emerald-600" />
             <Card label="NEPA Power" value={fmt(t.nepaKwh)} unit="KWH" accent="text-sky-600" />
             <Card label="EB Milling" value={fmt(t.ebMilling)} unit="KWH" />
             <Card label="EB Utility" value={fmt(t.ebUtility)} unit="KWH" />

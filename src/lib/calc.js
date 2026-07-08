@@ -68,10 +68,12 @@ export function computeRows(readings, settings, calibration) {
     (a, b) => new Date(a.date) - new Date(b.date)
   );
 
+  let lastServiceTankLitres = null;
+
   return sorted.map((r, i) => {
     const prev = i > 0 ? sorted[i - 1] : null;
 
-    // Diesel stock via tank calibration.
+    // Diesel stock via tank calibration (Main Tank).
     const closingLitres = litresFromDip(r.dieselDipMm);
     const openingLitres = prev ? litresFromDip(prev.dieselDipMm) : null;
     const received = r.dieselReceivedLitres ?? 0;
@@ -79,6 +81,14 @@ export function computeRows(readings, settings, calibration) {
     if (openingLitres != null && closingLitres != null) {
       dieselConsumption = openingLitres - closingLitres + received;
     }
+
+    // Service Tank is entered occasionally and held constant until the next entry.
+    if (r.serviceTankLitres != null) lastServiceTankLitres = r.serviceTankLitres;
+    const serviceTankLitres = lastServiceTankLitres;
+    const totalStockLitres =
+      closingLitres != null && serviceTankLitres != null
+        ? closingLitres + serviceTankLitres
+        : null;
 
     // Grid / EB power.
     const nepaConsumption = diff(r.nepaMeterKwh, prev?.nepaMeterKwh);
@@ -109,6 +119,8 @@ export function computeRows(readings, settings, calibration) {
       dieselConsumption: round(dieselConsumption),
       dieselReceived: r.dieselReceivedLitres ?? null,
       closingLitres: round(closingLitres),
+      serviceTankLitres: round(serviceTankLitres),
+      totalStockLitres: round(totalStockLitres),
       nepaConsumption: round(nepaConsumption),
       ebMilling: round(ebMilling),
       ebUtility: round(ebUtility),
@@ -173,6 +185,20 @@ export function buildSummary(rows, settings) {
     return null;
   })();
 
+  const latestServiceTank = (() => {
+    for (let i = rows.length - 1; i >= 0; i--) {
+      if (rows[i].serviceTankLitres != null) return rows[i].serviceTankLitres;
+    }
+    return null;
+  })();
+
+  const latestTotalStock = (() => {
+    for (let i = rows.length - 1; i >= 0; i--) {
+      if (rows[i].totalStockLitres != null) return rows[i].totalStockLitres;
+    }
+    return null;
+  })();
+
   // Chart series (one point per day).
   const series = rows.map((r) => ({
     date: r.date,
@@ -186,5 +212,13 @@ export function buildSummary(rows, settings) {
     ),
   }));
 
-  return { totals, runHoursTotal, alerts, latestDieselStock, series };
+  return {
+    totals,
+    runHoursTotal,
+    alerts,
+    latestDieselStock,
+    latestServiceTank,
+    latestTotalStock,
+    series,
+  };
 }
