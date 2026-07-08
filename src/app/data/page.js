@@ -15,7 +15,8 @@ export default function DataPage() {
   const [exporting, setExporting] = useState("");
   const loading = !hasLoaded;
 
-  const canWrite = user?.role === "ADMIN" || user?.role === "OPERATOR";
+  const canAddEntry = user?.role === "ADMIN" || user?.role === "OPERATOR";
+  const canEdit = user?.role === "ADMIN";
 
   function onMonthChange(nextMonth) {
     setMonth(nextMonth);
@@ -81,7 +82,7 @@ export default function DataPage() {
           >
             {exporting === "pdf" ? "Exporting…" : "PDF"}
           </button>
-          {canWrite && (
+          {canAddEntry && (
             <Link
               href="/entry"
               className="h-9 inline-flex items-center rounded-lg bg-slate-900 text-white px-4 text-sm font-medium hover:bg-slate-800"
@@ -110,8 +111,6 @@ export default function DataPage() {
                 <th className="px-3 py-2 text-right">Diesel Consumption (LTRS)</th>
                 <th className="px-3 py-2 text-right">Recv (L)</th>
                 <th className="px-3 py-2 text-right">Stock (L)</th>
-                <th className="px-3 py-2 text-right">Dip After (mm)</th>
-                <th className="px-3 py-2 text-right">Flow (L)</th>
                 <th className="px-3 py-2 text-right">Issued (L)</th>
                 <th className="px-3 py-2 text-right">NEPA (KWH)</th>
                 <th className="px-3 py-2 text-right">Milling</th>
@@ -122,7 +121,7 @@ export default function DataPage() {
                   </th>
                 ))}
                 <th className="px-3 py-2 text-left">Remarks</th>
-                {canWrite && <th className="px-3 py-2"></th>}
+                {canEdit && <th className="px-3 py-2"></th>}
               </tr>
             </thead>
             <tbody>
@@ -135,8 +134,6 @@ export default function DataPage() {
                   <td className="px-3 py-2 text-right text-amber-600">{fmt(r.dieselConsumption)}</td>
                   <td className="px-3 py-2 text-right">{fmt(r.dieselReceived)}</td>
                   <td className="px-3 py-2 text-right">{fmt(r.closingLitres)}</td>
-                  <td className="px-3 py-2 text-right">{fmt(r.raw.dieselDipAfterReceiveMm)}</td>
-                  <td className="px-3 py-2 text-right">{fmt(r.raw.dieselFlowMeterReading)}</td>
                   <td className="px-3 py-2 text-right">{fmt(r.raw.dieselIssued)}</td>
                   <td className="px-3 py-2 text-right text-sky-600">{fmt(r.nepaConsumption)}</td>
                   <td className="px-3 py-2 text-right">{fmt(r.ebMilling)}</td>
@@ -149,7 +146,7 @@ export default function DataPage() {
                   <td className="px-3 py-2 text-slate-500 max-w-[16rem] truncate" title={r.raw.remarks ?? ""}>
                     {r.raw.remarks ?? ""}
                   </td>
-                  {canWrite && (
+                  {canEdit && (
                     <td className="px-3 py-2 text-right">
                       <Link
                         href={`/entry?date=${r.date}`}
