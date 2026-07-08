@@ -102,7 +102,7 @@ export default function DashboardPage() {
 
       {!loading && hasData && (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
             <Card label="Diesel Consumed" value={fmt(t.dieselConsumed)} unit="L" accent="text-amber-600" />
             <Card label="Diesel Received" value={fmt(t.dieselReceived)} unit="L" />
             <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="L" />
