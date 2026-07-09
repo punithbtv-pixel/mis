@@ -7,6 +7,7 @@ import {
   THRESHOLD_SETTING_KEYS,
   DEFAULT_SERVICE_ALERT_THRESHOLDS,
 } from "@/lib/equipment";
+import { MAINTENANCE_TYPE_VALUES, isValidTimeStr } from "@/lib/maintenanceLog";
 
 function toDateStr(d) {
   return d.toISOString().slice(0, 10);
@@ -74,6 +75,22 @@ function toSettingsRows(map) {
   return SERVICE_KEYS.map((key) => ({ key, value: Number(map[key]) }));
 }
 
+function makeInitialMaintenanceLogs() {
+  const rows = [
+    { date: "2026-07-09", plant: "Milling", section: "Milling Section", equipment: "CC1 / Chain conveyor", startTime: "09:00", endTime: "10:30", type: "PREVENTIVE", detail: "Bearing noise on drive-end, replaced bearing and re-aligned belt.", spareParts: ["Bearing 6205", "V-belt A47"], attendedBy: ["Lucky", "Bakari Lawal"] },
+    { date: "2026-07-09", plant: "Powerhouse", section: "Powerhouse Section", equipment: "AIR Compressor E75 - 2", startTime: "14:10", endTime: "16:40", type: "BREAKDOWN", detail: "Tripped on high discharge temp; cleaned cooler fins, reset overload.", spareParts: ["Air filter", "Overload relay"], attendedBy: ["Gideon Micah", "James"] },
+    { date: "2026-07-08", plant: "Boiler", section: "Boiler Section", equipment: "FD Fan - 1", startTime: "08:00", endTime: "08:45", type: "PREVENTIVE", detail: "Monthly vibration check and grease top-up.", spareParts: ["Grease NLGI-2"], attendedBy: ["Anthony I. Amedu"] },
+    { date: "2026-07-05", plant: "Milling", section: "Sorting Section", equipment: "Sortex-Spark Pro 10_A", startTime: "15:00", endTime: "18:20", type: "PROJECT", detail: "Installed upgraded ejector valve bank as part of capacity project.", spareParts: ["Ejector valve bank v2"], attendedBy: ["Abdulmajid Abdulraham", "Anthony Inuwa", "Joseph F Matthew"] },
+  ];
+  return rows.map((r, i) => ({
+    id: i + 1,
+    createdByUsername: "demo",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    ...r,
+  }));
+}
+
 function buildInitialState() {
   const settings = {
     ...DEFAULT_SERVICE_HOURS,
@@ -87,11 +104,14 @@ function buildInitialState() {
   };
   const readings = generateInitialReadings();
   const byDate = new Map(readings.map((r) => [r.date, r]));
+  const maintenanceLogs = makeInitialMaintenanceLogs();
   return {
     nextId: readings.length + 1,
     readingsByDate: byDate,
     settings,
     calibration: makeDefaultCalibration(),
+    maintenanceLogs,
+    nextMaintenanceLogId: maintenanceLogs.length + 1,
   };
 }
 
@@ -212,5 +232,107 @@ export function updateMockSettings(body) {
     }
   }
   return { settings: { ...state.settings }, status: 200 };
+}
+
+function normalizeStringArray(v) {
+  if (v == null) return [];
+  if (!Array.isArray(v)) return [];
+  return v.map((s) => String(s).trim()).filter(Boolean);
+}
+
+function validateMaintenanceLogBody(body) {
+  const date = parseDateOnly(body.date);
+  if (!date) return { error: "Invalid or missing date" };
+  if (!body.plant || !body.section || !body.equipment) {
+    return { error: "Plant, section and equipment are required" };
+  }
+  if (!isValidTimeStr(body.startTime) || !isValidTimeStr(body.endTime)) {
+    return { error: "Start and end time must be HH:MM" };
+  }
+  if (!MAINTENANCE_TYPE_VALUES.includes(body.type)) {
+    return { error: "Invalid maintenance type" };
+  }
+  const attendedBy = normalizeStringArray(body.attendedBy);
+  if (attendedBy.length === 0) {
+    return { error: "At least one person must be selected in Attended by" };
+  }
+  return {
+    dateStr: date.toISOString().slice(0, 10),
+    plant: String(body.plant),
+    section: String(body.section),
+    equipment: String(body.equipment),
+    startTime: body.startTime,
+    endTime: body.endTime,
+    type: body.type,
+    detail: body.detail ? String(body.detail) : null,
+    spareParts: normalizeStringArray(body.spareParts),
+    attendedBy,
+  };
+}
+
+export function getMockMaintenanceLogs(month, type) {
+  const state = getState();
+  let rows = [...state.maintenanceLogs];
+  if (month) rows = rows.filter((r) => r.date.startsWith(month));
+  if (type && type !== "All") rows = rows.filter((r) => r.type === type);
+  rows.sort((a, b) => (a.date === b.date ? b.id - a.id : b.date.localeCompare(a.date)));
+  return { rows };
+}
+
+export function getMockMaintenanceLog(id) {
+  const state = getState();
+  return state.maintenanceLogs.find((r) => r.id === Number(id)) ?? null;
+}
+
+export function createMockMaintenanceLog(body, session) {
+  const parsed = validateMaintenanceLogBody(body);
+  if (parsed.error) return { error: parsed.error, status: 400 };
+
+  const state = getState();
+  const now = new Date().toISOString();
+  const row = {
+    id: state.nextMaintenanceLogId++,
+    date: parsed.dateStr,
+    plant: parsed.plant,
+    section: parsed.section,
+    equipment: parsed.equipment,
+    startTime: parsed.startTime,
+    endTime: parsed.endTime,
+    type: parsed.type,
+    detail: parsed.detail,
+    spareParts: parsed.spareParts,
+    attendedBy: parsed.attendedBy,
+    createdByUsername: session?.username ?? null,
+    createdAt: now,
+    updatedAt: now,
+  };
+  state.maintenanceLogs.push(row);
+  return { log: row, status: 200 };
+}
+
+export function updateMockMaintenanceLog(id, body) {
+  const state = getState();
+  const idx = state.maintenanceLogs.findIndex((r) => r.id === Number(id));
+  if (idx === -1) return { error: "Not found", status: 404 };
+
+  const parsed = validateMaintenanceLogBody(body);
+  if (parsed.error) return { error: parsed.error, status: 400 };
+
+  const row = {
+    ...state.maintenanceLogs[idx],
+    date: parsed.dateStr,
+    plant: parsed.plant,
+    section: parsed.section,
+    equipment: parsed.equipment,
+    startTime: parsed.startTime,
+    endTime: parsed.endTime,
+    type: parsed.type,
+    detail: parsed.detail,
+    spareParts: parsed.spareParts,
+    attendedBy: parsed.attendedBy,
+    updatedAt: new Date().toISOString(),
+  };
+  state.maintenanceLogs[idx] = row;
+  return { log: row, status: 200 };
 }
 

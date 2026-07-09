@@ -9,6 +9,8 @@ const ALL_LINKS = [
   { href: "/", label: "Dashboard" },
   { href: "/entry", label: "Daily Entry" },
   { href: "/data", label: "Data" },
+  { href: "/log-entry", label: "Log Entry" },
+  { href: "/log-data", label: "Log Data" },
   { href: "/settings", label: "Settings" },
 ];
 

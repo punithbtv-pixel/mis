@@ -9,6 +9,8 @@ export const PAGE_ACCESS = {
   "/": [ROLES.ADMIN, ROLES.OPERATOR, ROLES.ZYN],
   "/entry": [ROLES.ADMIN, ROLES.OPERATOR],
   "/data": [ROLES.ADMIN, ROLES.OPERATOR, ROLES.ZYN],
+  "/log-entry": [ROLES.ADMIN, ROLES.OPERATOR],
+  "/log-data": [ROLES.ADMIN, ROLES.OPERATOR, ROLES.ZYN],
   "/settings": [ROLES.ADMIN],
 };
 
@@ -28,6 +30,16 @@ export function canWriteEntry(role) {
 }
 
 export function canWriteSettings(role) {
+  return role === ROLES.ADMIN;
+}
+
+// Admin and Operator can log new maintenance activity; only Admin may edit
+// an entry once it has been saved.
+export function canCreateMaintenanceLog(role) {
+  return role === ROLES.ADMIN || role === ROLES.OPERATOR;
+}
+
+export function canEditMaintenanceLog(role) {
   return role === ROLES.ADMIN;
 }
 

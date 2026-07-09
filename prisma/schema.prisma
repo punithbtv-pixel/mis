@@ -65,3 +65,29 @@ model DipCalibration {
   dipMm  Int   @id
   litres Float
 }
+
+/// One row per maintenance activity logged against a plant/section/equipment.
+model MaintenanceLog {
+  id   Int      @id @default(autoincrement())
+  date DateTime @db.Date
+
+  plant     String // e.g. "Milling"
+  section   String // e.g. "Milling Section"
+  equipment String // e.g. "CC1 / Chain conveyor"
+
+  startTime String // "HH:MM"
+  endTime   String // "HH:MM"
+
+  type   String // PREVENTIVE | BREAKDOWN | PROJECT | IMPROVEMENT
+  detail String?
+
+  spareParts String[] // free-text parts used
+  attendedBy String[] // one or more staff names
+
+  createdByUsername String? // who logged the entry
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([date])
+}
