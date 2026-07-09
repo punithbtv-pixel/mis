@@ -42,7 +42,7 @@ export default function NavBar() {
     <header className="bg-slate-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-6">
         <span className="font-semibold tracking-tight whitespace-nowrap">
-          ZYN PowerHouse <span className="text-sky-400">MIS</span>
+          ZYN ELECTRICAL <span className="text-sky-400">MIS</span>
         </span>
         <nav className="flex items-center gap-1 flex-1">
           {links.map((l) => {
