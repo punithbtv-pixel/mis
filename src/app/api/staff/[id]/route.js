@@ -40,8 +40,15 @@ export async function PUT(request, { params }) {
       data: { name, designation },
     });
     return NextResponse.json({ staff });
-  } catch {
-    return NextResponse.json({ error: "Not found, or name already in use" }, { status: 400 });
+  } catch (e) {
+    if (e.code === "P2002") {
+      return NextResponse.json({ error: "A staff member with this name already exists" }, { status: 400 });
+    }
+    if (e.code === "P2025") {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    console.error("PUT /api/staff/[id] failed:", e);
+    return NextResponse.json({ error: "Could not save staff member" }, { status: 500 });
   }
 }
 
@@ -65,7 +72,11 @@ export async function DELETE(request, { params }) {
   try {
     await prisma.staff.delete({ where: { id: Number(id) } });
     return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  } catch (e) {
+    if (e.code === "P2025") {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    console.error("DELETE /api/staff/[id] failed:", e);
+    return NextResponse.json({ error: "Could not delete staff member" }, { status: 500 });
   }
 }

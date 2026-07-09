@@ -51,7 +51,11 @@ export async function POST(request) {
   try {
     const staff = await prisma.staff.create({ data: { name, designation } });
     return NextResponse.json({ staff });
-  } catch {
-    return NextResponse.json({ error: "A staff member with this name already exists" }, { status: 400 });
+  } catch (e) {
+    if (e.code === "P2002") {
+      return NextResponse.json({ error: "A staff member with this name already exists" }, { status: 400 });
+    }
+    console.error("POST /api/staff failed:", e);
+    return NextResponse.json({ error: "Could not save staff member" }, { status: 500 });
   }
 }
