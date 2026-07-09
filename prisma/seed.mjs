@@ -40,6 +40,23 @@ const DEFAULT_SERVICE_HOURS = {
   nextSer_parboilingDg: 12700,
 };
 
+// Initial "Attended by" roster; editable afterwards by Admin from Settings.
+const DEFAULT_STAFF = [
+  { name: "Danjuma Peter", designation: "Ele Supervisor" },
+  { name: "Lucky", designation: "Sr. Electrician" },
+  { name: "Anthony I. Amedu", designation: "Sr. Electrician" },
+  { name: "Bakari Lawal", designation: "Sr. Electrician" },
+  { name: "Bitrus Yunusa", designation: "Electrician" },
+  { name: "Saleh Haruna", designation: "Electrician" },
+  { name: "Abdulmajid Abdulraham", designation: "Electrician" },
+  { name: "Anthony Inuwa", designation: "Electrician" },
+  { name: "Joseph F Matthew", designation: "Electrician" },
+  { name: "Daniel Okechukwu", designation: "Electrician" },
+  { name: "Gideon Micah", designation: "Gen Operator" },
+  { name: "James", designation: "Gen Operator" },
+  { name: "Joseph Peter", designation: "Gen Operator" },
+];
+
 function norm(s) {
   return String(s ?? "")
     .replace(/\s+/g, " ")
@@ -181,6 +198,16 @@ async function importSettings() {
   }
 }
 
+async function importStaff() {
+  for (const { name, designation } of DEFAULT_STAFF) {
+    await prisma.staff.upsert({
+      where: { name },
+      create: { name, designation },
+      update: {}, // don't overwrite a user-customized designation
+    });
+  }
+}
+
 async function main() {
   console.log(`Reading workbook: ${XLSX_PATH}`);
   const workbook = new ExcelJS.Workbook();
@@ -199,6 +226,9 @@ async function main() {
 
   await importSettings();
   console.log(`  Service-hour settings seeded.`);
+
+  await importStaff();
+  console.log(`  Staff roster seeded.`);
 
   console.log("Seed complete.");
 }

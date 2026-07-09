@@ -4,13 +4,13 @@ import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   PLANTS,
-  STAFF,
   MAINTENANCE_TYPES,
   sectionsForPlant,
   equipmentForSection,
   durationMinutes,
   formatDuration,
 } from "@/lib/maintenanceLog";
+import EntryTabs from "@/components/EntryTabs";
 
 function todayStr() {
   return new Date().toISOString().slice(0, 10);
@@ -65,6 +65,14 @@ function LogEntryForm() {
   const [loading, setLoading] = useState(!!editId);
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
+  const [staff, setStaff] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/staff")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => d && setStaff(d.staff ?? []))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     fetch("/api/me")
@@ -184,11 +192,17 @@ function LogEntryForm() {
   }
 
   if (!checkedAccess || loading) {
-    return <p className="text-slate-500">Loading…</p>;
+    return (
+      <div className="space-y-5 max-w-4xl">
+        <EntryTabs />
+        <p className="text-slate-500">Loading…</p>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-5 max-w-4xl">
+      <EntryTabs />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl font-semibold text-slate-900">
           {editId ? "Edit Log Entry" : "Daily Log Entry"}
@@ -197,9 +211,6 @@ function LogEntryForm() {
 
       <form onSubmit={save} className="space-y-4">
         <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">
-            Asset / Location
-          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">Date</label>
@@ -285,7 +296,7 @@ function LogEntryForm() {
 
         <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
           <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">
-            Type of maintenance
+            Type of Job
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {MAINTENANCE_TYPES.map((t) => {
@@ -369,7 +380,7 @@ function LogEntryForm() {
             </span>
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-            {STAFF.map((s) => {
+            {staff.map((s) => {
               const sel = form.attendedBy.includes(s.name);
               return (
                 <label

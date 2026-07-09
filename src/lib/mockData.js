@@ -7,7 +7,7 @@ import {
   THRESHOLD_SETTING_KEYS,
   DEFAULT_SERVICE_ALERT_THRESHOLDS,
 } from "@/lib/equipment";
-import { MAINTENANCE_TYPE_VALUES, isValidTimeStr } from "@/lib/maintenanceLog";
+import { MAINTENANCE_TYPE_VALUES, isValidTimeStr, DEFAULT_STAFF } from "@/lib/maintenanceLog";
 
 function toDateStr(d) {
   return d.toISOString().slice(0, 10);
@@ -105,6 +105,7 @@ function buildInitialState() {
   const readings = generateInitialReadings();
   const byDate = new Map(readings.map((r) => [r.date, r]));
   const maintenanceLogs = makeInitialMaintenanceLogs();
+  const staff = DEFAULT_STAFF.map((s, i) => ({ id: i + 1, ...s }));
   return {
     nextId: readings.length + 1,
     readingsByDate: byDate,
@@ -112,6 +113,8 @@ function buildInitialState() {
     calibration: makeDefaultCalibration(),
     maintenanceLogs,
     nextMaintenanceLogId: maintenanceLogs.length + 1,
+    staff,
+    nextStaffId: staff.length + 1,
   };
 }
 
@@ -334,5 +337,50 @@ export function updateMockMaintenanceLog(id, body) {
   };
   state.maintenanceLogs[idx] = row;
   return { log: row, status: 200 };
+}
+
+export function getMockStaff() {
+  const state = getState();
+  return { staff: [...state.staff] };
+}
+
+export function createMockStaff(body) {
+  const name = String(body?.name ?? "").trim();
+  const designation = String(body?.designation ?? "").trim();
+  if (!name || !designation) {
+    return { error: "Name and designation are required", status: 400 };
+  }
+  const state = getState();
+  if (state.staff.some((s) => s.name.toLowerCase() === name.toLowerCase())) {
+    return { error: "A staff member with this name already exists", status: 400 };
+  }
+  const row = { id: state.nextStaffId++, name, designation };
+  state.staff.push(row);
+  return { staff: row, status: 200 };
+}
+
+export function updateMockStaff(id, body) {
+  const state = getState();
+  const idx = state.staff.findIndex((s) => s.id === Number(id));
+  if (idx === -1) return { error: "Not found", status: 404 };
+
+  const name = String(body?.name ?? "").trim();
+  const designation = String(body?.designation ?? "").trim();
+  if (!name || !designation) {
+    return { error: "Name and designation are required", status: 400 };
+  }
+  if (state.staff.some((s) => s.id !== Number(id) && s.name.toLowerCase() === name.toLowerCase())) {
+    return { error: "A staff member with this name already exists", status: 400 };
+  }
+  state.staff[idx] = { ...state.staff[idx], name, designation };
+  return { staff: state.staff[idx], status: 200 };
+}
+
+export function deleteMockStaff(id) {
+  const state = getState();
+  const idx = state.staff.findIndex((s) => s.id === Number(id));
+  if (idx === -1) return { error: "Not found", status: 404 };
+  state.staff.splice(idx, 1);
+  return { ok: true, status: 200 };
 }
 

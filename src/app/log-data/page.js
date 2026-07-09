@@ -31,7 +31,25 @@ export default function LogDataPage() {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [user, setUser] = useState(null);
   const [exporting, setExporting] = useState("");
+  const [search, setSearch] = useState("");
   const loading = !hasLoaded;
+
+  const visibleRows = rows.filter((r) => {
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+    const haystack = [
+      r.plant,
+      r.section,
+      r.equipment,
+      r.detail,
+      ...(r.spareParts ?? []),
+      ...(r.attendedBy ?? []),
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+    return haystack.includes(q);
+  });
 
   const canEdit = user?.role === "ADMIN";
   const canCreate = user?.role === "ADMIN" || user?.role === "OPERATOR";
@@ -83,11 +101,6 @@ export default function LogDataPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold text-slate-900">Daily Log Data</h1>
-          <p className="text-sm text-slate-500 mt-1">
-            {canEdit
-              ? "Browse, filter and edit logged maintenance activities."
-              : "Browse and filter logged maintenance activities. Only Admin can edit a saved entry."}
-          </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <MonthPicker month={month} onChange={onMonthChange} />
@@ -119,6 +132,16 @@ export default function LogDataPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search plant, section, equipment, detail, parts, staff…"
+          className="h-9 w-full max-w-sm rounded-lg border border-slate-300 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+        />
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
         <button
           onClick={() => setType("All")}
           className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${
@@ -142,13 +165,13 @@ export default function LogDataPage() {
 
       {loading && <p className="text-slate-500">Loading…</p>}
 
-      {!loading && rows.length === 0 && (
+      {!loading && visibleRows.length === 0 && (
         <div className="bg-white rounded-xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
-          No log entries for this month.
+          {rows.length === 0 ? "No log entries for this month." : "No log entries match your search."}
         </div>
       )}
 
-      {!loading && rows.length > 0 && (
+      {!loading && visibleRows.length > 0 && (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
           <table className="w-full text-sm border-collapse">
             <thead>
@@ -165,7 +188,7 @@ export default function LogDataPage() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => (
+              {visibleRows.map((r) => (
                 <tr key={r.id} className="border-t border-slate-100 hover:bg-slate-50 align-top">
                   <td className="sticky left-0 bg-white px-3 py-2 font-medium text-slate-700 whitespace-nowrap">
                     {r.date}

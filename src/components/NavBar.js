@@ -7,9 +7,8 @@ import { PAGE_ACCESS, roleLabel } from "@/lib/roles";
 
 const ALL_LINKS = [
   { href: "/", label: "Dashboard" },
-  { href: "/entry", label: "Daily Entry" },
+  { href: "/entry", label: "Daily Entry", activeMatch: ["/entry", "/log-entry"] },
   { href: "/data", label: "Data" },
-  { href: "/log-entry", label: "Log Entry" },
   { href: "/log-data", label: "Log Data" },
   { href: "/settings", label: "Settings" },
 ];
@@ -46,8 +45,9 @@ export default function NavBar() {
         </span>
         <nav className="flex items-center gap-1 flex-1">
           {links.map((l) => {
+            const matches = l.activeMatch ?? [l.href];
             const active =
-              l.href === "/" ? pathname === "/" : pathname.startsWith(l.href);
+              l.href === "/" ? pathname === "/" : matches.some((m) => pathname.startsWith(m));
             return (
               <Link
                 key={l.href}

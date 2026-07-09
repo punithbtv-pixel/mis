@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { RUN_HOUR_EQUIPMENT, THRESHOLD_CATEGORIES } from "@/lib/equipment";
+import StaffManager from "@/components/StaffManager";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -139,6 +140,8 @@ export default function SettingsPage() {
           </div>
         </form>
       )}
+
+      <StaffManager />
     </div>
   );
 }

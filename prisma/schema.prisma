@@ -66,6 +66,16 @@ model DipCalibration {
   litres Float
 }
 
+/// Staff who can be recorded under "Attended by" on a maintenance log entry.
+/// Editable by Admin from Settings.
+model Staff {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  designation String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 /// One row per maintenance activity logged against a plant/section/equipment.
 model MaintenanceLog {
   id   Int      @id @default(autoincrement())

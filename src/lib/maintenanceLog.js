@@ -158,8 +158,9 @@ export function equipmentForSection(plant, section) {
   return withGeneral(PLANT_TREE[plant]?.items?.[section] ?? []);
 }
 
-// Staff who can be recorded under "Attended by".
-export const STAFF = [
+// Default staff roster used to seed the Staff table. The live, editable list
+// (managed by Admin from Settings) is served from /api/staff at runtime.
+export const DEFAULT_STAFF = [
   { name: "Danjuma Peter", designation: "Ele Supervisor" },
   { name: "Lucky", designation: "Sr. Electrician" },
   { name: "Anthony I. Amedu", designation: "Sr. Electrician" },
@@ -174,8 +175,6 @@ export const STAFF = [
   { name: "James", designation: "Gen Operator" },
   { name: "Joseph Peter", designation: "Gen Operator" },
 ];
-
-export const STAFF_NAMES = STAFF.map((s) => s.name);
 
 export const MAINTENANCE_TYPES = [
   { value: "PREVENTIVE", label: "Preventive", description: "Scheduled / routine check" },
