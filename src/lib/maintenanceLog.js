@@ -181,7 +181,7 @@ export const MAINTENANCE_TYPES = [
   { value: "PREVENTIVE", label: "Preventive", description: "Scheduled / routine check" },
   { value: "BREAKDOWN", label: "Breakdown", description: "Unplanned failure" },
   { value: "PROJECT", label: "Project", description: "New install / upgrade work" },
-  { value: "IMPROVEMENT", label: "Improvement", description: "Modification / optimisation" },
+  { value: "IMPROVEMENT", label: "Monitoring / Observations", description: "Routine checks / notes" },
 ];
 
 export const MAINTENANCE_TYPE_VALUES = MAINTENANCE_TYPES.map((t) => t.value);
