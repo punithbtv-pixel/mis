@@ -6,6 +6,7 @@ import MonthPicker from "@/components/MonthPicker";
 import { RUN_HOUR_EQUIPMENT } from "@/lib/equipment";
 import { currentMonth } from "@/lib/dates";
 import { fmt } from "@/lib/format";
+import DataTabs from "@/components/DataTabs";
 
 export default function DataPage() {
   const [month, setMonth] = useState(currentMonth());
@@ -62,6 +63,7 @@ export default function DataPage() {
 
   return (
     <div className="space-y-5">
+      <DataTabs />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl font-semibold text-slate-900">Monthly Data</h1>
         <div className="flex flex-wrap items-center gap-2">

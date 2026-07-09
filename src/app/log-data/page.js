@@ -5,6 +5,7 @@ import Link from "next/link";
 import MonthPicker from "@/components/MonthPicker";
 import { currentMonth } from "@/lib/dates";
 import { MAINTENANCE_TYPES, durationMinutes, formatDuration } from "@/lib/maintenanceLog";
+import DataTabs from "@/components/DataTabs";
 
 const TYPE_BADGE = {
   PREVENTIVE: "bg-emerald-50 text-emerald-700",
@@ -98,6 +99,7 @@ export default function LogDataPage() {
 
   return (
     <div className="space-y-5">
+      <DataTabs />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold text-slate-900">Daily Log Data</h1>

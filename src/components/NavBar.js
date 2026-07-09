@@ -8,8 +8,7 @@ import { PAGE_ACCESS, roleLabel } from "@/lib/roles";
 const ALL_LINKS = [
   { href: "/", label: "Dashboard" },
   { href: "/entry", label: "Daily Entry", activeMatch: ["/entry", "/log-entry"] },
-  { href: "/data", label: "Data" },
-  { href: "/log-data", label: "Log Data" },
+  { href: "/data", label: "Data", activeMatch: ["/data", "/log-data"] },
   { href: "/settings", label: "Settings" },
 ];
 
