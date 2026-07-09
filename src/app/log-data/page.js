@@ -30,6 +30,7 @@ export default function LogDataPage() {
   const [rows, setRows] = useState([]);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [user, setUser] = useState(null);
+  const [exporting, setExporting] = useState("");
   const loading = !hasLoaded;
 
   const canEdit = user?.role === "ADMIN";
@@ -59,6 +60,24 @@ export default function LogDataPage() {
     };
   }, [month, type]);
 
+  async function downloadReport(format) {
+    setExporting(format);
+    try {
+      const res = await fetch(`/api/maintenance-logs/export?month=${month}&type=${type}&format=${format}`);
+      if (!res.ok) return;
+      const blob = await res.blob();
+      const ext = format === "pdf" ? "pdf" : "xlsx";
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `daily-log-${month}.${ext}`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting("");
+    }
+  }
+
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -72,6 +91,22 @@ export default function LogDataPage() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <MonthPicker month={month} onChange={onMonthChange} />
+          <button
+            type="button"
+            onClick={() => downloadReport("excel")}
+            disabled={!!exporting || loading}
+            className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+          >
+            {exporting === "excel" ? "Exporting…" : "Excel"}
+          </button>
+          <button
+            type="button"
+            onClick={() => downloadReport("pdf")}
+            disabled={!!exporting || loading}
+            className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+          >
+            {exporting === "pdf" ? "Exporting…" : "PDF"}
+          </button>
           {canCreate && (
             <Link
               href="/log-entry"

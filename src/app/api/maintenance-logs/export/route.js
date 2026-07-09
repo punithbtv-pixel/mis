@@ -1,39 +1,42 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { computeRows } from "@/lib/calc";
 import { currentMonth, isValidMonth, monthRange } from "@/lib/dates";
 import { isUiOnlyMode } from "@/lib/mode";
-import { getMockDashboard } from "@/lib/mockData";
+import { getMockMaintenanceLogs } from "@/lib/mockData";
 import { getSession } from "@/lib/apiAuth";
-import { reportHeaders, rowToReportCells, REPORT_COLUMNS } from "@/lib/report";
+import {
+  LOG_REPORT_COLUMNS,
+  logReportHeaders,
+  rowToLogReportCells,
+} from "@/lib/maintenanceLogReport";
 import { buildExcelReport, buildPdfReport } from "@/lib/exportDoc";
 
-async function fetchReportRows(month) {
+function toDateStr(d) {
+  return d.toISOString().slice(0, 10);
+}
+
+function serialize(row) {
+  return { ...row, date: toDateStr(row.date) };
+}
+
+async function fetchLogRows(month, type) {
   if (isUiOnlyMode()) {
-    const data = getMockDashboard(month);
+    const data = getMockMaintenanceLogs(month, type);
     return data.rows ?? [];
   }
 
   const { gte, lt } = monthRange(month);
-  const [readings, prior, settings, calibration] = await Promise.all([
-    prisma.dailyReading.findMany({
-      where: { date: { gte, lt } },
-      orderBy: { date: "asc" },
-    }),
-    prisma.dailyReading.findFirst({
-      where: { date: { lt: gte } },
-      orderBy: { date: "desc" },
-    }),
-    prisma.setting.findMany(),
-    prisma.dipCalibration.findMany(),
-  ]);
-
-  const withPrior = prior ? [prior, ...readings] : readings;
-  const allRows = computeRows(withPrior, settings, calibration);
-  return prior ? allRows.slice(1) : allRows;
+  const rows = await prisma.maintenanceLog.findMany({
+    where: {
+      date: { gte, lt },
+      ...(type && type !== "All" ? { type } : {}),
+    },
+    orderBy: [{ date: "desc" }, { id: "desc" }],
+  });
+  return rows.map(serialize);
 }
 
-// GET /api/export?month=YYYY-MM&format=excel|pdf
+// GET /api/maintenance-logs/export?month=YYYY-MM&type=All&format=excel|pdf
 export async function GET(request) {
   const session = await getSession();
   if (!session) {
@@ -42,6 +45,7 @@ export async function GET(request) {
 
   const { searchParams } = new URL(request.url);
   const month = searchParams.get("month") || currentMonth();
+  const type = searchParams.get("type") || "All";
   const format = (searchParams.get("format") || "excel").toLowerCase();
 
   if (!isValidMonth(month)) {
@@ -51,35 +55,35 @@ export async function GET(request) {
     return NextResponse.json({ error: "Invalid format" }, { status: 400 });
   }
 
-  const rows = await fetchReportRows(month);
-  const title = `PowerHouse MIS — Monthly Data (${month})`;
+  const rows = await fetchLogRows(month, type);
+  const title = `Daily Log Data (${month})`;
 
   if (format === "pdf") {
     const body = buildPdfReport({
       title,
-      headers: reportHeaders(),
-      rows: rows.map(rowToReportCells),
+      headers: logReportHeaders(),
+      rows: rows.map(rowToLogReportCells),
     });
     return new NextResponse(body, {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="powerhouse-${month}.pdf"`,
+        "Content-Disposition": `attachment; filename="daily-log-${month}.pdf"`,
       },
     });
   }
 
   const body = await buildExcelReport({
-    sheetName: "PowerHouse Data",
+    sheetName: "Daily Log Data",
     title,
-    columnCount: REPORT_COLUMNS.length,
-    headers: reportHeaders(),
-    rows: rows.map(rowToReportCells),
+    columnCount: LOG_REPORT_COLUMNS.length,
+    headers: logReportHeaders(),
+    rows: rows.map(rowToLogReportCells),
   });
   return new NextResponse(body, {
     headers: {
       "Content-Type":
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "Content-Disposition": `attachment; filename="powerhouse-${month}.xlsx"`,
+      "Content-Disposition": `attachment; filename="daily-log-${month}.xlsx"`,
     },
   });
 }
