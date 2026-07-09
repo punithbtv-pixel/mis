@@ -134,16 +134,6 @@ export default function LogDataPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search plant, section, equipment, detail, parts, staff…"
-          className="h-9 w-full max-w-sm rounded-lg border border-slate-300 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
-        />
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2">
         <button
           onClick={() => setType("All")}
           className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${
@@ -163,6 +153,13 @@ export default function LogDataPage() {
             {t.label}
           </button>
         ))}
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search plant, section, equipment, detail, parts, staff…"
+          className="h-9 flex-1 min-w-[220px] max-w-sm rounded-lg border border-slate-300 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+        />
       </div>
 
       {loading && <p className="text-slate-500">Loading…</p>}
