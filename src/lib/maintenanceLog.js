@@ -146,12 +146,16 @@ export const PLANT_TREE = {
 
 export const PLANTS = Object.keys(PLANT_TREE);
 
+function withGeneral(list) {
+  return list.includes("General") ? list : [...list, "General"];
+}
+
 export function sectionsForPlant(plant) {
-  return PLANT_TREE[plant]?.sections ?? [];
+  return withGeneral(PLANT_TREE[plant]?.sections ?? []);
 }
 
 export function equipmentForSection(plant, section) {
-  return PLANT_TREE[plant]?.items?.[section] ?? [];
+  return withGeneral(PLANT_TREE[plant]?.items?.[section] ?? []);
 }
 
 // Staff who can be recorded under "Attended by".
