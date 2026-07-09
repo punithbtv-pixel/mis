@@ -28,6 +28,7 @@ const LABEL_TO_FIELD = {
   milling: "ebMillingKwh",
   "utility / parboiling": "ebUtilityKwh",
   "diesel issued": "dieselIssued",
+  "service tanks": "serviceTankLitres",
 };
 
 const DEFAULT_SERVICE_HOURS = {

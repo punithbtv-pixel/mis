@@ -1,5 +1,5 @@
-// One-off import: backfill DailyReading.serviceTankLitres from the "Service tank
-// (Liters)" column in the Diesel sheet of the monthly Excel workbook.
+// One-off import: backfill DailyReading.serviceTankLitres from the "Service
+// Tanks" row of the PowerHouse Data sheet in the monthly Excel workbook.
 //   node prisma/import-service-tank.mjs
 // Reads XLSX_PATH (default: ./data/Jul_2026.xlsx).
 //
@@ -7,6 +7,12 @@
 // seed); it does not create new DailyReading rows. The value is entered
 // occasionally in the sheet and held constant in between — calc.js already
 // forward-fills it, so we just store the sparse raw values as-is.
+//
+// Sourced from PowerHouse Data (hand-entered literal numbers) rather than the
+// Diesel sheet's "Service tank (Liters)" column, which is populated by
+// formulas that reference PowerHouse Data and can silently break (seen in
+// practice: a couple of cells pointed at unrelated far-off columns and had
+// no cached result, so they read back as blank).
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -17,8 +23,6 @@ const prisma = new PrismaClient();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const XLSX_PATH =
   process.env.XLSX_PATH || path.join(__dirname, "..", "data", "Jul_2026.xlsx");
-
-const SERVICE_TANK_COL = 22; // Diesel sheet: "Service tank (Liters)"
 
 function cellNumber(cell) {
   const v = cell?.value;
@@ -51,23 +55,31 @@ async function main() {
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.readFile(XLSX_PATH);
 
-  const ws = workbook.getWorksheet("Diesel");
-  if (!ws) throw new Error('Worksheet "Diesel" not found');
+  const ws = workbook.getWorksheet("PowerHouse Data");
+  if (!ws) throw new Error('Worksheet "PowerHouse Data" not found');
+
+  // Row 1 = dates across columns (from col C onward).
+  const dateCols = [];
+  ws.getRow(1).eachCell({ includeEmpty: false }, (cell, col) => {
+    if (col < 3) return;
+    const dateStr = cellDateStr(cell);
+    if (dateStr) dateCols.push({ col, dateStr });
+  });
+
+  // Find the "Service Tanks" row.
+  let serviceTankRow = null;
+  ws.eachRow({ includeEmpty: false }, (row) => {
+    const label = String(row.getCell(2).value ?? "").trim().toLowerCase();
+    if (label === "service tanks") serviceTankRow = row;
+  });
+  if (!serviceTankRow) throw new Error('"Service Tanks" row not found in PowerHouse Data');
 
   let updated = 0;
   let skippedMissing = 0;
   let skippedBlank = 0;
 
-  const rows = [];
-  ws.eachRow({ includeEmpty: false }, (row, rowNum) => {
-    if (rowNum === 1) return; // header
-    const dateStr = cellDateStr(row.getCell(1));
-    if (!dateStr) return;
-    const litres = cellNumber(row.getCell(SERVICE_TANK_COL));
-    rows.push({ dateStr, litres });
-  });
-
-  for (const { dateStr, litres } of rows) {
+  for (const { col, dateStr } of dateCols) {
+    const litres = cellNumber(serviceTankRow.getCell(col));
     if (litres == null) {
       skippedBlank++;
       continue;
