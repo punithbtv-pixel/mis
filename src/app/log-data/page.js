@@ -102,7 +102,7 @@ export default function LogDataPage() {
       <DataTabs />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold text-slate-900">Daily Log Data</h1>
+          <h1 className="text-xl font-semibold text-slate-900">Monthly Data</h1>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <MonthPicker month={month} onChange={onMonthChange} />
