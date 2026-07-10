@@ -80,10 +80,6 @@ function EntryForm() {
     setIssuanceDraft({ to: DIESEL_ISSUE_TO_OPTIONS[0], comment: "", liters: "" });
   }
 
-  function clearIssuanceDraft() {
-    setIssuanceDraft({ to: DIESEL_ISSUE_TO_OPTIONS[0], comment: "", liters: "" });
-  }
-
   function removeIssuance(i) {
     setValues((prev) => ({
       ...prev,

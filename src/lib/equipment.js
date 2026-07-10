@@ -90,14 +90,6 @@ export const DIESEL_ISSUE_TO_OPTIONS = [
   "Admin DG",
   "Fire Hydrant DG (WTP)",
   "Fire Hydrant system (ETP)",
+  "Boiler",
   "Other",
 ];
-
-// Pull one column (to/comment/liters) out of a day's diesel issuance list,
-// joined for display in the Monthly Data table and report exports.
-export function issuanceColumn(list, key) {
-  if (!Array.isArray(list) || list.length === 0) return "";
-  return list
-    .map((it) => (key === "liters" ? it.liters ?? "" : it[key] ?? ""))
-    .join(", ");
-}
