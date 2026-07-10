@@ -46,6 +46,7 @@ export const INPUT_GROUPS = [
       { field: "dieselDipMm", label: "Dip stick reading", unit: "mm" },
       { field: "dieselReceivedLitres", label: "Diesel received", unit: "L" },
       { field: "dieselIssued", label: "Diesel issued", unit: "L" },
+      { field: "serviceTankLitres", label: "Service tank", unit: "L" },
     ],
   },
   {
