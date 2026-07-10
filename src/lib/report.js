@@ -9,6 +9,7 @@ export const REPORT_COLUMNS = [
   { key: "dieselDipAfterReceiveMm", header: "Dip After (mm)", width: 14 },
   { key: "dieselFlowMeterReading", header: "Flow", width: 10 },
   { key: "dieselIssued", header: "Issued (L)", width: 10 },
+  { key: "dieselIssuedTo", header: "Issued To", width: 20 },
   { key: "nepaConsumption", header: "NEPA (KWH)", width: 12 },
   { key: "ebMilling", header: "Milling", width: 10 },
   { key: "ebUtility", header: "Utility", width: 10 },
@@ -35,6 +36,7 @@ export function rowToReportCells(row) {
     "dieselDipAfterReceiveMm",
     "dieselFlowMeterReading",
     "dieselIssued",
+    "dieselIssuedTo",
   ]);
   return REPORT_COLUMNS.map((col) => {
     if (col.runHours) return fmtCell(row.runHours?.[col.key]);

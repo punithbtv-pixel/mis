@@ -3,6 +3,7 @@ import { monthRange, parseDateOnly } from "@/lib/dates";
 import {
   DEFAULT_SERVICE_HOURS,
   NUMERIC_FIELDS,
+  TEXT_FIELDS,
   SERVICE_KEYS,
   THRESHOLD_SETTING_KEYS,
   DEFAULT_SERVICE_ALERT_THRESHOLDS,
@@ -207,6 +208,10 @@ export function upsertMockReading(body) {
 
   if ("remarks" in body) next.remarks = body.remarks || null;
   else if (!("remarks" in next)) next.remarks = null;
+  for (const field of TEXT_FIELDS) {
+    if (field in body) next[field] = body[field] || null;
+    else if (!(field in next)) next[field] = null;
+  }
 
   state.readingsByDate.set(dateStr, next);
   return { reading: serialize(next), status: 200 };

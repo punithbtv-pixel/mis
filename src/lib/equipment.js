@@ -45,8 +45,9 @@ export const INPUT_GROUPS = [
     fields: [
       { field: "dieselDipMm", label: "Dip stick reading", unit: "mm" },
       { field: "dieselReceivedLitres", label: "Diesel received", unit: "L" },
-      { field: "dieselIssued", label: "Diesel issued", unit: "L" },
       { field: "serviceTankLitres", label: "Service tank", unit: "L" },
+      { field: "dieselIssued", label: "Diesel issued", unit: "L" },
+      { field: "dieselIssuedTo", label: "Issued To", type: "text" },
     ],
   },
   {
@@ -77,7 +78,12 @@ export const INPUT_GROUPS = [
 
 // Flat list of all numeric input field names (for parsing/validation).
 export const NUMERIC_FIELDS = INPUT_GROUPS.flatMap((g) =>
-  g.fields.map((f) => f.field)
+  g.fields.filter((f) => f.type !== "text").map((f) => f.field)
+);
+
+// Flat list of free-text input fields entered on the daily form (not parsed as numbers).
+export const TEXT_FIELDS = INPUT_GROUPS.flatMap((g) =>
+  g.fields.filter((f) => f.type === "text").map((f) => f.field)
 );
 
 export const SERVICE_KEYS = RUN_HOUR_EQUIPMENT.map((e) => e.serviceKey);

@@ -117,6 +117,22 @@ function EntryForm() {
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {group.fields.map((f) => {
+                if (f.type === "text") {
+                  return (
+                    <div key={f.field} className="col-span-2 md:col-span-4">
+                      <label className="block text-xs font-medium text-slate-600 mb-1">
+                        {f.label}
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={values[f.field] ?? ""}
+                        onChange={(e) => setField(f.field, e.target.value)}
+                        disabled={loading}
+                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      />
+                    </div>
+                  );
+                }
                 const d = delta(f.field);
                 return (
                   <div key={f.field}>
