@@ -221,14 +221,6 @@ function EntryForm() {
                   >
                     ADD
                   </button>
-                  <button
-                    type="button"
-                    onClick={clearIssuanceDraft}
-                    disabled={loading}
-                    className="h-[38px] rounded-lg border border-slate-300 text-slate-600 px-4 text-sm font-medium hover:bg-slate-50"
-                  >
-                    Delete
-                  </button>
                 </div>
                 {(values.dieselIssuances ?? []).length > 0 && (
                   <div className="mt-3 space-y-1.5">
