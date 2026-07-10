@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { INPUT_GROUPS } from "@/lib/equipment";
+import { INPUT_GROUPS, DIESEL_ISSUE_TO_OPTIONS } from "@/lib/equipment";
 import { fmt } from "@/lib/format";
 import EntryTabs from "@/components/EntryTabs";
 
@@ -24,6 +24,11 @@ function EntryForm() {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(true);
   const [forbidden, setForbidden] = useState(false);
+  const [issuanceDraft, setIssuanceDraft] = useState({
+    to: DIESEL_ISSUE_TO_OPTIONS[0],
+    comment: "",
+    liters: "",
+  });
 
   useEffect(() => {
     fetch("/api/me")
@@ -48,6 +53,7 @@ function EntryForm() {
         for (const g of INPUT_GROUPS)
           for (const f of g.fields) next[f.field] = r[f.field] ?? "";
         next.remarks = r.remarks ?? "";
+        next.dieselIssuances = Array.isArray(r.dieselIssuances) ? r.dieselIssuances : [];
         setValues(next);
         setPrevious(data.previous);
       })
@@ -59,6 +65,30 @@ function EntryForm() {
 
   function setField(field, v) {
     setValues((prev) => ({ ...prev, [field]: v }));
+  }
+
+  function addIssuance() {
+    const liters = Number(issuanceDraft.liters);
+    if (issuanceDraft.liters === "" || !Number.isFinite(liters)) return;
+    setValues((prev) => ({
+      ...prev,
+      dieselIssuances: [
+        ...(prev.dieselIssuances ?? []),
+        { to: issuanceDraft.to, comment: issuanceDraft.comment, liters },
+      ],
+    }));
+    setIssuanceDraft({ to: DIESEL_ISSUE_TO_OPTIONS[0], comment: "", liters: "" });
+  }
+
+  function clearIssuanceDraft() {
+    setIssuanceDraft({ to: DIESEL_ISSUE_TO_OPTIONS[0], comment: "", liters: "" });
+  }
+
+  function removeIssuance(i) {
+    setValues((prev) => ({
+      ...prev,
+      dieselIssuances: (prev.dieselIssuances ?? []).filter((_, idx) => idx !== i),
+    }));
   }
 
   async function save(e) {
@@ -117,22 +147,6 @@ function EntryForm() {
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {group.fields.map((f) => {
-                if (f.type === "text") {
-                  return (
-                    <div key={f.field} className="col-span-2 md:col-span-4">
-                      <label className="block text-xs font-medium text-slate-600 mb-1">
-                        {f.label}
-                      </label>
-                      <textarea
-                        rows={2}
-                        value={values[f.field] ?? ""}
-                        onChange={(e) => setField(f.field, e.target.value)}
-                        disabled={loading}
-                        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
-                      />
-                    </div>
-                  );
-                }
                 const d = delta(f.field);
                 return (
                   <div key={f.field}>
@@ -157,6 +171,92 @@ function EntryForm() {
                 );
               })}
             </div>
+
+            {group.title === "Diesel" && (
+              <div className="mt-4 pt-4 border-t border-slate-100">
+                <label className="block text-xs font-medium text-slate-600 mb-1">
+                  Issued To
+                </label>
+                <div className="flex flex-wrap items-end gap-2">
+                  <select
+                    value={issuanceDraft.to}
+                    onChange={(e) =>
+                      setIssuanceDraft((d) => ({ ...d, to: e.target.value }))
+                    }
+                    disabled={loading}
+                    className="h-[38px] rounded-lg border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  >
+                    {DIESEL_ISSUE_TO_OPTIONS.map((o) => (
+                      <option key={o} value={o}>
+                        {o}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="text"
+                    placeholder="Comment"
+                    value={issuanceDraft.comment}
+                    onChange={(e) =>
+                      setIssuanceDraft((d) => ({ ...d, comment: e.target.value }))
+                    }
+                    disabled={loading}
+                    className="flex-1 min-w-[160px] h-[38px] rounded-lg border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  />
+                  <input
+                    type="number"
+                    step="any"
+                    placeholder="Liters"
+                    value={issuanceDraft.liters}
+                    onChange={(e) =>
+                      setIssuanceDraft((d) => ({ ...d, liters: e.target.value }))
+                    }
+                    disabled={loading}
+                    className="w-28 h-[38px] rounded-lg border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={addIssuance}
+                    disabled={loading}
+                    className="h-[38px] rounded-lg bg-slate-900 text-white px-4 text-sm font-medium hover:bg-slate-800"
+                  >
+                    ADD
+                  </button>
+                  <button
+                    type="button"
+                    onClick={clearIssuanceDraft}
+                    disabled={loading}
+                    className="h-[38px] rounded-lg border border-slate-300 text-slate-600 px-4 text-sm font-medium hover:bg-slate-50"
+                  >
+                    Delete
+                  </button>
+                </div>
+                {(values.dieselIssuances ?? []).length > 0 && (
+                  <div className="mt-3 space-y-1.5">
+                    {values.dieselIssuances.map((it, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center justify-between gap-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-1.5 text-sm"
+                      >
+                        <span>
+                          <span className="font-medium text-slate-700">{it.to}</span>
+                          {it.comment && (
+                            <span className="text-slate-500"> — {it.comment}</span>
+                          )}
+                          <span className="text-slate-500"> · {it.liters} L</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeIssuance(i)}
+                          className="w-5 h-5 rounded-full bg-slate-300 text-white text-xs leading-none flex items-center justify-center hover:bg-rose-500"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         ))}
 

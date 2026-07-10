@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { NUMERIC_FIELDS, TEXT_FIELDS } from "@/lib/equipment";
+import { NUMERIC_FIELDS } from "@/lib/equipment";
 import {
   currentMonth,
   isValidMonth,
@@ -15,6 +15,18 @@ import { ROLES } from "@/lib/roles";
 
 function serialize(r) {
   return { ...r, date: toDateStr(r.date) };
+}
+
+function sanitizeIssuances(list) {
+  if (!Array.isArray(list)) return [];
+  return list.map((it) => {
+    const liters = Number(it?.liters);
+    return {
+      to: String(it?.to ?? ""),
+      comment: String(it?.comment ?? ""),
+      liters: Number.isFinite(liters) ? liters : null,
+    };
+  });
 }
 
 // GET /api/readings?month=YYYY-MM  -> raw readings for that month (asc).
@@ -78,9 +90,7 @@ export async function POST(request) {
     }
   }
   if ("remarks" in body) data.remarks = body.remarks || null;
-  for (const field of TEXT_FIELDS) {
-    if (field in body) data[field] = body[field] || null;
-  }
+  if ("dieselIssuances" in body) data.dieselIssuances = sanitizeIssuances(body.dieselIssuances);
 
   const saved = await prisma.dailyReading.upsert({
     where: { date },

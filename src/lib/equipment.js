@@ -47,7 +47,6 @@ export const INPUT_GROUPS = [
       { field: "dieselReceivedLitres", label: "Diesel received", unit: "L" },
       { field: "serviceTankLitres", label: "Service tank", unit: "L" },
       { field: "dieselIssued", label: "Diesel issued", unit: "L" },
-      { field: "dieselIssuedTo", label: "Issued To", type: "text" },
     ],
   },
   {
@@ -78,12 +77,27 @@ export const INPUT_GROUPS = [
 
 // Flat list of all numeric input field names (for parsing/validation).
 export const NUMERIC_FIELDS = INPUT_GROUPS.flatMap((g) =>
-  g.fields.filter((f) => f.type !== "text").map((f) => f.field)
-);
-
-// Flat list of free-text input fields entered on the daily form (not parsed as numbers).
-export const TEXT_FIELDS = INPUT_GROUPS.flatMap((g) =>
-  g.fields.filter((f) => f.type === "text").map((f) => f.field)
+  g.fields.map((f) => f.field)
 );
 
 export const SERVICE_KEYS = RUN_HOUR_EQUIPMENT.map((e) => e.serviceKey);
+
+// Destinations available in the Diesel "Issued To" dropdown.
+export const DIESEL_ISSUE_TO_OPTIONS = [
+  "Residency",
+  "Truck",
+  "Forklift",
+  "Admin DG",
+  "Fire Hydrant DG (WTP)",
+  "Fire Hydrant system (ETP)",
+  "Other",
+];
+
+// Pull one column (to/comment/liters) out of a day's diesel issuance list,
+// joined for display in the Monthly Data table and report exports.
+export function issuanceColumn(list, key) {
+  if (!Array.isArray(list) || list.length === 0) return "";
+  return list
+    .map((it) => (key === "liters" ? it.liters ?? "" : it[key] ?? ""))
+    .join(", ");
+}

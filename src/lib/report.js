@@ -1,4 +1,4 @@
-import { RUN_HOUR_EQUIPMENT } from "@/lib/equipment";
+import { RUN_HOUR_EQUIPMENT, issuanceColumn } from "@/lib/equipment";
 
 export const REPORT_COLUMNS = [
   { key: "date", header: "Date", width: 12 },
@@ -9,7 +9,9 @@ export const REPORT_COLUMNS = [
   { key: "dieselDipAfterReceiveMm", header: "Dip After (mm)", width: 14 },
   { key: "dieselFlowMeterReading", header: "Flow", width: 10 },
   { key: "dieselIssued", header: "Issued (L)", width: 10 },
-  { key: "dieselIssuedTo", header: "Issued To", width: 20 },
+  { key: "issuedTo", header: "Issued To", width: 16 },
+  { key: "issuedComment", header: "Comment", width: 20 },
+  { key: "issuedLiters", header: "Liters", width: 10 },
   { key: "nepaConsumption", header: "NEPA (KWH)", width: 12 },
   { key: "ebMilling", header: "Milling", width: 10 },
   { key: "ebUtility", header: "Utility", width: 10 },
@@ -36,12 +38,14 @@ export function rowToReportCells(row) {
     "dieselDipAfterReceiveMm",
     "dieselFlowMeterReading",
     "dieselIssued",
-    "dieselIssuedTo",
   ]);
   return REPORT_COLUMNS.map((col) => {
     if (col.runHours) return fmtCell(row.runHours?.[col.key]);
     if (col.key === "date") return row.date;
     if (col.key === "remarks") return row.raw?.remarks ?? "";
+    if (col.key === "issuedTo") return issuanceColumn(row.raw?.dieselIssuances, "to");
+    if (col.key === "issuedComment") return issuanceColumn(row.raw?.dieselIssuances, "comment");
+    if (col.key === "issuedLiters") return issuanceColumn(row.raw?.dieselIssuances, "liters");
     if (rawFields.has(col.key)) return fmtCell(row.raw?.[col.key]);
     return fmtCell(row[col.key]);
   });

@@ -19,7 +19,7 @@ model DailyReading {
   dieselDipAfterReceiveMm Float? // dip after receiving diesel (mm)
   dieselFlowMeterReading  Float? // flow meter reading
   dieselIssued            Float? // diesel issued that day (litres)
-  dieselIssuedTo          String? // who/what the diesel was issued to
+  dieselIssuances         Json? // line items: [{ to, comment, liters }]
   serviceTankLitres       Float? // service tank stock (litres); entered occasionally, held constant between entries
 
   // Grid power
