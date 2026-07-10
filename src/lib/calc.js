@@ -132,6 +132,17 @@ export function computeRows(readings, settings, calibration) {
   });
 }
 
+// The plant reports each day's entry as covering the previous day's
+// activity, so the row computed from a given day's reading is relabeled
+// to the prior day before it's shown on Monthly Data / the dashboard.
+export function shiftRowsToPriorDay(rows) {
+  const out = [];
+  for (let i = 0; i < rows.length - 1; i++) {
+    out.push({ ...rows[i + 1], date: rows[i].date });
+  }
+  return out;
+}
+
 function sum(arr) {
   const vals = arr.filter((v) => v != null && Number.isFinite(v));
   if (vals.length === 0) return 0;

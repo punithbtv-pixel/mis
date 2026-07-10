@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { computeRows } from "@/lib/calc";
+import { computeRows, shiftRowsToPriorDay } from "@/lib/calc";
 import { currentMonth, isValidMonth, monthRange } from "@/lib/dates";
 import { isUiOnlyMode } from "@/lib/mode";
 import { getMockDashboard } from "@/lib/mockData";
@@ -15,22 +15,22 @@ async function fetchReportRows(month) {
   }
 
   const { gte, lt } = monthRange(month);
-  const [readings, prior, settings, calibration] = await Promise.all([
+  const [readings, next, settings, calibration] = await Promise.all([
     prisma.dailyReading.findMany({
       where: { date: { gte, lt } },
       orderBy: { date: "asc" },
     }),
     prisma.dailyReading.findFirst({
-      where: { date: { lt: gte } },
-      orderBy: { date: "desc" },
+      where: { date: { gte: lt } },
+      orderBy: { date: "asc" },
     }),
     prisma.setting.findMany(),
     prisma.dipCalibration.findMany(),
   ]);
 
-  const withPrior = prior ? [prior, ...readings] : readings;
-  const allRows = computeRows(withPrior, settings, calibration);
-  return prior ? allRows.slice(1) : allRows;
+  const withNext = next ? [...readings, next] : readings;
+  const computedRows = computeRows(withNext, settings, calibration);
+  return shiftRowsToPriorDay(computedRows);
 }
 
 // GET /api/export?month=YYYY-MM&format=excel|pdf

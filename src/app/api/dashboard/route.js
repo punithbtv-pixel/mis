@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { computeRows, buildSummary } from "@/lib/calc";
+import { computeRows, buildSummary, shiftRowsToPriorDay } from "@/lib/calc";
 import { currentMonth, isValidMonth, monthRange } from "@/lib/dates";
 import { isUiOnlyMode } from "@/lib/mode";
 import { getMockDashboard } from "@/lib/mockData";
@@ -19,24 +19,24 @@ export async function GET(request) {
 
   const { gte, lt } = monthRange(month);
 
-  // Include the last reading of the previous month so day-1 deltas work.
-  const [readings, prior, settings, calibration] = await Promise.all([
+  // Include the next month's first reading so the last day's row (whose
+  // output is relabeled from that entry) can be computed.
+  const [readings, next, settings, calibration] = await Promise.all([
     prisma.dailyReading.findMany({
       where: { date: { gte, lt } },
       orderBy: { date: "asc" },
     }),
     prisma.dailyReading.findFirst({
-      where: { date: { lt: gte } },
-      orderBy: { date: "desc" },
+      where: { date: { gte: lt } },
+      orderBy: { date: "asc" },
     }),
     prisma.setting.findMany(),
     prisma.dipCalibration.findMany(),
   ]);
 
-  const withPrior = prior ? [prior, ...readings] : readings;
-  const allRows = computeRows(withPrior, settings, calibration);
-  // Drop the carried-in prior day so the month view only shows its own days.
-  const rows = prior ? allRows.slice(1) : allRows;
+  const withNext = next ? [...readings, next] : readings;
+  const computedRows = computeRows(withNext, settings, calibration);
+  const rows = shiftRowsToPriorDay(computedRows);
 
   const summary = buildSummary(rows, settings);
   return NextResponse.json({ month, rows, ...summary });

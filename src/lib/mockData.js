@@ -1,4 +1,4 @@
-import { buildSummary, computeRows } from "@/lib/calc";
+import { buildSummary, computeRows, shiftRowsToPriorDay } from "@/lib/calc";
 import { monthRange, parseDateOnly } from "@/lib/dates";
 import {
   DEFAULT_SERVICE_HOURS,
@@ -144,11 +144,11 @@ export function getMockDashboard(month) {
   const { gte, lt } = monthRange(month);
   const sorted = toSortedReadings(state.readingsByDate);
   const monthRows = sorted.filter((r) => inRange(r.date, gte, lt));
-  const prior = [...sorted].reverse().find((r) => new Date(`${r.date}T00:00:00.000Z`) < gte);
+  const next = sorted.find((r) => new Date(`${r.date}T00:00:00.000Z`) >= lt);
   const settingsRows = toSettingsRows(state.settings);
-  const withPrior = prior ? [prior, ...monthRows] : monthRows;
-  const computedRows = computeRows(withPrior, settingsRows, state.calibration);
-  const rows = prior ? computedRows.slice(1) : computedRows;
+  const withNext = next ? [...monthRows, next] : monthRows;
+  const allComputedRows = computeRows(withNext, settingsRows, state.calibration);
+  const rows = shiftRowsToPriorDay(allComputedRows);
   const summary = buildSummary(rows, settingsRows);
   return { month, rows, ...summary };
 }
