@@ -112,7 +112,7 @@ export default function DashboardPage() {
 
       {!loading && hasData && (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+          <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
             <Card label="Diesel Consumed" value={fmt(t.dieselConsumed)} unit="Liters" accent="text-amber-600" />
             <Card label="Diesel Received" value={fmt(t.dieselReceived)} unit="Liters" />
             <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="Liters" />
@@ -170,8 +170,12 @@ export default function DashboardPage() {
                   <Tooltip />
                   <Legend />
                   <Line type="monotone" dataKey="nepaConsumption" name="NEPA" stroke="#0ea5e9" dot={false} strokeWidth={2} />
-                  <Line type="monotone" dataKey="ebMilling" name="Milling" stroke="#6366f1" dot={false} strokeWidth={2} />
-                  <Line type="monotone" dataKey="ebUtility" name="Utility" stroke="#14b8a6" dot={false} strokeWidth={2} />
+                  {isAdmin && (
+                    <>
+                      <Line type="monotone" dataKey="ebMilling" name="Milling" stroke="#6366f1" dot={false} strokeWidth={2} />
+                      <Line type="monotone" dataKey="ebUtility" name="Utility" stroke="#14b8a6" dot={false} strokeWidth={2} />
+                    </>
+                  )}
                 </LineChart>
               </ResponsiveContainer>
             </Panel>

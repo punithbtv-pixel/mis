@@ -43,6 +43,7 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const month = searchParams.get("month") || currentMonth();
   const format = (searchParams.get("format") || "excel").toLowerCase();
+  const datesParam = searchParams.get("dates");
 
   if (!isValidMonth(month)) {
     return NextResponse.json({ error: "Invalid month" }, { status: 400 });
@@ -51,7 +52,11 @@ export async function GET(request) {
     return NextResponse.json({ error: "Invalid format" }, { status: 400 });
   }
 
-  const rows = await fetchReportRows(month);
+  let rows = await fetchReportRows(month);
+  if (datesParam) {
+    const wanted = new Set(datesParam.split(",").filter(Boolean));
+    rows = rows.filter((r) => wanted.has(r.date));
+  }
   const title = `PowerHouse MIS — Monthly Data (${month})`;
 
   if (format === "pdf") {

@@ -14,7 +14,9 @@ export default function DataPage() {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [user, setUser] = useState(null);
   const [exporting, setExporting] = useState("");
+  const [selected, setSelected] = useState(new Set());
   const loading = !hasLoaded;
+  const allSelected = rows.length > 0 && selected.size === rows.length;
 
   const canAddEntry = user?.role === "ADMIN" || user?.role === "OPERATOR";
   const canEdit = user?.role === "ADMIN";
@@ -35,7 +37,12 @@ export default function DataPage() {
     let active = true;
     fetch(`/api/dashboard?month=${month}`)
       .then((r) => r.json())
-      .then((d) => active && setRows(d.rows ?? []))
+      .then((d) => {
+        if (!active) return;
+        const nextRows = d.rows ?? [];
+        setRows(nextRows);
+        setSelected(new Set(nextRows.map((r) => r.date)));
+      })
       .catch(() => active && setRows([]))
       .finally(() => active && setHasLoaded(true));
     return () => {
@@ -43,10 +50,24 @@ export default function DataPage() {
     };
   }, [month]);
 
+  function toggleRow(date) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(date)) next.delete(date);
+      else next.add(date);
+      return next;
+    });
+  }
+
+  function toggleAll() {
+    setSelected(allSelected ? new Set() : new Set(rows.map((r) => r.date)));
+  }
+
   async function downloadReport(format) {
     setExporting(format);
     try {
-      const res = await fetch(`/api/export?month=${month}&format=${format}`);
+      const dates = encodeURIComponent(rows.map((r) => r.date).filter((d) => selected.has(d)).join(","));
+      const res = await fetch(`/api/export?month=${month}&format=${format}&dates=${dates}`);
       if (!res.ok) return;
       const blob = await res.blob();
       const ext = format === "pdf" ? "pdf" : "xlsx";
@@ -71,18 +92,18 @@ export default function DataPage() {
           <button
             type="button"
             onClick={() => downloadReport("excel")}
-            disabled={!!exporting || loading}
+            disabled={!!exporting || loading || selected.size === 0}
             className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
           >
-            {exporting === "excel" ? "Exporting…" : "Excel"}
+            {exporting === "excel" ? "Exporting…" : `Excel${selected.size ? ` (${selected.size})` : ""}`}
           </button>
           <button
             type="button"
             onClick={() => downloadReport("pdf")}
-            disabled={!!exporting || loading}
+            disabled={!!exporting || loading || selected.size === 0}
             className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
           >
-            {exporting === "pdf" ? "Exporting…" : "PDF"}
+            {exporting === "pdf" ? "Exporting…" : `PDF${selected.size ? ` (${selected.size})` : ""}`}
           </button>
           {canAddEntry && (
             <Link
@@ -108,6 +129,14 @@ export default function DataPage() {
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wide">
+                <th className="px-3 py-2 text-left">
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={toggleAll}
+                    title="Select all"
+                  />
+                </th>
                 <th className="sticky left-0 bg-slate-50 px-3 py-2 text-left">Date</th>
                 <th className="px-3 py-2 text-right">Dip (mm)</th>
                 <th className="px-3 py-2 text-right">Diesel Consumption (LTRS)</th>
@@ -129,6 +158,13 @@ export default function DataPage() {
             <tbody>
               {rows.map((r) => (
                 <tr key={r.date} className="border-t border-slate-100 hover:bg-slate-50">
+                  <td className="px-3 py-2">
+                    <input
+                      type="checkbox"
+                      checked={selected.has(r.date)}
+                      onChange={() => toggleRow(r.date)}
+                    />
+                  </td>
                   <td className="sticky left-0 bg-white px-3 py-2 font-medium text-slate-700 whitespace-nowrap">
                     {r.date}
                   </td>
