@@ -39,37 +39,91 @@ const CARD_THEMES = {
   violet: { bar: "bg-violet-300", iconBg: "bg-violet-50", icon: "text-violet-500", value: "text-violet-600" },
 };
 
-function DropletIcon(props) {
+function GeneratorIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
-      <path d="M12 2.7c3.4 4.3 6 7.9 6 10.8a6 6 0 1 1-12 0c0-2.9 2.6-6.5 6-10.8Z" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
+      <rect x="3" y="7" width="15" height="11" rx="2" />
+      <circle cx="8.5" cy="12.5" r="2.6" />
+      <path d="M8.5 10.5v4M6.5 12.5h4" />
+      <path d="M14 10h2M14 13h2M14 16h1.5" />
+      <path d="M18 9v-2h2" />
     </svg>
   );
 }
 
-function TankIcon(props) {
+function FuelTruckIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
-      <path d="M4 6c0-1.1 3.6-2 8-2s8 .9 8 2v12c0 1.1-3.6 2-8 2s-8-.9-8-2V6Z" />
-      <path d="M4 6c0 1.1 3.6 2 8 2s8-.9 8-2" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
+      <rect x="2" y="9" width="12" height="7" rx="1.5" />
+      <path d="M14 11h4l3 3v2h-2" />
+      <circle cx="7" cy="18" r="1.6" />
+      <circle cx="16.5" cy="18" r="1.6" />
+      <path d="M2 16h3.5M18 16h-1.5" />
     </svg>
   );
 }
 
-function BoltIcon(props) {
+function HorizontalTankIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
-      <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
+      <rect x="2.5" y="8" width="19" height="9" rx="4.5" />
+      <path d="M8 8v9M4 19h2M18 19h2" />
     </svg>
   );
 }
 
-function Card({ label, value, unit, color = "sky", icon }) {
+function TwinTankIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
+      <rect x="3" y="5" width="7" height="15" rx="1.5" />
+      <rect x="14" y="5" width="7" height="15" rx="1.5" />
+      <path d="M3 9h7M14 9h7" />
+    </svg>
+  );
+}
+
+function PylonIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
+      <path d="M12 2v20" />
+      <path d="M6 6h12M4 11h16M2 20h20" />
+      <path d="M12 2 4 20M12 2l8 18" />
+      <path d="M9 6 6 20M15 6l3 14" />
+    </svg>
+  );
+}
+
+function FactoryIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
+      <path d="M3 20V11l5 3v-3l5 3v-3l5 3v6H3Z" />
+      <path d="M6 20v-4M11 20v-4M16 20v-4" />
+      <path d="M19 8V5" />
+    </svg>
+  );
+}
+
+function UtilityClusterIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
+      <path d="M4 11 12 4l8 7" />
+      <path d="M6 11v8h12v-8" />
+      <path d="M15 7V3h2v3" />
+      <path d="M9 15a2 2 0 1 0 4 0c0-1-2-3-2-3s-2 2-2 3Z" />
+    </svg>
+  );
+}
+
+function Card({ label, value, unit, color = "sky", icon, wide }) {
   const theme = CARD_THEMES[color] ?? CARD_THEMES.sky;
   return (
     <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow text-center">
       <div className={`absolute inset-x-0 top-0 h-1 ${theme.bar}`} />
-      <div className={`mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full ${theme.iconBg} ${theme.icon}`}>
+      <div
+        className={`mx-auto mb-2 flex h-9 items-center justify-center gap-1 rounded-full ${theme.iconBg} ${theme.icon} ${
+          wide ? "px-2.5" : "w-9"
+        }`}
+      >
         {icon}
       </div>
       <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
@@ -154,16 +208,28 @@ export default function DashboardPage() {
       {!loading && hasData && (
         <>
           <div className={`grid gap-3 ${isAdmin ? "grid-cols-8" : "grid-cols-6"}`}>
-            <Card label="Diesel Consumed" value={fmt(t.dieselConsumed)} unit="Liters" color="amber" icon={<DropletIcon />} />
-            <Card label="Diesel Received" value={fmt(t.dieselReceived)} unit="Liters" color="orange" icon={<DropletIcon />} />
-            <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="Liters" color="teal" icon={<TankIcon />} />
-            <Card label="Service Tank Stock" value={fmt(data.latestServiceTank)} unit="Liters" color="cyan" icon={<TankIcon />} />
-            <Card label="Current Total Stock" value={fmt(data.latestTotalStock)} unit="Liters" color="emerald" icon={<TankIcon />} />
-            <Card label="NEPA Power Consumption" value={fmt(t.nepaKwh)} unit="KWH" color="sky" icon={<BoltIcon />} />
+            <Card label="Diesel Consumed" value={fmt(t.dieselConsumed)} unit="Liters" color="amber" icon={<GeneratorIcon />} />
+            <Card label="Diesel Received" value={fmt(t.dieselReceived)} unit="Liters" color="orange" icon={<FuelTruckIcon />} />
+            <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="Liters" color="teal" icon={<HorizontalTankIcon />} />
+            <Card label="Service Tank Stock" value={fmt(data.latestServiceTank)} unit="Liters" color="cyan" icon={<TwinTankIcon />} />
+            <Card
+              label="Current Total Stock"
+              value={fmt(data.latestTotalStock)}
+              unit="Liters"
+              color="emerald"
+              wide
+              icon={
+                <>
+                  <HorizontalTankIcon width="15" height="15" />
+                  <TwinTankIcon width="15" height="15" />
+                </>
+              }
+            />
+            <Card label="NEPA Power Consumption" value={fmt(t.nepaKwh)} unit="KWH" color="sky" icon={<PylonIcon />} />
             {isAdmin && (
               <>
-                <Card label="Milling Power Consumption" value={fmt(t.ebMilling)} unit="KWH" color="indigo" icon={<BoltIcon />} />
-                <Card label="Utility Power Consumption" value={fmt(t.ebUtility)} unit="KWH" color="violet" icon={<BoltIcon />} />
+                <Card label="Milling Power Consumption" value={fmt(t.ebMilling)} unit="KWH" color="indigo" icon={<FactoryIcon />} />
+                <Card label="Utility Power Consumption" value={fmt(t.ebUtility)} unit="KWH" color="violet" icon={<UtilityClusterIcon />} />
               </>
             )}
           </div>
@@ -212,7 +278,7 @@ export default function DashboardPage() {
                   <Legend />
                   <Line type="monotone" dataKey="nepaConsumption" name="NEPA" stroke="#0ea5e9" dot={false} strokeWidth={2} />
                   {isAdmin && <Line type="monotone" dataKey="ebMilling" name="Milling" stroke="#6366f1" dot={false} strokeWidth={2} />}
-                  {isAdmin && <Line type="monotone" dataKey="ebUtility" name="Utility" stroke="#14b8a6" dot={false} strokeWidth={2} />}
+                  {isAdmin && <Line type="monotone" dataKey="ebUtility" name="Utility" stroke="#8b5cf6" dot={false} strokeWidth={2} />}
                 </LineChart>
               </ResponsiveContainer>
             </Panel>
