@@ -62,7 +62,6 @@ export async function GET(request) {
   let columns = REPORT_COLUMNS;
   if (columnsParam) {
     const wantedCols = new Set(columnsParam.split(",").filter(Boolean));
-    wantedCols.add("date");
     columns = REPORT_COLUMNS.filter((c) => wantedCols.has(c.key));
   }
 

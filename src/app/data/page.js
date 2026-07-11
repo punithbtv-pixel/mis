@@ -9,6 +9,29 @@ import { fmt } from "@/lib/format";
 import DataTabs from "@/components/DataTabs";
 import { SELECTABLE_REPORT_COLUMNS } from "@/lib/report";
 
+function ColumnHeader({ colKey, label, align = "right", sticky, selectedColumns, toggleColumn }) {
+  return (
+    <th
+      className={`px-3 py-2 whitespace-nowrap ${align === "right" ? "text-right" : "text-left"} ${
+        sticky ? "sticky left-0 bg-slate-50" : ""
+      }`}
+    >
+      <label
+        className={`flex items-center gap-1.5 cursor-pointer ${
+          align === "right" ? "justify-end" : "justify-start"
+        }`}
+      >
+        <input
+          type="checkbox"
+          checked={selectedColumns.has(colKey)}
+          onChange={() => toggleColumn(colKey)}
+        />
+        <span>{label}</span>
+      </label>
+    </th>
+  );
+}
+
 export default function DataPage() {
   const [month, setMonth] = useState(currentMonth());
   const [rows, setRows] = useState([]);
@@ -19,7 +42,6 @@ export default function DataPage() {
   const [selectedColumns, setSelectedColumns] = useState(
     new Set(SELECTABLE_REPORT_COLUMNS.map((c) => c.key))
   );
-  const [showColumns, setShowColumns] = useState(false);
   const loading = !hasLoaded;
   const allSelected = rows.length > 0 && selected.size === rows.length;
   const allColumnsSelected = selectedColumns.size === SELECTABLE_REPORT_COLUMNS.length;
@@ -111,35 +133,13 @@ export default function DataPage() {
         <h1 className="text-xl font-semibold text-slate-900">Monthly Data</h1>
         <div className="flex flex-wrap items-center gap-2">
           <MonthPicker month={month} onChange={onMonthChange} />
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setShowColumns((v) => !v)}
-              className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
-            >
-              Columns ({selectedColumns.size})
-            </button>
-            {showColumns && (
-              <div className="absolute right-0 z-10 mt-1 w-72 rounded-lg border border-slate-200 bg-white p-3 shadow-lg">
-                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 border-b border-slate-100 pb-2 mb-2">
-                  <input type="checkbox" checked={allColumnsSelected} onChange={toggleAllColumns} />
-                  Select all
-                </label>
-                <div className="grid grid-cols-2 gap-1.5 max-h-64 overflow-y-auto">
-                  {SELECTABLE_REPORT_COLUMNS.map((c) => (
-                    <label key={c.key} className="flex items-center gap-1.5 text-sm text-slate-600">
-                      <input
-                        type="checkbox"
-                        checked={selectedColumns.has(c.key)}
-                        onChange={() => toggleColumn(c.key)}
-                      />
-                      {c.header}
-                    </label>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          <button
+            type="button"
+            onClick={toggleAllColumns}
+            className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            {allColumnsSelected ? "Uncheck all columns" : "Check all columns"} ({selectedColumns.size}/{SELECTABLE_REPORT_COLUMNS.length})
+          </button>
           <button
             type="button"
             onClick={() => downloadReport("excel")}
@@ -188,21 +188,25 @@ export default function DataPage() {
                     title="Select all"
                   />
                 </th>
-                <th className="sticky left-0 bg-slate-50 px-3 py-2 text-left">Date</th>
-                <th className="px-3 py-2 text-right">Dip (mm)</th>
-                <th className="px-3 py-2 text-right">Diesel Consumption (LTRS)</th>
-                <th className="px-3 py-2 text-right">Recv (L)</th>
-                <th className="px-3 py-2 text-right">Stock (L)</th>
-                <th className="px-3 py-2 text-right">Issued (L)</th>
-                <th className="px-3 py-2 text-right">NEPA (KWH)</th>
-                <th className="px-3 py-2 text-right">Milling</th>
-                <th className="px-3 py-2 text-right">Utility</th>
+                <ColumnHeader colKey="date" label="Date" align="left" sticky selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
+                <ColumnHeader colKey="dieselDipMm" label="Dip (mm)" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
+                <ColumnHeader colKey="dieselConsumption" label="Diesel Consumption (LTRS)" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
+                <ColumnHeader colKey="dieselReceived" label="Recv (L)" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
+                <ColumnHeader colKey="closingLitres" label="Stock (L)" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
+                <ColumnHeader colKey="dieselIssued" label="Issued (L)" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
+                <ColumnHeader colKey="nepaConsumption" label="NEPA (KWH)" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
+                <ColumnHeader colKey="ebMilling" label="Milling" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
+                <ColumnHeader colKey="ebUtility" label="Utility" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
                 {RUN_HOUR_EQUIPMENT.map((eq) => (
-                  <th key={eq.field} className="px-3 py-2 text-right whitespace-nowrap">
-                    {eq.label}
-                  </th>
+                  <ColumnHeader
+                    key={eq.field}
+                    colKey={eq.field}
+                    label={eq.label}
+                    selectedColumns={selectedColumns}
+                    toggleColumn={toggleColumn}
+                  />
                 ))}
-                <th className="px-3 py-2 text-left">Remarks</th>
+                <ColumnHeader colKey="remarks" label="Remarks" align="left" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
                 {canEdit && <th className="px-3 py-2"></th>}
               </tr>
             </thead>
