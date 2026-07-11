@@ -170,12 +170,8 @@ export default function DashboardPage() {
                   <Tooltip />
                   <Legend />
                   <Line type="monotone" dataKey="nepaConsumption" name="NEPA" stroke="#0ea5e9" dot={false} strokeWidth={2} />
-                  {isAdmin && (
-                    <>
-                      <Line type="monotone" dataKey="ebMilling" name="Milling" stroke="#6366f1" dot={false} strokeWidth={2} />
-                      <Line type="monotone" dataKey="ebUtility" name="Utility" stroke="#14b8a6" dot={false} strokeWidth={2} />
-                    </>
-                  )}
+                  {isAdmin && <Line type="monotone" dataKey="ebMilling" name="Milling" stroke="#6366f1" dot={false} strokeWidth={2} />}
+                  {isAdmin && <Line type="monotone" dataKey="ebUtility" name="Utility" stroke="#14b8a6" dot={false} strokeWidth={2} />}
                 </LineChart>
               </ResponsiveContainer>
             </Panel>
