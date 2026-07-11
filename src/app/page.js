@@ -112,7 +112,7 @@ export default function DashboardPage() {
 
       {!loading && hasData && (
         <>
-          <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
+          <div className={`grid gap-3 ${isAdmin ? "grid-cols-8" : "grid-cols-6"}`}>
             <Card label="Diesel Consumed" value={fmt(t.dieselConsumed)} unit="Liters" accent="text-amber-600" />
             <Card label="Diesel Received" value={fmt(t.dieselReceived)} unit="Liters" />
             <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="Liters" />

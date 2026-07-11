@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { RUN_HOUR_EQUIPMENT, THRESHOLD_CATEGORIES } from "@/lib/equipment";
 import StaffManager from "@/components/StaffManager";
+import UserManager from "@/components/UserManager";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -11,6 +12,7 @@ export default function SettingsPage() {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(true);
   const [forbidden, setForbidden] = useState(false);
+  const [showUsers, setShowUsers] = useState(false);
 
   useEffect(() => {
     fetch("/api/me")
@@ -142,6 +144,17 @@ export default function SettingsPage() {
       )}
 
       <StaffManager />
+
+      <div className="space-y-4">
+        <button
+          type="button"
+          onClick={() => setShowUsers((v) => !v)}
+          className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
+        >
+          {showUsers ? "Hide user settings" : "User settings"}
+        </button>
+        {showUsers && <UserManager />}
+      </div>
     </div>
   );
 }

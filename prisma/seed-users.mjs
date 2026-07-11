@@ -2,9 +2,9 @@
 //   node prisma/seed-users.mjs
 //
 // Default credentials (change after first login in production):
-//   admin    / admin123     (ADMIN — full access)
-//   operator / operator123  (OPERATOR — daily entry + monitor)
-//   zyn      / zyn123       (ZYN — monitor only)
+//   admin / admin123  (ADMIN — full access)
+//   engg  / engg123   (OPERATOR — daily entry + monitor)
+//   zyn   / zyn123    (ZYN — monitor only)
 
 import { PrismaClient } from "@prisma/client";
 import { createHash } from "node:crypto";
@@ -19,7 +19,7 @@ function hashPassword(password) {
 
 const USERS = [
   { username: "admin", password: "admin123", role: "ADMIN" },
-  { username: "operator", password: "operator123", role: "OPERATOR" },
+  { username: "engg", password: "engg123", role: "OPERATOR" },
   { username: "zyn", password: "zyn123", role: "ZYN" },
 ];
 
