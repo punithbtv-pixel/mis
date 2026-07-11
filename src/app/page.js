@@ -17,6 +17,7 @@ import MonthPicker from "@/components/MonthPicker";
 import { RUN_HOUR_EQUIPMENT } from "@/lib/equipment";
 import { currentMonth } from "@/lib/dates";
 import { fmt, dayLabel } from "@/lib/format";
+import { ROLES } from "@/lib/roles";
 
 const EQ_COLORS = [
   "#0ea5e9",
@@ -29,7 +30,7 @@ const EQ_COLORS = [
 
 function Card({ label, value, unit, accent = "text-slate-900" }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+    <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm text-center">
       <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
         {label}
       </div>
@@ -56,7 +57,16 @@ function Panel({ title, children, right }) {
 export default function DashboardPage() {
   const [month, setMonth] = useState(currentMonth());
   const [data, setData] = useState(null);
+  const [user, setUser] = useState(null);
   const loading = data == null;
+  const isAdmin = user?.role === ROLES.ADMIN;
+
+  useEffect(() => {
+    fetch("/api/me")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => d && setUser(d.user))
+      .catch(() => {});
+  }, []);
 
   function onMonthChange(nextMonth) {
     setMonth(nextMonth);
@@ -103,14 +113,18 @@ export default function DashboardPage() {
       {!loading && hasData && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
-            <Card label="Diesel Consumed" value={fmt(t.dieselConsumed)} unit="L" accent="text-amber-600" />
-            <Card label="Diesel Received" value={fmt(t.dieselReceived)} unit="L" />
-            <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="L" />
-            <Card label="Service Tank Stock" value={fmt(data.latestServiceTank)} unit="L" />
-            <Card label="Current Total Stock" value={fmt(data.latestTotalStock)} unit="L" accent="text-emerald-600" />
+            <Card label="Diesel Consumed" value={fmt(t.dieselConsumed)} unit="Liters" accent="text-amber-600" />
+            <Card label="Diesel Received" value={fmt(t.dieselReceived)} unit="Liters" />
+            <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="Liters" />
+            <Card label="Service Tank Stock" value={fmt(data.latestServiceTank)} unit="Liters" />
+            <Card label="Current Total Stock" value={fmt(data.latestTotalStock)} unit="Liters" accent="text-emerald-600" />
             <Card label="NEPA Power Consumption" value={fmt(t.nepaKwh)} unit="KWH" accent="text-sky-600" />
-            <Card label="Milling Power Consumption" value={fmt(t.ebMilling)} unit="KWH" />
-            <Card label="Utility Power Consumption" value={fmt(t.ebUtility)} unit="KWH" />
+            {isAdmin && (
+              <>
+                <Card label="Milling Power Consumption" value={fmt(t.ebMilling)} unit="KWH" />
+                <Card label="Utility Power Consumption" value={fmt(t.ebUtility)} unit="KWH" />
+              </>
+            )}
           </div>
 
           {data.alerts?.some((a) => a.due) && (
