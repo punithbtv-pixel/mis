@@ -43,8 +43,9 @@ export default function DataPage() {
     new Set(SELECTABLE_REPORT_COLUMNS.map((c) => c.key))
   );
   const loading = !hasLoaded;
-  const allSelected = rows.length > 0 && selected.size === rows.length;
+  const allRowsSelected = rows.length > 0 && selected.size === rows.length;
   const allColumnsSelected = selectedColumns.size === SELECTABLE_REPORT_COLUMNS.length;
+  const allSelected = allRowsSelected && allColumnsSelected;
 
   const canAddEntry = user?.role === "ADMIN" || user?.role === "OPERATOR";
   const canEdit = user?.role === "ADMIN";
@@ -88,7 +89,13 @@ export default function DataPage() {
   }
 
   function toggleAll() {
-    setSelected(allSelected ? new Set() : new Set(rows.map((r) => r.date)));
+    if (allSelected) {
+      setSelected(new Set());
+      setSelectedColumns(new Set());
+    } else {
+      setSelected(new Set(rows.map((r) => r.date)));
+      setSelectedColumns(new Set(SELECTABLE_REPORT_COLUMNS.map((c) => c.key)));
+    }
   }
 
   function toggleColumn(key) {
@@ -185,7 +192,7 @@ export default function DataPage() {
                     type="checkbox"
                     checked={allSelected}
                     onChange={toggleAll}
-                    title="Select all"
+                    title="Select/deselect all rows and columns"
                   />
                 </th>
                 <ColumnHeader colKey="date" label="Date" align="left" sticky selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
