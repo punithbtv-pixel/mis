@@ -28,13 +28,54 @@ const EQ_COLORS = [
   "#8b5cf6",
 ];
 
-function Card({ label, value, unit, accent = "text-slate-900" }) {
+const CARD_THEMES = {
+  amber: { bar: "bg-amber-300", iconBg: "bg-amber-50", icon: "text-amber-500", value: "text-amber-600" },
+  orange: { bar: "bg-orange-300", iconBg: "bg-orange-50", icon: "text-orange-500", value: "text-orange-600" },
+  teal: { bar: "bg-teal-300", iconBg: "bg-teal-50", icon: "text-teal-500", value: "text-teal-600" },
+  cyan: { bar: "bg-cyan-300", iconBg: "bg-cyan-50", icon: "text-cyan-500", value: "text-cyan-600" },
+  emerald: { bar: "bg-emerald-300", iconBg: "bg-emerald-50", icon: "text-emerald-500", value: "text-emerald-600" },
+  sky: { bar: "bg-sky-300", iconBg: "bg-sky-50", icon: "text-sky-500", value: "text-sky-600" },
+  indigo: { bar: "bg-indigo-300", iconBg: "bg-indigo-50", icon: "text-indigo-500", value: "text-indigo-600" },
+  violet: { bar: "bg-violet-300", iconBg: "bg-violet-50", icon: "text-violet-500", value: "text-violet-600" },
+};
+
+function DropletIcon(props) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm text-center">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
+      <path d="M12 2.7c3.4 4.3 6 7.9 6 10.8a6 6 0 1 1-12 0c0-2.9 2.6-6.5 6-10.8Z" />
+    </svg>
+  );
+}
+
+function TankIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
+      <path d="M4 6c0-1.1 3.6-2 8-2s8 .9 8 2v12c0 1.1-3.6 2-8 2s-8-.9-8-2V6Z" />
+      <path d="M4 6c0 1.1 3.6 2 8 2s8-.9 8-2" />
+    </svg>
+  );
+}
+
+function BoltIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
+      <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" />
+    </svg>
+  );
+}
+
+function Card({ label, value, unit, color = "sky", icon }) {
+  const theme = CARD_THEMES[color] ?? CARD_THEMES.sky;
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow text-center">
+      <div className={`absolute inset-x-0 top-0 h-1 ${theme.bar}`} />
+      <div className={`mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full ${theme.iconBg} ${theme.icon}`}>
+        {icon}
+      </div>
       <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
         {label}
       </div>
-      <div className={`mt-1 text-2xl font-semibold ${accent}`}>
+      <div className={`mt-1 text-2xl font-semibold ${theme.value}`}>
         {value}
         {unit && <span className="text-sm font-normal text-slate-400 ml-1">{unit}</span>}
       </div>
@@ -113,16 +154,16 @@ export default function DashboardPage() {
       {!loading && hasData && (
         <>
           <div className={`grid gap-3 ${isAdmin ? "grid-cols-8" : "grid-cols-6"}`}>
-            <Card label="Diesel Consumed" value={fmt(t.dieselConsumed)} unit="Liters" accent="text-amber-600" />
-            <Card label="Diesel Received" value={fmt(t.dieselReceived)} unit="Liters" />
-            <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="Liters" />
-            <Card label="Service Tank Stock" value={fmt(data.latestServiceTank)} unit="Liters" />
-            <Card label="Current Total Stock" value={fmt(data.latestTotalStock)} unit="Liters" accent="text-emerald-600" />
-            <Card label="NEPA Power Consumption" value={fmt(t.nepaKwh)} unit="KWH" accent="text-sky-600" />
+            <Card label="Diesel Consumed" value={fmt(t.dieselConsumed)} unit="Liters" color="amber" icon={<DropletIcon />} />
+            <Card label="Diesel Received" value={fmt(t.dieselReceived)} unit="Liters" color="orange" icon={<DropletIcon />} />
+            <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="Liters" color="teal" icon={<TankIcon />} />
+            <Card label="Service Tank Stock" value={fmt(data.latestServiceTank)} unit="Liters" color="cyan" icon={<TankIcon />} />
+            <Card label="Current Total Stock" value={fmt(data.latestTotalStock)} unit="Liters" color="emerald" icon={<TankIcon />} />
+            <Card label="NEPA Power Consumption" value={fmt(t.nepaKwh)} unit="KWH" color="sky" icon={<BoltIcon />} />
             {isAdmin && (
               <>
-                <Card label="Milling Power Consumption" value={fmt(t.ebMilling)} unit="KWH" />
-                <Card label="Utility Power Consumption" value={fmt(t.ebUtility)} unit="KWH" />
+                <Card label="Milling Power Consumption" value={fmt(t.ebMilling)} unit="KWH" color="indigo" icon={<BoltIcon />} />
+                <Card label="Utility Power Consumption" value={fmt(t.ebUtility)} unit="KWH" color="violet" icon={<BoltIcon />} />
               </>
             )}
           </div>
