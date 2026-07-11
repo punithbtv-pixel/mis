@@ -108,9 +108,9 @@ export default function DashboardPage() {
             <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="L" />
             <Card label="Service Tank Stock" value={fmt(data.latestServiceTank)} unit="L" />
             <Card label="Current Total Stock" value={fmt(data.latestTotalStock)} unit="L" accent="text-emerald-600" />
-            <Card label="NEPA Power" value={fmt(t.nepaKwh)} unit="KWH" accent="text-sky-600" />
-            <Card label="EB Milling" value={fmt(t.ebMilling)} unit="KWH" />
-            <Card label="EB Utility" value={fmt(t.ebUtility)} unit="KWH" />
+            <Card label="NEPA Power Consumption" value={fmt(t.nepaKwh)} unit="KWH" accent="text-sky-600" />
+            <Card label="Milling Power Consumption" value={fmt(t.ebMilling)} unit="KWH" />
+            <Card label="Utility Power Consumption" value={fmt(t.ebUtility)} unit="KWH" />
           </div>
 
           {data.alerts?.some((a) => a.due) && (
