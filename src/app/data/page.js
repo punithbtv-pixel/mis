@@ -151,7 +151,7 @@ export default function DataPage() {
                   {canEdit && (
                     <td className="px-3 py-2 text-right">
                       <Link
-                        href={`/entry?date=${r.date}`}
+                        href={`/entry?date=${String(r.raw.date).slice(0, 10)}`}
                         className="text-sky-600 hover:underline"
                       >
                         Edit
