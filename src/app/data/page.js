@@ -7,6 +7,7 @@ import { RUN_HOUR_EQUIPMENT } from "@/lib/equipment";
 import { currentMonth } from "@/lib/dates";
 import { fmt } from "@/lib/format";
 import DataTabs from "@/components/DataTabs";
+import { SELECTABLE_REPORT_COLUMNS } from "@/lib/report";
 
 export default function DataPage() {
   const [month, setMonth] = useState(currentMonth());
@@ -15,8 +16,13 @@ export default function DataPage() {
   const [user, setUser] = useState(null);
   const [exporting, setExporting] = useState("");
   const [selected, setSelected] = useState(new Set());
+  const [selectedColumns, setSelectedColumns] = useState(
+    new Set(SELECTABLE_REPORT_COLUMNS.map((c) => c.key))
+  );
+  const [showColumns, setShowColumns] = useState(false);
   const loading = !hasLoaded;
   const allSelected = rows.length > 0 && selected.size === rows.length;
+  const allColumnsSelected = selectedColumns.size === SELECTABLE_REPORT_COLUMNS.length;
 
   const canAddEntry = user?.role === "ADMIN" || user?.role === "OPERATOR";
   const canEdit = user?.role === "ADMIN";
@@ -63,11 +69,27 @@ export default function DataPage() {
     setSelected(allSelected ? new Set() : new Set(rows.map((r) => r.date)));
   }
 
+  function toggleColumn(key) {
+    setSelectedColumns((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
+
+  function toggleAllColumns() {
+    setSelectedColumns(
+      allColumnsSelected ? new Set() : new Set(SELECTABLE_REPORT_COLUMNS.map((c) => c.key))
+    );
+  }
+
   async function downloadReport(format) {
     setExporting(format);
     try {
       const dates = encodeURIComponent(rows.map((r) => r.date).filter((d) => selected.has(d)).join(","));
-      const res = await fetch(`/api/export?month=${month}&format=${format}&dates=${dates}`);
+      const columns = encodeURIComponent([...selectedColumns].join(","));
+      const res = await fetch(`/api/export?month=${month}&format=${format}&dates=${dates}&columns=${columns}`);
       if (!res.ok) return;
       const blob = await res.blob();
       const ext = format === "pdf" ? "pdf" : "xlsx";
@@ -89,10 +111,39 @@ export default function DataPage() {
         <h1 className="text-xl font-semibold text-slate-900">Monthly Data</h1>
         <div className="flex flex-wrap items-center gap-2">
           <MonthPicker month={month} onChange={onMonthChange} />
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowColumns((v) => !v)}
+              className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              Columns ({selectedColumns.size})
+            </button>
+            {showColumns && (
+              <div className="absolute right-0 z-10 mt-1 w-72 rounded-lg border border-slate-200 bg-white p-3 shadow-lg">
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 border-b border-slate-100 pb-2 mb-2">
+                  <input type="checkbox" checked={allColumnsSelected} onChange={toggleAllColumns} />
+                  Select all
+                </label>
+                <div className="grid grid-cols-2 gap-1.5 max-h-64 overflow-y-auto">
+                  {SELECTABLE_REPORT_COLUMNS.map((c) => (
+                    <label key={c.key} className="flex items-center gap-1.5 text-sm text-slate-600">
+                      <input
+                        type="checkbox"
+                        checked={selectedColumns.has(c.key)}
+                        onChange={() => toggleColumn(c.key)}
+                      />
+                      {c.header}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
           <button
             type="button"
             onClick={() => downloadReport("excel")}
-            disabled={!!exporting || loading || selected.size === 0}
+            disabled={!!exporting || loading || selected.size === 0 || selectedColumns.size === 0}
             className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
           >
             {exporting === "excel" ? "Exporting…" : `Excel${selected.size ? ` (${selected.size})` : ""}`}
@@ -100,7 +151,7 @@ export default function DataPage() {
           <button
             type="button"
             onClick={() => downloadReport("pdf")}
-            disabled={!!exporting || loading || selected.size === 0}
+            disabled={!!exporting || loading || selected.size === 0 || selectedColumns.size === 0}
             className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
           >
             {exporting === "pdf" ? "Exporting…" : `PDF${selected.size ? ` (${selected.size})` : ""}`}

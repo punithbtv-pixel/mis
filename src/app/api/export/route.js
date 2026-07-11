@@ -44,6 +44,7 @@ export async function GET(request) {
   const month = searchParams.get("month") || currentMonth();
   const format = (searchParams.get("format") || "excel").toLowerCase();
   const datesParam = searchParams.get("dates");
+  const columnsParam = searchParams.get("columns");
 
   if (!isValidMonth(month)) {
     return NextResponse.json({ error: "Invalid month" }, { status: 400 });
@@ -57,13 +58,21 @@ export async function GET(request) {
     const wanted = new Set(datesParam.split(",").filter(Boolean));
     rows = rows.filter((r) => wanted.has(r.date));
   }
+
+  let columns = REPORT_COLUMNS;
+  if (columnsParam) {
+    const wantedCols = new Set(columnsParam.split(",").filter(Boolean));
+    wantedCols.add("date");
+    columns = REPORT_COLUMNS.filter((c) => wantedCols.has(c.key));
+  }
+
   const title = `PowerHouse MIS — Monthly Data (${month})`;
 
   if (format === "pdf") {
     const body = buildPdfReport({
       title,
-      headers: reportHeaders(),
-      rows: rows.map(rowToReportCells),
+      headers: reportHeaders(columns),
+      rows: rows.map((r) => rowToReportCells(r, columns)),
     });
     return new NextResponse(body, {
       headers: {
@@ -76,9 +85,9 @@ export async function GET(request) {
   const body = await buildExcelReport({
     sheetName: "PowerHouse Data",
     title,
-    columnCount: REPORT_COLUMNS.length,
-    headers: reportHeaders(),
-    rows: rows.map(rowToReportCells),
+    columnCount: columns.length,
+    headers: reportHeaders(columns),
+    rows: rows.map((r) => rowToReportCells(r, columns)),
   });
   return new NextResponse(body, {
     headers: {

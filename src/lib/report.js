@@ -21,6 +21,12 @@ export const REPORT_COLUMNS = [
   { key: "remarks", header: "Remarks", width: 24 },
 ];
 
+// Columns offered as tick-boxes on the Monthly Data page (mirrors what's
+// shown on screen; excludes the legacy/always-empty raw dip-after & flow fields).
+export const SELECTABLE_REPORT_COLUMNS = REPORT_COLUMNS.filter(
+  (c) => c.key !== "dieselDipAfterReceiveMm" && c.key !== "dieselFlowMeterReading"
+);
+
 function fmtCell(v) {
   if (v == null || v === "") return "";
   if (typeof v === "number" && Number.isFinite(v)) {
@@ -29,14 +35,14 @@ function fmtCell(v) {
   return String(v);
 }
 
-export function rowToReportCells(row) {
+export function rowToReportCells(row, columns = REPORT_COLUMNS) {
   const rawFields = new Set([
     "dieselDipMm",
     "dieselDipAfterReceiveMm",
     "dieselFlowMeterReading",
     "dieselIssued",
   ]);
-  return REPORT_COLUMNS.map((col) => {
+  return columns.map((col) => {
     if (col.runHours) return fmtCell(row.runHours?.[col.key]);
     if (col.key === "date") return row.date;
     if (col.key === "remarks") return row.raw?.remarks ?? "";
@@ -45,6 +51,6 @@ export function rowToReportCells(row) {
   });
 }
 
-export function reportHeaders() {
-  return REPORT_COLUMNS.map((c) => c.header);
+export function reportHeaders(columns = REPORT_COLUMNS) {
+  return columns.map((c) => c.header);
 }
