@@ -57,7 +57,7 @@ function IconImage({ src, width = 22, height = 22, ...props }) {
 
 function FactoryIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="20" height="20" {...props}>
       <path d="M3 20V11l5 3v-3l5 3v-3l5 3v6H3Z" />
       <path d="M6 20v-4M11 20v-4M16 20v-4" />
       <path d="M19 8V5" />
@@ -67,7 +67,7 @@ function FactoryIcon(props) {
 
 function WindIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="14" height="14" {...props}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
       <path d="M2 8h11.5a2.3 2.3 0 1 0-2-3.5" />
       <path d="M2 13h14.5a2.3 2.3 0 1 1-2 3.5" />
       <path d="M2 18h7.5" />
@@ -77,7 +77,7 @@ function WindIcon(props) {
 
 function WaterDropIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="14" height="14" {...props}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
       <path d="M12 3c3 4 6 7.7 6 11.2a6 6 0 1 1-12 0C6 10.7 9 7 12 3Z" />
     </svg>
   );
@@ -85,7 +85,7 @@ function WaterDropIcon(props) {
 
 function RiceGrainIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="14" height="14" {...props}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
       <path d="M12 21V9.5" />
       <path d="M12 9.5c-3-1-4.2-4.2-3.2-7.5 3 1 4.2 4.2 3.2 7.5Z" />
       <path d="M12 14c3-1 4.2-4.2 3.2-7.5-3 1-4.2 4.2-3.2 7.5Z" />
@@ -99,8 +99,8 @@ function Card({ label, value, unit, color = "sky", icon, wide }) {
     <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow text-center">
       <div className={`absolute inset-x-0 top-0 h-1 ${theme.bar}`} />
       <div
-        className={`mx-auto mb-2 flex h-9 items-center justify-center gap-1 rounded-full ${theme.iconBg} ${theme.icon} ${
-          wide ? "px-2.5" : "w-9"
+        className={`mx-auto mb-2 flex h-11 items-center justify-center gap-1 rounded-full ${theme.iconBg} ${theme.icon} ${
+          wide ? "px-3" : "w-11"
         }`}
       >
         {icon}
@@ -187,10 +187,10 @@ export default function DashboardPage() {
       {!loading && hasData && (
         <>
           <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(130px,1fr))]">
-            <Card label="Diesel Consumed" value={fmt(t.dieselConsumed)} unit="Liters" color="amber" icon={<IconImage src="/icons/fuel-gun.png" width={24} height={13} />} />
-            <Card label="Diesel Received" value={fmt(t.dieselReceived)} unit="Liters" color="orange" icon={<IconImage src="/icons/diesel-received.avif" width={22} height={22} />} />
-            <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="Liters" color="teal" icon={<IconImage src="/icons/main-tank.png" width={24} height={24} />} />
-            <Card label="Service Tank Stock" value={fmt(data.latestServiceTank)} unit="Liters" color="cyan" icon={<IconImage src="/icons/service-tank.jpg" width={20} height={15} />} />
+            <Card label="Diesel Consumed" value={fmt(t.dieselConsumed)} unit="Liters" color="amber" icon={<IconImage src="/icons/fuel-gun.png" width={31} height={17} />} />
+            <Card label="Diesel Received" value={fmt(t.dieselReceived)} unit="Liters" color="orange" icon={<IconImage src="/icons/diesel-received.png" width={28} height={28} />} />
+            <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="Liters" color="teal" icon={<IconImage src="/icons/main-tank.png" width={30} height={30} />} />
+            <Card label="Service Tank Stock" value={fmt(data.latestServiceTank)} unit="Liters" color="cyan" icon={<IconImage src="/icons/service-tank.png" width={26} height={19.5} />} />
             <Card
               label="Current Total Stock"
               value={fmt(data.latestTotalStock)}
@@ -199,13 +199,13 @@ export default function DashboardPage() {
               wide
               icon={
                 <>
-                  <IconImage src="/icons/main-tank.png" width={16} height={16} />
+                  <IconImage src="/icons/main-tank.png" width={19} height={19} />
                   <span className="text-[11px] font-bold leading-none">+</span>
-                  <IconImage src="/icons/service-tank.jpg" width={14} height={10.5} />
+                  <IconImage src="/icons/service-tank.png" width={17} height={12.7} />
                 </>
               }
             />
-            <Card label="NEPA Power Consumption" value={fmt(t.nepaKwh)} unit="KWH" color="rose" icon={<IconImage src="/icons/nepa-power.jpg" width={20} height={21.5} />} />
+            <Card label="NEPA Power Consumption" value={fmt(t.nepaKwh)} unit="KWH" color="rose" icon={<IconImage src="/icons/nepa-power.png" width={26} height={28} />} />
             {isAdmin && (
               <>
                 <Card label="Milling Power Consumption" value={fmt(t.ebMilling)} unit="KWH" color="fuchsia" icon={<FactoryIcon />} />
