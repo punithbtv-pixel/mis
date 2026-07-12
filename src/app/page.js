@@ -52,12 +52,11 @@ const TREND_COLORS = {
 
 function FuelNozzleIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
-      <path d="M5.5 10 10 5.5" />
-      <rect x="9" y="6" width="7" height="10" rx="2" />
-      <path d="M12.5 10h2.3a1.3 1.3 0 1 1 0 2.6H12.5" />
-      <path d="M9 16c-1.5 1-3.5 1-4.5 3" />
-      <path d="M3.6 12.2c.9 1.1.9 1.7.9 1.7a1.1 1.1 0 1 1-1.8 0s0-.6.9-1.7Z" fill="currentColor" stroke="none" />
+    <svg viewBox="0 0 24 24" width="16" height="16" {...props}>
+      <path d="M9 4h4v4h4v10h-5v-8h-3z" fill="currentColor" />
+      <rect x="10" y="11" width="2.2" height="3" rx="0.6" fill="currentColor" />
+      <path d="M8 18c-1.6.8-3.4 1-4.3 3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M6.3 5.6c.9 1 .9 1.6.9 1.6a1.05 1.05 0 1 1-1.8 0s0-.6.9-1.6Z" fill="currentColor" />
     </svg>
   );
 }
@@ -239,7 +238,7 @@ export default function DashboardPage() {
         <>
           <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(130px,1fr))]">
             <Card label="Diesel Consumed" value={fmt(t.dieselConsumed)} unit="Liters" color="amber" icon={<FuelNozzleIcon />} />
-            <Card label="Diesel     Received" value={fmt(t.dieselReceived)} unit="Liters" color="orange" icon={<FuelTruckIcon />} />
+            <Card label="Diesel Received" value={fmt(t.dieselReceived)} unit="Liters" color="orange" icon={<FuelTruckIcon />} />
             <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="Liters" color="teal" icon={<HorizontalTankIcon />} />
             <Card label="Service Tank Stock" value={fmt(data.latestServiceTank)} unit="Liters" color="cyan" icon={<TwinTankIcon />} />
             <Card

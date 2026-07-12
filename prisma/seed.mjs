@@ -22,7 +22,7 @@ const LABEL_TO_FIELD = {
   "4-comp e55 reading (hours)": "compE55Hours",
   "milling dg reading (hours)": "millingDgHours",
   "parboiling dg reading (hours)": "parboilingDgHours",
-  "diesel received": "dieselReceivedLitres",
+  "diesel     received": "dieselReceivedLitres",
   "diesel dip after receive": "dieselDipAfterReceiveMm",
   "diesel flow meter reading": "dieselFlowMeterReading",
   milling: "ebMillingKwh",
