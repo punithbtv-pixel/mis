@@ -239,7 +239,7 @@ export default function DashboardPage() {
         <>
           <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(130px,1fr))]">
             <Card label="Diesel Consumed" value={fmt(t.dieselConsumed)} unit="Liters" color="amber" icon={<FuelNozzleIcon />} />
-            <Card label="Diesel Received" value={fmt(t.dieselReceived)} unit="Liters" color="orange" icon={<FuelTruckIcon />} />
+            <Card label="Diesel     Received" value={fmt(t.dieselReceived)} unit="Liters" color="orange" icon={<FuelTruckIcon />} />
             <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="Liters" color="teal" icon={<HorizontalTankIcon />} />
             <Card label="Service Tank Stock" value={fmt(data.latestServiceTank)} unit="Liters" color="cyan" icon={<TwinTankIcon />} />
             <Card
