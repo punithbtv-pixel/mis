@@ -205,7 +205,7 @@ export default function DashboardPage() {
                 </>
               }
             />
-            <Card label="NEPA Power Consumption" value={fmt(t.nepaKwh)} unit="KWH" color="rose" icon={<IconImage src="/icons/nepa-power.png" width={26} height={28} />} />
+            <Card label="NEPA Power Consumption" value={fmt(t.nepaKwh)} unit="KWH" color="rose" icon={<IconImage src="/icons/nepa-power.png" width={33} height={35.5} />} />
             {isAdmin && (
               <>
                 <Card label="Milling Power Consumption" value={fmt(t.ebMilling)} unit="KWH" color="fuchsia" icon={<FactoryIcon />} />
