@@ -52,12 +52,14 @@ const TREND_COLORS = {
 
 function FuelGaugeIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="17" height="17" {...props}>
-      <circle cx="12" cy="14" r="7.5" />
-      <path d="M12 6.5v1.6M4.5 14h1.6M19.5 14h-1.6" />
-      <path d="M12 14 16.2 9.8" />
-      <circle cx="12" cy="14" r="1.3" fill="currentColor" stroke="none" />
-      <path d="M12 2.2c1.3 1.5 2.1 2.7 2.1 3.7a2.1 2.1 0 1 1-4.2 0c0-1 .8-2.2 2.1-3.7Z" fill="currentColor" stroke="none" />
+    <svg viewBox="0 0 24 24" width="18" height="18" {...props}>
+      <circle cx="6" cy="18.5" r="4" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M6 14.9v1.1M2.4 18.5h1.1" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M6 18.5 8 16.9" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <circle cx="6" cy="18.5" r="0.9" fill="currentColor" />
+      <path d="M9 4h4v4h4v10h-5v-8h-3z" fill="currentColor" />
+      <rect x="10" y="11" width="2.2" height="3" rx="0.6" fill="currentColor" />
+      <path d="M6.3 5.6c.9 1 .9 1.6.9 1.6a1.05 1.05 0 1 1-1.8 0s0-.6.9-1.6Z" fill="currentColor" />
     </svg>
   );
 }
