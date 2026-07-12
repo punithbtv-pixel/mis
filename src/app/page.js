@@ -29,17 +29,17 @@ const EQ_COLORS = [
 ];
 
 const CARD_THEMES = {
-  amber: { bar: "bg-amber-300", icon: "text-amber-500", value: "text-amber-600" },
-  orange: { bar: "bg-orange-300", icon: "text-orange-500", value: "text-orange-600" },
-  teal: { bar: "bg-teal-300", icon: "text-teal-500", value: "text-teal-600" },
-  cyan: { bar: "bg-cyan-300", icon: "text-cyan-500", value: "text-cyan-600" },
-  emerald: { bar: "bg-emerald-300", icon: "text-emerald-500", value: "text-emerald-600" },
-  sky: { bar: "bg-sky-300", icon: "text-sky-500", value: "text-sky-600" },
-  indigo: { bar: "bg-indigo-300", icon: "text-indigo-500", value: "text-indigo-600" },
-  violet: { bar: "bg-violet-300", icon: "text-violet-500", value: "text-violet-600" },
-  blue: { bar: "bg-blue-300", icon: "text-blue-500", value: "text-blue-600" },
-  fuchsia: { bar: "bg-fuchsia-300", icon: "text-fuchsia-500", value: "text-fuchsia-600" },
-  rose: { bar: "bg-rose-300", icon: "text-rose-500", value: "text-rose-600" },
+  amber: { bar: "bg-amber-300", value: "text-amber-600" },
+  orange: { bar: "bg-orange-300", value: "text-orange-600" },
+  teal: { bar: "bg-teal-300", value: "text-teal-600" },
+  cyan: { bar: "bg-cyan-300", value: "text-cyan-600" },
+  emerald: { bar: "bg-emerald-300", value: "text-emerald-600" },
+  sky: { bar: "bg-sky-300", value: "text-sky-600" },
+  indigo: { bar: "bg-indigo-300", value: "text-indigo-600" },
+  violet: { bar: "bg-violet-300", value: "text-violet-600" },
+  blue: { bar: "bg-blue-300", value: "text-blue-600" },
+  fuchsia: { bar: "bg-fuchsia-300", value: "text-fuchsia-600" },
+  rose: { bar: "bg-rose-300", value: "text-rose-600" },
 };
 
 // Trend colors stay in lockstep with the KPI card colors above.
@@ -50,33 +50,24 @@ const TREND_COLORS = {
   utility: "#3b82f6",
 };
 
-function FactoryIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <path d="M3 20V11l5 3v-3l5 3v-3l5 3v6H3Z" />
-      <path d="M6 20v-4M11 20v-4M16 20v-4" />
-      <path d="M19 8V5" />
-    </svg>
-  );
-}
+const LOGO_CLASS = "object-contain opacity-[0.55]";
 
-const BG_LOGO_CLASS =
-  "pointer-events-none absolute left-1/2 top-1/2 h-[130%] w-[130%] -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.14]";
-
-function Card({ label, value, unit, color = "sky", bg }) {
+function Card({ label, value, unit, color = "sky", logo }) {
   const theme = CARD_THEMES[color] ?? CARD_THEMES.sky;
   return (
-    <div className="relative flex min-h-[136px] flex-col justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow text-center">
+    <div className="relative aspect-square overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow">
       <div className={`absolute inset-x-0 top-0 h-1 z-10 ${theme.bar}`} />
-      {bg}
-      <div className="relative z-10">
-        <div className="flex min-h-[2.6em] items-start justify-center text-xs font-medium uppercase leading-[1.3em] tracking-wide text-slate-500">
+      <div className="absolute inset-x-0 top-[10px] flex h-24 items-start justify-center">
+        {logo}
+      </div>
+      <div className="absolute inset-x-0 bottom-[10px] flex flex-col items-center px-2 text-center">
+        <div className="mb-0.5 text-[11px] font-semibold uppercase leading-[1.35] tracking-wide text-slate-500">
           {label}
         </div>
-        <div className={`mt-1 text-2xl font-semibold leading-[1.33] ${theme.value}`}>
-          {value}
+        <div className="flex items-baseline gap-1">
+          <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{value}</span>
+          {unit && <span className="text-[12.5px] font-medium text-slate-400">{unit}</span>}
         </div>
-        {unit && <div className="text-sm font-medium text-slate-600">{unit}</div>}
       </div>
     </div>
   );
@@ -154,79 +145,86 @@ export default function DashboardPage() {
         <>
           <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(130px,1fr))]">
             <Card
-              label="Diesel Consumed"
+              label={<>Diesel<br />Consumed</>}
               value={fmt(t.dieselConsumed)}
               unit="Liters"
               color="amber"
               // eslint-disable-next-line @next/next/no-img-element
-              bg={<img src="/icons/fuel-gun.png" alt="" className={BG_LOGO_CLASS} />}
+              logo={<img src="/icons/fuel-gun.png" alt="" className={`h-[54px] w-[54px] ${LOGO_CLASS}`} />}
             />
             <Card
-              label="Diesel Received"
+              label={<>Diesel<br />Received</>}
               value={fmt(t.dieselReceived)}
               unit="Liters"
               color="orange"
               // eslint-disable-next-line @next/next/no-img-element
-              bg={<img src="/icons/diesel-received.png" alt="" className={BG_LOGO_CLASS} />}
+              logo={<img src="/icons/diesel-received.png" alt="" className={`h-[48px] w-[86px] ${LOGO_CLASS}`} />}
             />
             <Card
-              label="Main Tank Stock"
+              label={<>Main Tank<br />Stock</>}
               value={fmt(data.latestDieselStock)}
               unit="Liters"
               color="teal"
               // eslint-disable-next-line @next/next/no-img-element
-              bg={<img src="/icons/main-tank.png" alt="" className={BG_LOGO_CLASS} />}
+              logo={<img src="/icons/main-tank.png" alt="" className={`h-[65px] w-[65px] ${LOGO_CLASS}`} />}
             />
             <Card
-              label="Service Tank Stock"
+              label={<>Service Tank<br />Stock</>}
               value={fmt(data.latestServiceTank)}
               unit="Liters"
               color="cyan"
-              // eslint-disable-next-line @next/next/no-img-element
-              bg={<img src="/icons/service-tank.png" alt="" className={BG_LOGO_CLASS} />}
-            />
-            <Card
-              label="Current Total Stock"
-              value={fmt(data.latestTotalStock)}
-              unit="Liters"
-              color="emerald"
-              bg={
-                <div className="pointer-events-none absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 scale-[1.3] flex-col items-center opacity-[0.14]">
+              logo={
+                <div className="flex items-center">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/icons/main-tank.png" alt="" className="-my-1.5 h-[55px] w-[55px] object-contain" />
+                  <img src="/icons/service-tank.png" alt="" className={`h-[47px] w-[47px] ${LOGO_CLASS}`} />
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/icons/service-tank.png" alt="" className="-my-1.5 h-[55px] w-[55px] object-contain" />
+                  <img src="/icons/service-tank.png" alt="" className={`-ml-[19px] h-[47px] w-[47px] ${LOGO_CLASS}`} />
                 </div>
               }
             />
             <Card
-              label="NEPA Power Consumption"
+              label={<>Current Total<br />Stock</>}
+              value={fmt(data.latestTotalStock)}
+              unit="Liters"
+              color="emerald"
+              logo={
+                <div className="flex items-center gap-1.5">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/icons/main-tank.png" alt="" className={`h-[67px] w-[67px] ${LOGO_CLASS}`} />
+                  <div className="flex items-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/icons/service-tank.png" alt="" className={`h-[30px] w-[30px] ${LOGO_CLASS}`} />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/icons/service-tank.png" alt="" className={`-ml-3 h-[30px] w-[30px] ${LOGO_CLASS}`} />
+                  </div>
+                </div>
+              }
+            />
+            <Card
+              label={<>NEPA Power<br />Consumption</>}
               value={fmt(t.nepaKwh)}
               unit="KWH"
               color="rose"
               // eslint-disable-next-line @next/next/no-img-element
-              bg={<img src="/icons/nepa-power.png" alt="" className={BG_LOGO_CLASS} />}
+              logo={<img src="/icons/nepa-power.png" alt="" className={`h-[77px] w-[77px] ${LOGO_CLASS}`} />}
             />
             {isAdmin && (
               <>
                 <Card
-                  label="Milling Power Consumption"
+                  label={<>Milling Power<br />Consumption</>}
                   value={fmt(t.ebMilling)}
                   unit="KWH"
                   color="fuchsia"
-                  bg={
-                    <div className={`${BG_LOGO_CLASS} ${CARD_THEMES.fuchsia.icon}`}>
-                      <FactoryIcon width="100%" height="100%" />
-                    </div>
-                  }
+                  // eslint-disable-next-line @next/next/no-img-element
+                  logo={<img src="/icons/milling.png" alt="" className={`h-[52px] w-[83px] ${LOGO_CLASS}`} />}
                 />
                 <Card
-                  label="Utility Power Consumption"
+                  label={<>Utility Power<br />Consumption</>}
                   value={fmt(t.ebUtility)}
                   unit="KWH"
                   color="blue"
                   // eslint-disable-next-line @next/next/no-img-element
-                  bg={<img src="/icons/utility.png" alt="" className="pointer-events-none absolute left-1/2 top-1/2 h-[135%] w-[135%] -translate-x-1/2 -translate-y-1/2 object-cover opacity-[0.14]" />}
+                  logo={<img src="/icons/utility.png" alt="" className={`h-[45px] w-[110px] ${LOGO_CLASS}`} />}
                 />
               </>
             )}
