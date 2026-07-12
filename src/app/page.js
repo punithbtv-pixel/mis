@@ -50,15 +50,14 @@ const TREND_COLORS = {
   utility: "#3b82f6",
 };
 
-function GeneratorIcon(props) {
+function FuelNozzleIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
-      <rect x="1.5" y="7.5" width="7" height="10" rx="1" />
-      <circle cx="5" cy="12.5" r="2.1" />
-      <path d="M6 7.5c0-1.9 1.2-3.2 3-3.2h2c1.8 0 3 1.3 3 3.2" />
-      <rect x="12.5" y="6" width="8" height="11.5" rx="1" />
-      <path d="M15 6v11.5" />
-      <path d="M20.5 9.5h1M20.5 12.5h1" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
+      <path d="M5.5 10 10 5.5" />
+      <rect x="9" y="6" width="7" height="10" rx="2" />
+      <path d="M12.5 10h2.3a1.3 1.3 0 1 1 0 2.6H12.5" />
+      <path d="M9 16c-1.5 1-3.5 1-4.5 3" />
+      <path d="M3.6 12.2c.9 1.1.9 1.7.9 1.7a1.1 1.1 0 1 1-1.8 0s0-.6.9-1.7Z" fill="currentColor" stroke="none" />
     </svg>
   );
 }
