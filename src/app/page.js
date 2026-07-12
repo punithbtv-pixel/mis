@@ -52,11 +52,13 @@ const TREND_COLORS = {
 
 function GeneratorIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
-      <rect x="1.5" y="8" width="19" height="9" rx="1.3" />
-      <path d="M1.5 17v1.5h19V17" />
-      <path d="M6 8v9M10.5 8v9M15 8v9" />
-      <path d="M17.5 8V4h3v2.5" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
+      <rect x="1.5" y="7.5" width="7" height="10" rx="1" />
+      <circle cx="5" cy="12.5" r="2.1" />
+      <path d="M6 7.5c0-1.9 1.2-3.2 3-3.2h2c1.8 0 3 1.3 3 3.2" />
+      <rect x="12.5" y="6" width="8" height="11.5" rx="1" />
+      <path d="M15 6v11.5" />
+      <path d="M20.5 9.5h1M20.5 12.5h1" />
     </svg>
   );
 }
