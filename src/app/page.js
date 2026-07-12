@@ -37,16 +37,25 @@ const CARD_THEMES = {
   sky: { bar: "bg-sky-300", iconBg: "bg-sky-50", icon: "text-sky-500", value: "text-sky-600" },
   indigo: { bar: "bg-indigo-300", iconBg: "bg-indigo-50", icon: "text-indigo-500", value: "text-indigo-600" },
   violet: { bar: "bg-violet-300", iconBg: "bg-violet-50", icon: "text-violet-500", value: "text-violet-600" },
+  blue: { bar: "bg-blue-300", iconBg: "bg-blue-50", icon: "text-blue-500", value: "text-blue-600" },
+  fuchsia: { bar: "bg-fuchsia-300", iconBg: "bg-fuchsia-50", icon: "text-fuchsia-500", value: "text-fuchsia-600" },
+  rose: { bar: "bg-rose-300", iconBg: "bg-rose-50", icon: "text-rose-500", value: "text-rose-600" },
+};
+
+// Trend colors stay in lockstep with the KPI card colors above.
+const TREND_COLORS = {
+  diesel: "#f59e0b",
+  nepa: "#3b82f6",
+  milling: "#d946ef",
+  utility: "#f43f5e",
 };
 
 function GeneratorIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
-      <rect x="3" y="7" width="15" height="11" rx="2" />
-      <circle cx="8.5" cy="12.5" r="2.6" />
-      <path d="M8.5 10.5v4M6.5 12.5h4" />
-      <path d="M14 10h2M14 13h2M14 16h1.5" />
-      <path d="M18 9v-2h2" />
+      <rect x="2.5" y="6" width="16" height="13" rx="2" />
+      <path d="M11.5 8.5 8 13h3l-1 4.5 4.5-6h-3l1-3Z" fill="currentColor" stroke="none" />
+      <path d="M18.5 9.5h2M18.5 12.5h2M18.5 15.5h2" />
     </svg>
   );
 }
@@ -84,11 +93,10 @@ function TwinTankIcon(props) {
 
 function PylonIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
-      <path d="M12 2v20" />
-      <path d="M6 6h12M4 11h16M2 20h20" />
-      <path d="M12 2 4 20M12 2l8 18" />
-      <path d="M9 6 6 20M15 6l3 14" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
+      <path d="M12 3v18" />
+      <path d="M7 7h10M5 12h14M3 20h18" />
+      <path d="M9 7 5 20M15 7l4 13" />
     </svg>
   );
 }
@@ -103,13 +111,11 @@ function FactoryIcon(props) {
   );
 }
 
-function UtilityClusterIcon(props) {
+function SteamIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
-      <path d="M4 11 12 4l8 7" />
-      <path d="M6 11v8h12v-8" />
-      <path d="M15 7V3h2v3" />
-      <path d="M9 15a2 2 0 1 0 4 0c0-1-2-3-2-3s-2 2-2 3Z" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
+      <path d="M5 20h14l-1.7-8.5H6.7L5 20Z" />
+      <path d="M9 9.5c0-1.3 1.2-1.4 1.2-2.7S9 4.5 9 4.5M14 9.5c0-1.3 1.2-1.4 1.2-2.7S14 4.5 14 4.5" />
     </svg>
   );
 }
@@ -225,11 +231,11 @@ export default function DashboardPage() {
                 </>
               }
             />
-            <Card label="NEPA Power Consumption" value={fmt(t.nepaKwh)} unit="KWH" color="sky" icon={<PylonIcon />} />
+            <Card label="NEPA Power Consumption" value={fmt(t.nepaKwh)} unit="KWH" color="blue" icon={<PylonIcon />} />
             {isAdmin && (
               <>
-                <Card label="Milling Power Consumption" value={fmt(t.ebMilling)} unit="KWH" color="indigo" icon={<FactoryIcon />} />
-                <Card label="Utility Power Consumption" value={fmt(t.ebUtility)} unit="KWH" color="violet" icon={<UtilityClusterIcon />} />
+                <Card label="Milling Power Consumption" value={fmt(t.ebMilling)} unit="KWH" color="fuchsia" icon={<FactoryIcon />} />
+                <Card label="Utility Power Consumption" value={fmt(t.ebUtility)} unit="KWH" color="rose" icon={<SteamIcon />} />
               </>
             )}
           </div>
@@ -263,7 +269,7 @@ export default function DashboardPage() {
                   <XAxis dataKey="day" fontSize={11} />
                   <YAxis fontSize={11} />
                   <Tooltip />
-                  <Bar dataKey="dieselConsumption" name="Diesel (L)" fill="#f59e0b" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="dieselConsumption" name="Diesel (L)" fill={TREND_COLORS.diesel} radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </Panel>
@@ -276,9 +282,9 @@ export default function DashboardPage() {
                   <YAxis fontSize={11} />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="nepaConsumption" name="NEPA" stroke="#0ea5e9" dot={false} strokeWidth={2} />
-                  {isAdmin && <Line type="monotone" dataKey="ebMilling" name="Milling" stroke="#6366f1" dot={false} strokeWidth={2} />}
-                  {isAdmin && <Line type="monotone" dataKey="ebUtility" name="Utility" stroke="#8b5cf6" dot={false} strokeWidth={2} />}
+                  <Line type="monotone" dataKey="nepaConsumption" name="NEPA" stroke={TREND_COLORS.nepa} dot={false} strokeWidth={2} />
+                  {isAdmin && <Line type="monotone" dataKey="ebMilling" name="Milling" stroke={TREND_COLORS.milling} dot={false} strokeWidth={2} />}
+                  {isAdmin && <Line type="monotone" dataKey="ebUtility" name="Utility" stroke={TREND_COLORS.utility} dot={false} strokeWidth={2} />}
                 </LineChart>
               </ResponsiveContainer>
             </Panel>
