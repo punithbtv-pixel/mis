@@ -29,17 +29,17 @@ const EQ_COLORS = [
 ];
 
 const CARD_THEMES = {
-  amber: { bar: "bg-amber-300", iconBg: "bg-amber-50", icon: "text-amber-500", value: "text-amber-600" },
-  orange: { bar: "bg-orange-300", iconBg: "bg-orange-50", icon: "text-orange-500", value: "text-orange-600" },
-  teal: { bar: "bg-teal-300", iconBg: "bg-teal-50", icon: "text-teal-500", value: "text-teal-600" },
-  cyan: { bar: "bg-cyan-300", iconBg: "bg-cyan-50", icon: "text-cyan-500", value: "text-cyan-600" },
-  emerald: { bar: "bg-emerald-300", iconBg: "bg-emerald-50", icon: "text-emerald-500", value: "text-emerald-600" },
-  sky: { bar: "bg-sky-300", iconBg: "bg-sky-50", icon: "text-sky-500", value: "text-sky-600" },
-  indigo: { bar: "bg-indigo-300", iconBg: "bg-indigo-50", icon: "text-indigo-500", value: "text-indigo-600" },
-  violet: { bar: "bg-violet-300", iconBg: "bg-violet-50", icon: "text-violet-500", value: "text-violet-600" },
-  blue: { bar: "bg-blue-300", iconBg: "bg-blue-50", icon: "text-blue-500", value: "text-blue-600" },
-  fuchsia: { bar: "bg-fuchsia-300", iconBg: "bg-fuchsia-50", icon: "text-fuchsia-500", value: "text-fuchsia-600" },
-  rose: { bar: "bg-rose-300", iconBg: "bg-rose-50", icon: "text-rose-500", value: "text-rose-600" },
+  amber: { bar: "bg-amber-300", icon: "text-amber-500", value: "text-amber-600" },
+  orange: { bar: "bg-orange-300", icon: "text-orange-500", value: "text-orange-600" },
+  teal: { bar: "bg-teal-300", icon: "text-teal-500", value: "text-teal-600" },
+  cyan: { bar: "bg-cyan-300", icon: "text-cyan-500", value: "text-cyan-600" },
+  emerald: { bar: "bg-emerald-300", icon: "text-emerald-500", value: "text-emerald-600" },
+  sky: { bar: "bg-sky-300", icon: "text-sky-500", value: "text-sky-600" },
+  indigo: { bar: "bg-indigo-300", icon: "text-indigo-500", value: "text-indigo-600" },
+  violet: { bar: "bg-violet-300", icon: "text-violet-500", value: "text-violet-600" },
+  blue: { bar: "bg-blue-300", icon: "text-blue-500", value: "text-blue-600" },
+  fuchsia: { bar: "bg-fuchsia-300", icon: "text-fuchsia-500", value: "text-fuchsia-600" },
+  rose: { bar: "bg-rose-300", icon: "text-rose-500", value: "text-rose-600" },
 };
 
 // Trend colors stay in lockstep with the KPI card colors above.
@@ -50,14 +50,9 @@ const TREND_COLORS = {
   utility: "#3b82f6",
 };
 
-function IconImage({ src, width = 22, height = 22, ...props }) {
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={src} alt="" width={width} height={height} className="object-contain" {...props} />;
-}
-
 function FactoryIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="20" height="20" {...props}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" {...props}>
       <path d="M3 20V11l5 3v-3l5 3v-3l5 3v6H3Z" />
       <path d="M6 20v-4M11 20v-4M16 20v-4" />
       <path d="M19 8V5" />
@@ -65,52 +60,23 @@ function FactoryIcon(props) {
   );
 }
 
-function WindIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
-      <path d="M2 8h11.5a2.3 2.3 0 1 0-2-3.5" />
-      <path d="M2 13h14.5a2.3 2.3 0 1 1-2 3.5" />
-      <path d="M2 18h7.5" />
-    </svg>
-  );
-}
+const BG_LOGO_CLASS =
+  "pointer-events-none absolute left-1/2 top-1/2 h-[130%] w-[130%] -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.14]";
 
-function WaterDropIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
-      <path d="M12 3c3 4 6 7.7 6 11.2a6 6 0 1 1-12 0C6 10.7 9 7 12 3Z" />
-    </svg>
-  );
-}
-
-function RiceGrainIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
-      <path d="M12 21V9.5" />
-      <path d="M12 9.5c-3-1-4.2-4.2-3.2-7.5 3 1 4.2 4.2 3.2 7.5Z" />
-      <path d="M12 14c3-1 4.2-4.2 3.2-7.5-3 1-4.2 4.2-3.2 7.5Z" />
-    </svg>
-  );
-}
-
-function Card({ label, value, unit, color = "sky", icon, wide }) {
+function Card({ label, value, unit, color = "sky", bg }) {
   const theme = CARD_THEMES[color] ?? CARD_THEMES.sky;
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow text-center">
-      <div className={`absolute inset-x-0 top-0 h-1 ${theme.bar}`} />
-      <div
-        className={`mx-auto mb-2 flex h-11 items-center justify-center gap-1 rounded-full ${theme.iconBg} ${theme.icon} ${
-          wide ? "px-3" : "w-11"
-        }`}
-      >
-        {icon}
-      </div>
-      <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
-        {label}
-      </div>
-      <div className={`mt-1 text-2xl font-semibold ${theme.value}`}>
-        {value}
-        {unit && <span className="text-sm font-normal text-slate-400 ml-1">{unit}</span>}
+    <div className="relative flex min-h-[136px] flex-col justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow text-center">
+      <div className={`absolute inset-x-0 top-0 h-1 z-10 ${theme.bar}`} />
+      {bg}
+      <div className="relative z-10">
+        <div className="flex min-h-[2.6em] items-start justify-center text-xs font-medium uppercase leading-[1.3em] tracking-wide text-slate-500">
+          {label}
+        </div>
+        <div className={`mt-1 text-2xl font-semibold leading-[1.33] ${theme.value}`}>
+          {value}
+        </div>
+        {unit && <div className="text-sm font-medium text-slate-600">{unit}</div>}
       </div>
     </div>
   );
@@ -187,41 +153,80 @@ export default function DashboardPage() {
       {!loading && hasData && (
         <>
           <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(130px,1fr))]">
-            <Card label="Diesel Consumed" value={fmt(t.dieselConsumed)} unit="Liters" color="amber" icon={<IconImage src="/icons/fuel-gun.png" width={31} height={17} />} />
-            <Card label="Diesel Received" value={fmt(t.dieselReceived)} unit="Liters" color="orange" icon={<IconImage src="/icons/diesel-received.png" width={28} height={28} />} />
-            <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="Liters" color="teal" icon={<IconImage src="/icons/main-tank.png" width={30} height={30} />} />
-            <Card label="Service Tank Stock" value={fmt(data.latestServiceTank)} unit="Liters" color="cyan" icon={<IconImage src="/icons/service-tank.png" width={26} height={19.5} />} />
+            <Card
+              label="Diesel Consumed"
+              value={fmt(t.dieselConsumed)}
+              unit="Liters"
+              color="amber"
+              // eslint-disable-next-line @next/next/no-img-element
+              bg={<img src="/icons/fuel-gun.png" alt="" className={BG_LOGO_CLASS} />}
+            />
+            <Card
+              label="Diesel Received"
+              value={fmt(t.dieselReceived)}
+              unit="Liters"
+              color="orange"
+              // eslint-disable-next-line @next/next/no-img-element
+              bg={<img src="/icons/diesel-received.png" alt="" className={BG_LOGO_CLASS} />}
+            />
+            <Card
+              label="Main Tank Stock"
+              value={fmt(data.latestDieselStock)}
+              unit="Liters"
+              color="teal"
+              // eslint-disable-next-line @next/next/no-img-element
+              bg={<img src="/icons/main-tank.png" alt="" className={BG_LOGO_CLASS} />}
+            />
+            <Card
+              label="Service Tank Stock"
+              value={fmt(data.latestServiceTank)}
+              unit="Liters"
+              color="cyan"
+              // eslint-disable-next-line @next/next/no-img-element
+              bg={<img src="/icons/service-tank.png" alt="" className={BG_LOGO_CLASS} />}
+            />
             <Card
               label="Current Total Stock"
               value={fmt(data.latestTotalStock)}
               unit="Liters"
               color="emerald"
-              wide
-              icon={
-                <>
-                  <IconImage src="/icons/main-tank.png" width={19} height={19} />
-                  <span className="text-[11px] font-bold leading-none">+</span>
-                  <IconImage src="/icons/service-tank.png" width={17} height={12.7} />
-                </>
+              bg={
+                <div className="pointer-events-none absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 scale-[1.3] flex-col items-center opacity-[0.14]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/icons/main-tank.png" alt="" className="-my-1.5 h-[55px] w-[55px] object-contain" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/icons/service-tank.png" alt="" className="-my-1.5 h-[55px] w-[55px] object-contain" />
+                </div>
               }
             />
-            <Card label="NEPA Power Consumption" value={fmt(t.nepaKwh)} unit="KWH" color="rose" icon={<IconImage src="/icons/nepa-power.png" width={33} height={35.5} />} />
+            <Card
+              label="NEPA Power Consumption"
+              value={fmt(t.nepaKwh)}
+              unit="KWH"
+              color="rose"
+              // eslint-disable-next-line @next/next/no-img-element
+              bg={<img src="/icons/nepa-power.png" alt="" className={BG_LOGO_CLASS} />}
+            />
             {isAdmin && (
               <>
-                <Card label="Milling Power Consumption" value={fmt(t.ebMilling)} unit="KWH" color="fuchsia" icon={<FactoryIcon />} />
+                <Card
+                  label="Milling Power Consumption"
+                  value={fmt(t.ebMilling)}
+                  unit="KWH"
+                  color="fuchsia"
+                  bg={
+                    <div className={`${BG_LOGO_CLASS} ${CARD_THEMES.fuchsia.icon}`}>
+                      <FactoryIcon width="100%" height="100%" />
+                    </div>
+                  }
+                />
                 <Card
                   label="Utility Power Consumption"
                   value={fmt(t.ebUtility)}
                   unit="KWH"
                   color="blue"
-                  wide
-                  icon={
-                    <>
-                      <WindIcon width="13" height="13" />
-                      <WaterDropIcon width="13" height="13" />
-                      <RiceGrainIcon width="13" height="13" />
-                    </>
-                  }
+                  // eslint-disable-next-line @next/next/no-img-element
+                  bg={<img src="/icons/utility.png" alt="" className="pointer-events-none absolute left-1/2 top-1/2 h-[135%] w-[135%] -translate-x-1/2 -translate-y-1/2 object-cover opacity-[0.14]" />}
                 />
               </>
             )}
