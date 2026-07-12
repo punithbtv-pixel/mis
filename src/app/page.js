@@ -50,53 +50,9 @@ const TREND_COLORS = {
   utility: "#3b82f6",
 };
 
-function FuelGunImage(props) {
+function IconImage({ src, width = 22, height = 22, ...props }) {
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src="/icons/fuel-gun.png" alt="" width={24} height={13} {...props} />;
-}
-
-function FuelTruckIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
-      <rect x="1.5" y="9.5" width="13" height="6.5" rx="3.25" />
-      <path d="M6 9.5v6.5" />
-      <path d="M14.5 11h3.5l3 3v2h-2" />
-      <circle cx="6.5" cy="18.5" r="1.6" />
-      <circle cx="16" cy="18.5" r="1.6" />
-      <path d="M1.5 16.5h3M18.5 16.5h-1" />
-    </svg>
-  );
-}
-
-function HorizontalTankIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
-      <rect x="2.5" y="8" width="19" height="9" rx="4.5" />
-      <path d="M8 8v9M4 19h2M18 19h2" />
-    </svg>
-  );
-}
-
-function TwinTankIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
-      <rect x="3" y="5" width="7" height="15" rx="1.5" />
-      <rect x="14" y="5" width="7" height="15" rx="1.5" />
-      <path d="M3 9h7M14 9h7" />
-    </svg>
-  );
-}
-
-function PylonIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" {...props}>
-      <path d="M12 2v3.5" />
-      <path d="M9 5.5h6" />
-      <path d="M12 5.5 6.5 21M12 5.5 17.5 21" />
-      <path d="M8.3 13.5h7.4" />
-      <path d="M5 21h14" />
-    </svg>
-  );
+  return <img src={src} alt="" width={width} height={height} className="object-contain" {...props} />;
 }
 
 function FactoryIcon(props) {
@@ -231,10 +187,10 @@ export default function DashboardPage() {
       {!loading && hasData && (
         <>
           <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(130px,1fr))]">
-            <Card label="Diesel Consumed" value={fmt(t.dieselConsumed)} unit="Liters" color="amber" icon={<FuelGunImage className="w-6 h-auto" />} />
-            <Card label="Diesel Received" value={fmt(t.dieselReceived)} unit="Liters" color="orange" icon={<FuelTruckIcon />} />
-            <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="Liters" color="teal" icon={<HorizontalTankIcon />} />
-            <Card label="Service Tank Stock" value={fmt(data.latestServiceTank)} unit="Liters" color="cyan" icon={<TwinTankIcon />} />
+            <Card label="Diesel Consumed" value={fmt(t.dieselConsumed)} unit="Liters" color="amber" icon={<IconImage src="/icons/fuel-gun.png" width={24} height={13} />} />
+            <Card label="Diesel Received" value={fmt(t.dieselReceived)} unit="Liters" color="orange" icon={<IconImage src="/icons/diesel-received.avif" width={22} height={22} />} />
+            <Card label="Main Tank Stock" value={fmt(data.latestDieselStock)} unit="Liters" color="teal" icon={<IconImage src="/icons/main-tank.png" width={24} height={24} />} />
+            <Card label="Service Tank Stock" value={fmt(data.latestServiceTank)} unit="Liters" color="cyan" icon={<IconImage src="/icons/service-tank.jpg" width={20} height={15} />} />
             <Card
               label="Current Total Stock"
               value={fmt(data.latestTotalStock)}
@@ -243,13 +199,13 @@ export default function DashboardPage() {
               wide
               icon={
                 <>
-                  <HorizontalTankIcon width="14" height="14" />
+                  <IconImage src="/icons/main-tank.png" width={16} height={16} />
                   <span className="text-[11px] font-bold leading-none">+</span>
-                  <TwinTankIcon width="14" height="14" />
+                  <IconImage src="/icons/service-tank.jpg" width={14} height={10.5} />
                 </>
               }
             />
-            <Card label="NEPA Power Consumption" value={fmt(t.nepaKwh)} unit="KWH" color="rose" icon={<PylonIcon />} />
+            <Card label="NEPA Power Consumption" value={fmt(t.nepaKwh)} unit="KWH" color="rose" icon={<IconImage src="/icons/nepa-power.jpg" width={20} height={21.5} />} />
             {isAdmin && (
               <>
                 <Card label="Milling Power Consumption" value={fmt(t.ebMilling)} unit="KWH" color="fuchsia" icon={<FactoryIcon />} />
