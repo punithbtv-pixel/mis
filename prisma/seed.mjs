@@ -32,12 +32,12 @@ const LABEL_TO_FIELD = {
 };
 
 const DEFAULT_SERVICE_HOURS = {
-  nextSer_compE75_1: 6000,
-  nextSer_compE75_2: 6000,
-  nextSer_compE75_3: 6000,
-  nextSer_compE55: 6000,
-  nextSer_millingDg: 6300,
-  nextSer_parboilingDg: 12700,
+  nextSer_compE75_1: 4000,
+  nextSer_compE75_2: 4000,
+  nextSer_compE75_3: 4000,
+  nextSer_compE55: 4000,
+  nextSer_millingDg: 300,
+  nextSer_parboilingDg: 300,
 };
 
 // Initial "Attended by" roster; editable afterwards by Admin from Settings.
