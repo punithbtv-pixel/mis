@@ -2,7 +2,9 @@ import {
   RUN_HOUR_EQUIPMENT,
   DEFAULT_SERVICE_HOURS,
   DEFAULT_SERVICE_ALERT_THRESHOLDS,
+  DEFAULT_SERVICE_SCALE,
   thresholdSettingKeyForCategory,
+  scaleKeysForCategory,
 } from "./equipment";
 
 // Format a Date (or date-like) to YYYY-MM-DD. test
@@ -41,6 +43,7 @@ function settingsToMap(settings) {
   const map = {
     ...DEFAULT_SERVICE_HOURS,
     ...DEFAULT_SERVICE_ALERT_THRESHOLDS,
+    ...DEFAULT_SERVICE_SCALE,
   };
   for (const s of settings ?? []) map[s.key] = Number(s.value);
   return map;
@@ -179,12 +182,15 @@ export function buildSummary(rows, settings) {
     }
     const thresholdKey = thresholdSettingKeyForCategory(eq.category);
     const threshold = svc[thresholdKey] ?? DEFAULT_SERVICE_ALERT_THRESHOLDS[thresholdKey];
+    const { minKey, maxKey } = scaleKeysForCategory(eq.category);
     alerts.push({
       field: eq.field,
       label: eq.label,
       remaining: latest,
       asOf: latestDate,
       target: svc[eq.serviceKey] ?? null,
+      scaleMin: svc[minKey] ?? DEFAULT_SERVICE_SCALE[minKey],
+      scaleMax: svc[maxKey] ?? DEFAULT_SERVICE_SCALE[maxKey],
       due: latest != null && latest <= threshold,
     });
   }

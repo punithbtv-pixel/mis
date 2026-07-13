@@ -38,6 +38,28 @@ export function thresholdSettingKeyForCategory(category) {
   return THRESHOLD_CATEGORIES.find((c) => c.category === category)?.settingKey;
 }
 
+// Fixed min/max hour range each category's "Hours Remaining" bar is scaled
+// against, so a DG's much shorter service interval doesn't render as a
+// barely-visible sliver next to a compressor's.
+export const SCALE_CATEGORIES = [
+  { category: "comp", label: "Compressors", minKey: "serviceScaleMinComp", maxKey: "serviceScaleMaxComp", defaultMin: 0, defaultMax: 4000 },
+  { category: "dg", label: "DG (Generators)", minKey: "serviceScaleMinDg", maxKey: "serviceScaleMaxDg", defaultMin: 0, defaultMax: 300 },
+];
+
+export const DEFAULT_SERVICE_SCALE = Object.fromEntries(
+  SCALE_CATEGORIES.flatMap((c) => [
+    [c.minKey, c.defaultMin],
+    [c.maxKey, c.defaultMax],
+  ])
+);
+
+export const SCALE_SETTING_KEYS = SCALE_CATEGORIES.flatMap((c) => [c.minKey, c.maxKey]);
+
+export function scaleKeysForCategory(category) {
+  const c = SCALE_CATEGORIES.find((c) => c.category === category);
+  return c ? { minKey: c.minKey, maxKey: c.maxKey } : null;
+}
+
 // Grouped definition of everything entered on the daily form.
 export const INPUT_GROUPS = [
   {

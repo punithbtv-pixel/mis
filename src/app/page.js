@@ -303,9 +303,11 @@ export default function DashboardPage() {
             <Panel title="Hours Remaining To Next Service">
               <div className="space-y-3 py-1">
                 {data.alerts.map((a) => {
+                  const scaleMin = a.scaleMin ?? 0;
+                  const scaleMax = a.scaleMax;
                   const pct =
-                    a.remaining != null && a.target
-                      ? Math.max(0, Math.min(100, (a.remaining / a.target) * 100))
+                    a.remaining != null && scaleMax != null && scaleMax > scaleMin
+                      ? Math.max(0, Math.min(100, ((a.remaining - scaleMin) / (scaleMax - scaleMin)) * 100))
                       : 0;
                   return (
                     <div key={a.field}>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { RUN_HOUR_EQUIPMENT, THRESHOLD_CATEGORIES } from "@/lib/equipment";
+import { RUN_HOUR_EQUIPMENT, THRESHOLD_CATEGORIES, SCALE_CATEGORIES } from "@/lib/equipment";
 import StaffManager from "@/components/StaffManager";
 import UserManager from "@/components/UserManager";
 
@@ -135,6 +135,57 @@ export default function SettingsPage() {
                 <p className="text-xs text-slate-400 mt-1">
                   Equipment is flagged &quot;service due&quot; when remaining hours
                   fall at or below its category&apos;s threshold.
+                </p>
+              </div>
+
+              <div>
+                <span className="block text-sm font-medium text-slate-600 mb-1">
+                  Hours-remaining bar scale
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {SCALE_CATEGORIES.map((c) => (
+                    <div key={c.category}>
+                      <label className="block text-xs font-medium text-slate-500 mb-1">
+                        {c.label}
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          step="any"
+                          min="0"
+                          placeholder="Min"
+                          value={values[c.minKey] ?? ""}
+                          onChange={(e) =>
+                            setValues((p) => ({
+                              ...p,
+                              [c.minKey]: e.target.value,
+                            }))
+                          }
+                          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                        />
+                        <span className="text-slate-400 text-sm">–</span>
+                        <input
+                          type="number"
+                          step="any"
+                          min="0"
+                          placeholder="Max"
+                          value={values[c.maxKey] ?? ""}
+                          onChange={(e) =>
+                            setValues((p) => ({
+                              ...p,
+                              [c.maxKey]: e.target.value,
+                            }))
+                          }
+                          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  Sets the min/max hour range each category&apos;s progress bar on the
+                  dashboard is scaled against, independent of each machine&apos;s own
+                  next-service target.
                 </p>
               </div>
 

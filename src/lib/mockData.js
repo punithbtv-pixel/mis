@@ -6,6 +6,8 @@ import {
   SERVICE_KEYS,
   THRESHOLD_SETTING_KEYS,
   DEFAULT_SERVICE_ALERT_THRESHOLDS,
+  SCALE_SETTING_KEYS,
+  DEFAULT_SERVICE_SCALE,
 } from "@/lib/equipment";
 import { MAINTENANCE_TYPE_VALUES, isValidTimeStr, DEFAULT_STAFF } from "@/lib/maintenanceLog";
 
@@ -95,6 +97,7 @@ function buildInitialState() {
   const settings = {
     ...DEFAULT_SERVICE_HOURS,
     ...DEFAULT_SERVICE_ALERT_THRESHOLDS,
+    ...DEFAULT_SERVICE_SCALE,
     nextSer_compE75_1: 6200,
     nextSer_compE75_2: 6150,
     nextSer_compE75_3: 6280,
@@ -238,7 +241,7 @@ export function getMockSettings() {
 
 export function updateMockSettings(body) {
   const state = getState();
-  const keys = [...SERVICE_KEYS, ...THRESHOLD_SETTING_KEYS];
+  const keys = [...SERVICE_KEYS, ...THRESHOLD_SETTING_KEYS, ...SCALE_SETTING_KEYS];
   for (const key of keys) {
     if (key in body && body[key] !== "" && body[key] != null) {
       const value = Number(body[key]);

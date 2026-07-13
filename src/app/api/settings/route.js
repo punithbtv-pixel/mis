@@ -5,6 +5,8 @@ import {
   DEFAULT_SERVICE_HOURS,
   THRESHOLD_SETTING_KEYS,
   DEFAULT_SERVICE_ALERT_THRESHOLDS,
+  SCALE_SETTING_KEYS,
+  DEFAULT_SERVICE_SCALE,
 } from "@/lib/equipment";
 import { isUiOnlyMode } from "@/lib/mode";
 import { getMockSettings, updateMockSettings } from "@/lib/mockData";
@@ -15,6 +17,7 @@ function mergeSettings(rows) {
   const map = {
     ...DEFAULT_SERVICE_HOURS,
     ...DEFAULT_SERVICE_ALERT_THRESHOLDS,
+    ...DEFAULT_SERVICE_SCALE,
   };
   for (const r of rows) map[r.key] = Number(r.value);
   return map;
@@ -58,7 +61,7 @@ export async function POST(request) {
   }
 
   const updates = [];
-  const keys = [...SERVICE_KEYS, ...THRESHOLD_SETTING_KEYS];
+  const keys = [...SERVICE_KEYS, ...THRESHOLD_SETTING_KEYS, ...SCALE_SETTING_KEYS];
   for (const key of keys) {
     if (key in body && body[key] !== "" && body[key] != null) {
       const value = Number(body[key]);
@@ -67,6 +70,9 @@ export async function POST(request) {
       }
       if (THRESHOLD_SETTING_KEYS.includes(key) && value < 0) {
         return NextResponse.json({ error: "Threshold must be zero or positive" }, { status: 400 });
+      }
+      if (SCALE_SETTING_KEYS.includes(key) && value < 0) {
+        return NextResponse.json({ error: "Scale range must be zero or positive" }, { status: 400 });
       }
       updates.push(
         prisma.setting.upsert({
