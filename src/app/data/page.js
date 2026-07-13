@@ -1,32 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import MonthPicker from "@/components/MonthPicker";
-import { RUN_HOUR_EQUIPMENT } from "@/lib/equipment";
 import { currentMonth } from "@/lib/dates";
 import { fmt } from "@/lib/format";
 import DataTabs from "@/components/DataTabs";
-import { SELECTABLE_REPORT_COLUMNS } from "@/lib/report";
+import {
+  SELECTABLE_REPORT_COLUMNS,
+  DATA_CATEGORIES,
+  columnVisibleForCategory,
+  reportCellValue,
+} from "@/lib/report";
+
+// A couple of columns keep their existing accent color from before this was
+// made data-driven; everything else renders in the default slate.
+const ACCENT_CLASS = {
+  dieselConsumption: "text-amber-600",
+  nepaConsumption: "text-sky-600",
+};
 
 function ColumnHeader({ colKey, label, align = "right", sticky, selectedColumns, toggleColumn }) {
   return (
     <th
-      className={`px-3 py-2 whitespace-nowrap ${align === "right" ? "text-right" : "text-left"} ${
-        sticky ? "sticky left-0 bg-slate-50" : ""
-      }`}
+      className={`px-2 py-2 text-center align-bottom ${sticky ? "sticky left-0 bg-slate-50" : ""}`}
     >
-      <label
-        className={`flex items-center gap-1.5 cursor-pointer ${
-          align === "right" ? "justify-end" : "justify-start"
-        }`}
-      >
+      <label className="flex flex-col items-center gap-1 cursor-pointer">
         <input
           type="checkbox"
           checked={selectedColumns.has(colKey)}
           onChange={() => toggleColumn(colKey)}
         />
-        <span>{label}</span>
+        <span
+          className={`block max-w-[100px] leading-tight ${align === "left" ? "whitespace-nowrap" : ""}`}
+        >
+          {label}
+        </span>
       </label>
     </th>
   );
@@ -42,7 +51,18 @@ export default function DataPage() {
   const [selectedColumns, setSelectedColumns] = useState(
     new Set(SELECTABLE_REPORT_COLUMNS.map((c) => c.key))
   );
+  const [category, setCategory] = useState("all");
   const loading = !hasLoaded;
+
+  // Category filter only changes what's shown on screen; export column
+  // selection (the checkboxes) stays independent of it.
+  const middleColumns = useMemo(
+    () =>
+      SELECTABLE_REPORT_COLUMNS.filter(
+        (c) => c.key !== "date" && c.key !== "remarks" && columnVisibleForCategory(c, category)
+      ),
+    [category]
+  );
   const allRowsSelected = rows.length > 0 && selected.size === rows.length;
   const allColumnsSelected = selectedColumns.size === SELECTABLE_REPORT_COLUMNS.length;
   const allSelected = allRowsSelected && allColumnsSelected;
@@ -137,7 +157,20 @@ export default function DataPage() {
     <div className="space-y-5">
       <DataTabs />
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold text-slate-900">Monthly Data</h1>
+        <div className="flex flex-wrap items-center gap-2">
+          <h1 className="text-xl font-semibold text-slate-900">Monthly Data</h1>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"
+          >
+            {DATA_CATEGORIES.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="flex flex-wrap items-center gap-2">
           <MonthPicker month={month} onChange={onMonthChange} />
           <button
@@ -196,19 +229,11 @@ export default function DataPage() {
                   />
                 </th>
                 <ColumnHeader colKey="date" label="Date" align="left" sticky selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
-                <ColumnHeader colKey="dieselDipMm" label="Dip (mm)" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
-                <ColumnHeader colKey="dieselConsumption" label="Diesel Consumption (LTRS)" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
-                <ColumnHeader colKey="dieselReceived" label="Recv (L)" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
-                <ColumnHeader colKey="closingLitres" label="Stock (L)" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
-                <ColumnHeader colKey="dieselIssued" label="Issued (L)" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
-                <ColumnHeader colKey="nepaConsumption" label="NEPA (KWH)" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
-                <ColumnHeader colKey="ebMilling" label="Milling" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
-                <ColumnHeader colKey="ebUtility" label="Utility" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
-                {RUN_HOUR_EQUIPMENT.map((eq) => (
+                {middleColumns.map((col) => (
                   <ColumnHeader
-                    key={eq.field}
-                    colKey={eq.field}
-                    label={eq.label}
+                    key={col.key}
+                    colKey={col.key}
+                    label={col.header}
                     selectedColumns={selectedColumns}
                     toggleColumn={toggleColumn}
                   />
@@ -227,20 +252,15 @@ export default function DataPage() {
                       onChange={() => toggleRow(r.date)}
                     />
                   </td>
-                  <td className="sticky left-0 bg-white px-3 py-2 font-medium text-slate-700 whitespace-nowrap">
+                  <td className="sticky left-0 bg-white px-3 py-2 text-center font-medium text-slate-700 whitespace-nowrap">
                     {r.date}
                   </td>
-                  <td className="px-3 py-2 text-right">{fmt(r.raw.dieselDipMm)}</td>
-                  <td className="px-3 py-2 text-right text-amber-600">{fmt(r.dieselConsumption)}</td>
-                  <td className="px-3 py-2 text-right">{fmt(r.dieselReceived)}</td>
-                  <td className="px-3 py-2 text-right">{fmt(r.closingLitres)}</td>
-                  <td className="px-3 py-2 text-right">{fmt(r.raw.dieselIssued)}</td>
-                  <td className="px-3 py-2 text-right text-sky-600">{fmt(r.nepaConsumption)}</td>
-                  <td className="px-3 py-2 text-right">{fmt(r.ebMilling)}</td>
-                  <td className="px-3 py-2 text-right">{fmt(r.ebUtility)}</td>
-                  {RUN_HOUR_EQUIPMENT.map((eq) => (
-                    <td key={eq.field} className="px-3 py-2 text-right">
-                      {fmt(r.runHours[eq.field], 1)}
+                  {middleColumns.map((col) => (
+                    <td
+                      key={col.key}
+                      className={`px-3 py-2 text-center ${ACCENT_CLASS[col.key] ?? ""}`}
+                    >
+                      {fmt(reportCellValue(r, col), col.decimals ?? 0)}
                     </td>
                   ))}
                   <td className="px-3 py-2 text-slate-500 max-w-[16rem] truncate" title={r.raw.remarks ?? ""}>
