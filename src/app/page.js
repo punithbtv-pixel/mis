@@ -16,7 +16,7 @@ import {
 import MonthPicker from "@/components/MonthPicker";
 import { RUN_HOUR_EQUIPMENT } from "@/lib/equipment";
 import { currentMonth } from "@/lib/dates";
-import { fmt, dayLabel } from "@/lib/format";
+import { fmt, dayLabel, fullDateLabel } from "@/lib/format";
 import { ROLES } from "@/lib/roles";
 
 const EQ_COLORS = [
@@ -51,6 +51,13 @@ const TREND_COLORS = {
 };
 
 const LOGO_CLASS = "object-contain opacity-[0.55]";
+
+// Trend chart tooltips show the full date, while the axis itself just shows
+// the day-of-month (via dayLabel) to keep tick labels compact.
+function trendTooltipLabel(_label, payload) {
+  const date = payload?.[0]?.payload?.date;
+  return date ? fullDateLabel(date) : _label;
+}
 
 function Card({ label, value, unit, color = "sky", logo }) {
   const theme = CARD_THEMES[color] ?? CARD_THEMES.sky;
@@ -258,7 +265,7 @@ export default function DashboardPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
                   <XAxis dataKey="day" fontSize={11} />
                   <YAxis fontSize={11} />
-                  <Tooltip />
+                  <Tooltip labelFormatter={trendTooltipLabel} />
                   <Bar dataKey="dieselConsumption" name="Diesel (L)" fill={TREND_COLORS.diesel} radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -270,7 +277,7 @@ export default function DashboardPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
                   <XAxis dataKey="day" fontSize={11} />
                   <YAxis fontSize={11} />
-                  <Tooltip />
+                  <Tooltip labelFormatter={trendTooltipLabel} />
                   <Legend />
                   <Line type="monotone" dataKey="nepaConsumption" name="NEPA" stroke={TREND_COLORS.nepa} dot={false} strokeWidth={2} />
                   {isAdmin && <Line type="monotone" dataKey="ebMilling" name="Milling" stroke={TREND_COLORS.milling} dot={false} strokeWidth={2} />}
@@ -285,7 +292,7 @@ export default function DashboardPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
                   <XAxis dataKey="day" fontSize={11} />
                   <YAxis fontSize={11} />
-                  <Tooltip />
+                  <Tooltip labelFormatter={trendTooltipLabel} />
                   <Legend />
                   {RUN_HOUR_EQUIPMENT.map((eq, i) => (
                     <Bar
