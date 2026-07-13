@@ -61,6 +61,19 @@ function round(n, dp = 2) {
   return Math.round(n * f) / f;
 }
 
+// Diesel-only rounding: same 2dp rounding as everything else, but a value
+// that lands exactly on .50 gets bumped up to the next whole number instead
+// of being reported with a half-litre fraction.
+function roundDiesel(n, dp = 2) {
+  const r = round(n, dp);
+  if (r == null || !Number.isFinite(r)) return r;
+  const cents = Math.round(r * 100);
+  if (Math.abs(cents % 100) === 50) {
+    return round(r + 0.5, dp);
+  }
+  return r;
+}
+
 // Core: turn raw daily readings into per-day derived rows.
 // `readings` may be in any order; returns rows sorted ascending by date.
 export function computeRows(readings, settings, calibration) {
@@ -119,11 +132,11 @@ export function computeRows(readings, settings, calibration) {
       id: r.id,
       date: toDateStr(r.date),
       raw: r,
-      dieselConsumption: round(dieselConsumption),
+      dieselConsumption: roundDiesel(dieselConsumption),
       dieselReceived: r.dieselReceivedLitres ?? null,
-      closingLitres: round(closingLitres),
-      serviceTankLitres: round(serviceTankLitres),
-      totalStockLitres: round(totalStockLitres),
+      closingLitres: roundDiesel(closingLitres),
+      serviceTankLitres: roundDiesel(serviceTankLitres),
+      totalStockLitres: roundDiesel(totalStockLitres),
       nepaConsumption: round(nepaConsumption),
       ebMilling: round(ebMilling),
       ebUtility: round(ebUtility),
@@ -146,10 +159,10 @@ export function shiftRowsToPriorDay(rows) {
   return out;
 }
 
-function sum(arr) {
+function sum(arr, roundFn = round) {
   const vals = arr.filter((v) => v != null && Number.isFinite(v));
   if (vals.length === 0) return 0;
-  return round(vals.reduce((a, b) => a + b, 0));
+  return roundFn(vals.reduce((a, b) => a + b, 0));
 }
 
 // Build dashboard payload (KPIs, chart series, service alerts) from rows.
@@ -157,8 +170,8 @@ export function buildSummary(rows, settings) {
   const svc = settingsToMap(settings);
 
   const totals = {
-    dieselConsumed: sum(rows.map((r) => r.dieselConsumption)),
-    dieselReceived: sum(rows.map((r) => r.dieselReceived)),
+    dieselConsumed: sum(rows.map((r) => r.dieselConsumption), roundDiesel),
+    dieselReceived: sum(rows.map((r) => r.dieselReceived), roundDiesel),
     nepaKwh: sum(rows.map((r) => r.nepaConsumption)),
     ebMilling: sum(rows.map((r) => r.ebMilling)),
     ebUtility: sum(rows.map((r) => r.ebUtility)),
