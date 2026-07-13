@@ -23,7 +23,7 @@ const ACCENT_CLASS = {
 function ColumnHeader({ colKey, label, align = "right", sticky, selectedColumns, toggleColumn }) {
   return (
     <th
-      className={`px-2 py-2 text-center align-bottom ${sticky ? "sticky left-0 bg-slate-50" : ""}`}
+      className={`px-2 py-2 text-center align-top ${sticky ? "sticky left-0 bg-slate-50" : ""}`}
     >
       <label className="flex flex-col items-center gap-1 cursor-pointer">
         <input
