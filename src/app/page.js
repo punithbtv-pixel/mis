@@ -28,6 +28,9 @@ const EQ_COLORS = [
   "#8b5cf6",
 ];
 
+// Card `color` theme per equipment, in lockstep with EQ_COLORS above.
+const EQ_CARD_THEMES = ["sky", "indigo", "teal", "amber", "rose", "violet"];
+
 const CARD_THEMES = {
   amber: { bar: "bg-amber-300", value: "text-amber-600" },
   orange: { bar: "bg-orange-300", value: "text-orange-600" },
@@ -160,6 +163,29 @@ function StockGauge({ value, max = STOCK_GAUGE_MAX }) {
       </g>
       <circle cx={cx} cy={cy} r={6} fill="url(#stock-gauge-hub)" filter="url(#stock-gauge-shadow)" />
       <circle cx={cx - 1.6} cy={cy - 1.8} r={1.6} fill="#f8fafc" fillOpacity="0.9" />
+    </svg>
+  );
+}
+
+// Generic "hours run" glyph shared by the equipment KPI cards below — there's
+// no dedicated per-machine art in /icons, so color + label do the differentiating.
+function StopwatchIcon({ className }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="12" cy="13" r="8" />
+      <path d="M12 13 L12 8.5" />
+      <path d="M12 13 L15 15" />
+      <path d="M9 2 h6" />
+      <path d="M12 2 v2.5" />
+      <path d="M19 5 l1.5 -1.5" />
     </svg>
   );
 }
@@ -410,12 +436,14 @@ export default function DashboardPage() {
                     a.remaining != null && scaleMax != null && scaleMax > scaleMin
                       ? Math.max(0, Math.min(100, ((a.remaining - scaleMin) / (scaleMax - scaleMin)) * 100))
                       : 0;
+                  const days = a.category === "comp" && a.remaining != null ? a.remaining / 24 : null;
                   return (
                     <div key={a.field}>
                       <div className="flex justify-between text-xs mb-1">
                         <span className="font-medium text-slate-700">{a.label}</span>
                         <span className={a.due ? "text-red-600 font-semibold" : "text-slate-500"}>
                           {fmt(a.remaining)} hrs
+                          {days != null && <span className="text-slate-400"> · ≈ {fmt(days, 1)} days</span>}
                         </span>
                       </div>
                       <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
@@ -433,15 +461,19 @@ export default function DashboardPage() {
 
           <Panel title="Total Run Hours This Month">
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-              {RUN_HOUR_EQUIPMENT.map((eq) => (
-                <div key={eq.field} className="rounded-lg bg-slate-50 p-3">
-                  <div className="text-xs text-slate-500">{eq.label}</div>
-                  <div className="text-lg font-semibold text-slate-800">
-                    {fmt(data.runHoursTotal[eq.field], 1)}
-                    <span className="text-xs font-normal text-slate-400 ml-1">hrs</span>
-                  </div>
-                </div>
-              ))}
+              {RUN_HOUR_EQUIPMENT.map((eq, i) => {
+                const theme = EQ_CARD_THEMES[i % EQ_CARD_THEMES.length];
+                return (
+                  <Card
+                    key={eq.field}
+                    label={eq.label}
+                    value={fmt(data.runHoursTotal[eq.field], 1)}
+                    unit="hrs"
+                    color={theme}
+                    logo={<StopwatchIcon className={`h-11 w-11 ${CARD_THEMES[theme].value} opacity-70`} />}
+                  />
+                );
+              })}
             </div>
           </Panel>
         </>

@@ -199,6 +199,7 @@ export function buildSummary(rows, settings) {
     alerts.push({
       field: eq.field,
       label: eq.label,
+      category: eq.category,
       remaining: latest,
       asOf: latestDate,
       target: svc[eq.serviceKey] ?? null,
