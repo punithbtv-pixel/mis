@@ -59,6 +59,111 @@ function trendTooltipLabel(_label, payload) {
   return date ? fullDateLabel(date) : _label;
 }
 
+const STOCK_GAUGE_MAX = 45000;
+const STOCK_GAUGE_BANDS = [
+  { from: 0, to: 0.15, base: "#dc2626", light: "#f87171" },
+  { from: 0.15, to: 0.35, base: "#ea580c", light: "#fb923c" },
+  { from: 0.35, to: 0.6, base: "#ca8a04", light: "#fde047" },
+  { from: 0.6, to: 1, base: "#16a34a", light: "#4ade80" },
+];
+
+// 3D-style fuel gauge (E..F) for the Current Total Stock card. The needle
+// rotates to `value` on a 0..max scale, clamping at F if value exceeds max.
+function StockGauge({ value, max = STOCK_GAUGE_MAX }) {
+  const ratio = Math.max(0, Math.min(1, (value ?? 0) / max));
+  const angle = ratio * 180 - 90;
+  const cx = 64;
+  const cy = 62;
+  const r = 44;
+  const bandWidth = 11;
+  const bezelR = r + bandWidth / 2 + 5;
+
+  function pt(fraction, radius) {
+    const a = (fraction * 180 * Math.PI) / 180;
+    return [cx - radius * Math.cos(a), cy - radius * Math.sin(a)];
+  }
+
+  const [bx0, by0] = pt(0, bezelR);
+  const [bx1, by1] = pt(1, bezelR);
+
+  return (
+    <svg width="90" height="56" viewBox="0 0 128 80">
+      <defs>
+        {STOCK_GAUGE_BANDS.map((b, i) => (
+          <linearGradient key={i} id={`stock-gauge-band${i}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={b.light} />
+            <stop offset="55%" stopColor={b.base} />
+            <stop offset="100%" stopColor={b.base} stopOpacity="0.75" />
+          </linearGradient>
+        ))}
+        <radialGradient id="stock-gauge-bezel" cx="35%" cy="30%" r="75%">
+          <stop offset="0%" stopColor="#f8fafc" />
+          <stop offset="55%" stopColor="#cbd5e1" />
+          <stop offset="100%" stopColor="#64748b" />
+        </radialGradient>
+        <radialGradient id="stock-gauge-face" cx="50%" cy="35%" r="70%">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="100%" stopColor="#e2e8f0" />
+        </radialGradient>
+        <radialGradient id="stock-gauge-hub" cx="35%" cy="30%" r="70%">
+          <stop offset="0%" stopColor="#f1f5f9" />
+          <stop offset="45%" stopColor="#94a3b8" />
+          <stop offset="100%" stopColor="#334155" />
+        </radialGradient>
+        <linearGradient id="stock-gauge-needle" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#fca5a5" />
+          <stop offset="55%" stopColor="#dc2626" />
+          <stop offset="100%" stopColor="#7f1d1d" />
+        </linearGradient>
+        <filter id="stock-gauge-shadow" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="1.4" stdDeviation="1.3" floodColor="#0f172a" floodOpacity="0.35" />
+        </filter>
+      </defs>
+
+      <path
+        d={`M ${bx0} ${by0} A ${bezelR} ${bezelR} 0 0 1 ${bx1} ${by1} L ${cx} ${cy} Z`}
+        fill="url(#stock-gauge-bezel)"
+        filter="url(#stock-gauge-shadow)"
+      />
+      <circle cx={cx} cy={cy} r={r - bandWidth / 2 - 1} fill="url(#stock-gauge-face)" />
+
+      {STOCK_GAUGE_BANDS.map((b, i) => {
+        const [x0, y0] = pt(b.from, r);
+        const [x1, y1] = pt(b.to, r);
+        const large = b.to - b.from > 0.5 ? 1 : 0;
+        return (
+          <path
+            key={i}
+            d={`M ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1}`}
+            stroke={`url(#stock-gauge-band${i})`}
+            strokeWidth={bandWidth}
+            fill="none"
+          />
+        );
+      })}
+      {[0, 0.15, 0.35, 0.6, 1].map((f, i) => {
+        const [ix, iy] = pt(f, r - bandWidth / 2 - 0.5);
+        const [ox, oy] = pt(f, r + bandWidth / 2 + 0.5);
+        return <line key={i} x1={ix} y1={iy} x2={ox} y2={oy} stroke="#ffffff" strokeWidth="1.4" />;
+      })}
+
+      <text x={cx - r - bandWidth / 2 - 2} y={cy + 15} fontSize="13" fontWeight="800" fill="#dc2626" textAnchor="middle" fontFamily="Georgia, serif">
+        E
+      </text>
+      <text x={cx + r + bandWidth / 2 + 2} y={cy + 15} fontSize="13" fontWeight="800" fill="#16a34a" textAnchor="middle" fontFamily="Georgia, serif">
+        F
+      </text>
+
+      <g filter="url(#stock-gauge-shadow)" transform={`rotate(${angle} ${cx} ${cy})`}>
+        <path d={`M ${cx - 2} ${cy} L ${cx} ${cy - r + 8} L ${cx + 2} ${cy} Z`} fill="url(#stock-gauge-needle)" />
+        <line x1={cx} y1={cy} x2={cx} y2={cy - r + 9} stroke="#fecaca" strokeWidth="0.6" strokeOpacity="0.8" />
+      </g>
+      <circle cx={cx} cy={cy} r={6} fill="url(#stock-gauge-hub)" filter="url(#stock-gauge-shadow)" />
+      <circle cx={cx - 1.6} cy={cy - 1.8} r={1.6} fill="#f8fafc" fillOpacity="0.9" />
+    </svg>
+  );
+}
+
 function Card({ label, value, unit, color = "sky", logo }) {
   const theme = CARD_THEMES[color] ?? CARD_THEMES.sky;
   return (
@@ -194,18 +299,7 @@ export default function DashboardPage() {
               value={fmt(data.latestTotalStock)}
               unit="Liters"
               color="emerald"
-              logo={
-                <div className="flex items-center gap-1.5">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/icons/main-tank.png" alt="" className={`h-[67px] w-[67px] ${LOGO_CLASS}`} />
-                  <div className="flex items-center">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/icons/service-tank.png" alt="" className={`h-[30px] w-[30px] ${LOGO_CLASS}`} />
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/icons/service-tank.png" alt="" className={`-ml-3 h-[30px] w-[30px] ${LOGO_CLASS}`} />
-                  </div>
-                </div>
-              }
+              logo={<StockGauge value={data.latestTotalStock} />}
             />
             <Card
               label={<>NEPA Power<br />Consumption</>}
