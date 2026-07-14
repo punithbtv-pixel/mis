@@ -190,8 +190,29 @@ function StopwatchIcon({ className }) {
   );
 }
 
-function Card({ label, value, unit, color = "sky", logo }) {
+function Card({ label, value, unit, color = "sky", logo, compact = false }) {
   const theme = CARD_THEMES[color] ?? CARD_THEMES.sky;
+
+  if (compact) {
+    return (
+      <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow">
+        <div className={`absolute inset-x-0 top-0 h-1 z-10 ${theme.bar}`} />
+        <div className="flex items-center gap-3 px-3 py-3.5">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center">{logo}</div>
+          <div className="min-w-0">
+            <div className="mb-0.5 truncate text-[11px] font-semibold uppercase leading-[1.3] tracking-wide text-slate-500">
+              {label}
+            </div>
+            <div className="flex items-baseline gap-1">
+              <span className={`text-[19px] font-bold leading-none ${theme.value}`}>{value}</span>
+              {unit && <span className="text-[12px] font-medium text-slate-400">{unit}</span>}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative aspect-square overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow">
       <div className={`absolute inset-x-0 top-0 h-1 z-10 ${theme.bar}`} />
@@ -470,7 +491,8 @@ export default function DashboardPage() {
                     value={fmt(data.runHoursTotal[eq.field], 1)}
                     unit="hrs"
                     color={theme}
-                    logo={<StopwatchIcon className={`h-11 w-11 ${CARD_THEMES[theme].value} opacity-70`} />}
+                    compact
+                    logo={<StopwatchIcon className={`h-7 w-7 ${CARD_THEMES[theme].value} opacity-70`} />}
                   />
                 );
               })}
