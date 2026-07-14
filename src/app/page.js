@@ -436,14 +436,14 @@ export default function DashboardPage() {
                     a.remaining != null && scaleMax != null && scaleMax > scaleMin
                       ? Math.max(0, Math.min(100, ((a.remaining - scaleMin) / (scaleMax - scaleMin)) * 100))
                       : 0;
-                  const days = a.category === "comp" && a.remaining != null ? a.remaining / 24 : null;
+                  const days = a.remaining != null ? a.remaining / 24 : null;
                   return (
                     <div key={a.field}>
                       <div className="flex justify-between text-xs mb-1">
                         <span className="font-medium text-slate-700">{a.label}</span>
                         <span className={a.due ? "text-red-600 font-semibold" : "text-slate-500"}>
                           {fmt(a.remaining)} hrs
-                          {days != null && <span className="text-slate-400"> · ≈ {fmt(days, 1)} days</span>}
+                          {days != null && <span> = {fmt(days, 1)} days</span>}
                         </span>
                       </div>
                       <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
