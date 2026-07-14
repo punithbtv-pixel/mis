@@ -170,6 +170,12 @@ export default function DataPage() {
               </option>
             ))}
           </select>
+          <Link
+            href="/diesel-log"
+            className="h-9 inline-flex items-center rounded-lg border border-sky-300 bg-sky-50 px-3 text-sm font-medium text-sky-700 hover:bg-sky-100"
+          >
+            Diesel Issued
+          </Link>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <MonthPicker month={month} onChange={onMonthChange} />

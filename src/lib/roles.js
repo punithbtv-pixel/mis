@@ -9,6 +9,7 @@ export const PAGE_ACCESS = {
   "/": [ROLES.ADMIN, ROLES.OPERATOR, ROLES.ZYN],
   "/entry": [ROLES.ADMIN, ROLES.OPERATOR],
   "/data": [ROLES.ADMIN, ROLES.OPERATOR, ROLES.ZYN],
+  "/diesel-log": [ROLES.ADMIN, ROLES.OPERATOR, ROLES.ZYN],
   "/log-entry": [ROLES.ADMIN, ROLES.OPERATOR],
   "/log-data": [ROLES.ADMIN, ROLES.OPERATOR, ROLES.ZYN],
   "/settings": [ROLES.ADMIN],
