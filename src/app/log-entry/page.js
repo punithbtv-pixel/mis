@@ -6,7 +6,9 @@ import {
   PLANTS,
   MAINTENANCE_TYPES,
   sectionsForPlant,
+  categoriesForSection,
   equipmentForSection,
+  categoryForEquipment,
   durationMinutes,
   formatDuration,
 } from "@/lib/maintenanceLog";
@@ -38,11 +40,13 @@ const TYPE_STYLES = {
 function emptyForm() {
   const plant = PLANTS[0];
   const section = sectionsForPlant(plant)[0] ?? "";
-  const equipment = equipmentForSection(plant, section)[0] ?? "";
+  const category = categoriesForSection(plant, section)?.[0] ?? null;
+  const equipment = equipmentForSection(plant, section, category)[0] ?? "";
   return {
     date: todayStr(),
     plant,
     section,
+    category,
     equipment,
     startTime: "09:00",
     endTime: "10:00",
@@ -101,6 +105,7 @@ function LogEntryForm() {
           date: d.log.date,
           plant: d.log.plant,
           section: d.log.section,
+          category: categoryForEquipment(d.log.plant, d.log.section, d.log.equipment),
           equipment: d.log.equipment,
           startTime: d.log.startTime,
           endTime: d.log.endTime,
@@ -117,9 +122,13 @@ function LogEntryForm() {
   }, [editId, checkedAccess]);
 
   const sections = useMemo(() => sectionsForPlant(form.plant), [form.plant]);
-  const equipmentOptions = useMemo(
-    () => equipmentForSection(form.plant, form.section),
+  const categories = useMemo(
+    () => categoriesForSection(form.plant, form.section),
     [form.plant, form.section]
+  );
+  const equipmentOptions = useMemo(
+    () => equipmentForSection(form.plant, form.section, form.category),
+    [form.plant, form.section, form.category]
   );
   const duration = useMemo(
     () => formatDuration(durationMinutes(form.startTime, form.endTime)),
@@ -132,13 +141,20 @@ function LogEntryForm() {
 
   function onPlantChange(plant) {
     const section = sectionsForPlant(plant)[0] ?? "";
-    const equipment = equipmentForSection(plant, section)[0] ?? "";
-    setForm((f) => ({ ...f, plant, section, equipment }));
+    const category = categoriesForSection(plant, section)?.[0] ?? null;
+    const equipment = equipmentForSection(plant, section, category)[0] ?? "";
+    setForm((f) => ({ ...f, plant, section, category, equipment }));
   }
 
   function onSectionChange(section) {
-    const equipment = equipmentForSection(form.plant, section)[0] ?? "";
-    setForm((f) => ({ ...f, section, equipment }));
+    const category = categoriesForSection(form.plant, section)?.[0] ?? null;
+    const equipment = equipmentForSection(form.plant, section, category)[0] ?? "";
+    setForm((f) => ({ ...f, section, category, equipment }));
+  }
+
+  function onCategoryChange(category) {
+    const equipment = equipmentForSection(form.plant, form.section, category)[0] ?? "";
+    setForm((f) => ({ ...f, category, equipment }));
   }
 
   function addPart() {
@@ -246,17 +262,33 @@ function LogEntryForm() {
               </select>
             </div>
           </div>
-          <div className="mt-4">
-            <label className="block text-xs font-medium text-slate-600 mb-1">Equipment / Location</label>
-            <select
-              value={form.equipment}
-              onChange={(e) => set("equipment", e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
-            >
-              {equipmentOptions.map((eq) => (
-                <option key={eq} value={eq}>{eq}</option>
-              ))}
-            </select>
+          <div className={`mt-4 grid grid-cols-1 gap-4 ${categories ? "md:grid-cols-3" : ""}`}>
+            {categories && (
+              <div>
+                <label className="block text-xs font-medium text-slate-600 mb-1">Category</label>
+                <select
+                  value={form.category ?? ""}
+                  onChange={(e) => onCategoryChange(e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                >
+                  {categories.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+            <div className={categories ? "md:col-span-2" : ""}>
+              <label className="block text-xs font-medium text-slate-600 mb-1">Equipment / Location</label>
+              <select
+                value={form.equipment}
+                onChange={(e) => set("equipment", e.target.value)}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+              >
+                {equipmentOptions.map((eq) => (
+                  <option key={eq} value={eq}>{eq}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
