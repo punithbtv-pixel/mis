@@ -18,6 +18,10 @@ function todayStr() {
   return new Date().toISOString().slice(0, 10);
 }
 
+function isDateStr(s) {
+  return typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s);
+}
+
 const TYPE_STYLES = {
   PREVENTIVE: {
     sel: "border-emerald-500 bg-emerald-50 text-emerald-700",
@@ -61,10 +65,11 @@ function LogEntryForm() {
   const router = useRouter();
   const search = useSearchParams();
   const editId = search.get("id");
+  const initialDate = isDateStr(search.get("date")) ? search.get("date") : todayStr();
 
   const [role, setRole] = useState(null);
   const [checkedAccess, setCheckedAccess] = useState(false);
-  const [form, setForm] = useState(emptyForm());
+  const [form, setForm] = useState(() => ({ ...emptyForm(), date: initialDate }));
   const [partInput, setPartInput] = useState("");
   const [loading, setLoading] = useState(!!editId);
   const [status, setStatus] = useState("");
@@ -210,7 +215,7 @@ function LogEntryForm() {
   if (!checkedAccess || loading) {
     return (
       <div className="space-y-5 max-w-4xl">
-        <EntryTabs />
+        <EntryTabs date={form.date} />
         <p className="text-slate-500">Loading…</p>
       </div>
     );

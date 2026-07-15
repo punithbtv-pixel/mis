@@ -109,7 +109,7 @@ function EntryForm() {
 
   return (
     <div className="space-y-5 max-w-4xl">
-      <EntryTabs />
+      <EntryTabs date={date} />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl font-semibold text-slate-900">Daily Entry</h1>
         <div className="flex items-center gap-2">
