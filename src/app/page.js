@@ -53,7 +53,7 @@ const TREND_COLORS = {
   utility: "#3b82f6",
 };
 
-const LOGO_CLASS = "object-contain opacity-[0.55]";
+const LOGO_CLASS = "object-contain drop-shadow-[0_3px_4px_rgba(0,0,0,0.35)]";
 
 // Trend chart tooltips show the full date, while the axis itself just shows
 // the day-of-month (via dayLabel) to keep tick labels compact.

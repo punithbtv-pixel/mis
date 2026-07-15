@@ -29,7 +29,8 @@ export const PLANT_TREE = {
         "MTRA Classifier MTRA100/200 DL B", "DRWA'B' / DRWA Ultrawhite", "SF-2 / Screw Conveyor",
         "E9 / Bucket Elevator", "DRWA'C' / DRWA Ultrawhite", "SF-3 / Screw Conveyor", "E10 / Bucket Elevator",
         "DRWA'D' / DRWA Ultrawhite", "E11 / Bucket Elevator", "MVSE-150G / MVSE Aspiration",
-        "MTRA Classifier MTRA100/200", "E12 / Bucket Elevator", "Airlock- MPS (FAN-9)", "FAN-9",
+        "MTRA Classifier MTRA100/200", "E12 / Bucket Elevator", "Airlock- MPSN (FAN-8)", "FAN-8",
+        "Airlock- MPS (FAN-9)", "FAN-9",
         "DRPG 'A' / DRPG Main", "DRPG 'A' / DRPG Water pump", "E13 / Bucket Elevator",
         "Airlock- MPSN (FAN-5)", "FAN-5", "DRPG 'B' / DRPG Main", "DRPG 'B' / DRPG Water pump",
         "E14 / Bucket Elevator", "DRPG 'C' / DRPG Main", "E15 / Bucket Elevator",
@@ -47,10 +48,10 @@ export const PLANT_TREE = {
         "BC4 / Belt Conveyor", "BC6 / Belt Conveyor", "SC9 / Screw Conveyor", "BC5 / Belt Conveyor",
         "E32 / Bucket Elevator", "E33 / Bucket Elevator", "BC7 / Belt Conveyor", "BC8 / Belt Conveyor",
         "Airlock- MPS (FAN-10)", "FAN-10", "E34 / Bucket Elevator", "SC-14 / Conveyor",
-        "BRAN Tip Separator A", "BRAN Tip Separator B",
+        "BRAN Tip Separator A", "BRAN Tip Separator B", "Bran Shifter -1", "Bran Shifter -2",
       ],
       "Sorting Section": ["Sortex-R500", "Sortex-Spark Pro 10_A", "Sortex-SPARK PRO-7_A", "Sortex-Spark Pro 10_B", "Sortex-SPARK PRO-7_B"],
-      "Bagging Section": ["Packing Machine-1", "Packing Machine-2", "Packing Machine-3", "Packing Machine-4"],
+      "Bagging Section": ["Packing Machine-1", "Packing Machine-2", "Packing Machine-3", "Packing Machine-4", "Wood Conveyor"],
       "Silo / Bin Section": [
         "Silo -1", "Bin-1", "Bin-2", "Bin-3", "Bin-4", "Bin-5", "Bin-6", "Bin-7", "Bin-8", "Bin-9", "Bin-10",
         "Bin-11", "Bin-12", "Bin-13", "Broken Rice Bin-14", "Head Rice Bin-15", "Primary Bin-16", "Primary Bin-17",
@@ -73,6 +74,9 @@ export const PLANT_TREE = {
       ],
       "Socking Section": [
         "Electrical Panel", "SILO ELEVATOR-3", "BELT CONVEYOR -2", "BIN ELEVATOR-4", "CHAIN CONVEYOR-1",
+        "HOT WATER TANK -1", "HOT WATER TANK -2", "HOT WATER TANK -3",
+        "MANUAL FEEDING PUMP-1", "MANUAL FEEDING PUMP-2", "MANUAL FEEDING PUMP-3", "MANUAL FEEDING PUMP-4",
+        "MANUAL FEEDING PUMP-5", "MANUAL FEEDING PUMP-6",
         "DRYER CLEANING HP PUMP-7", "HOT WATER TANK FEEDING PUMP-8", "HOT WATER TANK FEEDING PUMP-9",
         "HOT WATER TANK FEEDING PUMP-10", "HOT WATER TANK FEEDING PUMP-11", "BELT CONVEYOR-3",
         "POST STEAMING ELEVATOR-5", "ONC AIRLOCK-1", "ONC AIRLOCK-2",
@@ -103,7 +107,8 @@ export const PLANT_TREE = {
       "WTP Section": [
         "Electrical Panel", "Salt Mixer", "Softner Pump - 1", "Softner Pump - 2", "Raw Water Tank Pump - 1",
         "Raw Water Tank Pump - 2", "Hot Water Tank Pump -1", "Hot Water Tank Pump -2", "Hot Water Tank Pump -3",
-        "Softner Tank Pump - 1",
+        "Softner Tank Pump - 1", "New Softner transfer pump -1", "New Softner transfer pump -2",
+        "New Softner transfer pump -3", "Fire Hydrent Pump",
       ],
     },
   },
@@ -122,23 +127,29 @@ export const PLANT_TREE = {
     },
   },
   Powerhouse: {
-    sections: ["Powerhouse Section"],
+    sections: ["Utility Section", "Powerhouse Section"],
     items: {
+      "Utility Section": ["General", "Electric supply", "Water", "Compressor Air"],
       "Powerhouse Section": [
-        "Electrical Panel", "AIR Compressor E75 - 1", "AIR Compressor E75 - 2", "AIR Compressor E75 - 3",
-        "AIR Compressor E55 - 1", "Air Dryer - 1", "Air Dryer - 2", "Air Dryer - 3", "Milling DG",
-        "Parboiling DG", "Admin DG", "33/11KV Transformer", "11/0.415 KV Transformer", "NEPA Gride",
+        "Electrical Panel", "PCC Panels", "PDB Panels", "RMU", "HT Meetring", "AIR Compressor E75 - 1",
+        "AIR Compressor E75 - 2", "AIR Compressor E75 - 3", "AIR Compressor E55 - 1", "Air Dryer - 1",
+        "Air Dryer - 2", "Air Dryer - 3", "Milling DG", "Parboiling DG", "Admin DG", "33/11KV Transformer",
+        "11/0.415 KV Transformer", "NEPA GOS", "Milling Stabilizer", "Parboiling Stabilizer",
         "Diesel Storage",
       ],
     },
   },
   Admin: {
-    sections: ["Utility Section", "Admin Section"],
+    sections: ["Utility Section", "Admin Section", "Admin Building"],
     items: {
       "Utility Section": ["General", "Electric supply", "Water"],
       "Admin Section": [
         "Admin/Residency", "HR Office", "Technical store", "Masque", "REKA Storage", "Security gate - 1",
         "Security gate - 2", "Canteen", "WeighBridge", "Staff Rest Room",
+      ],
+      "Admin Building": [
+        "Reseption", "First Aid", "GM Office", "IT Office", "MD Office", "ChairMan Office", "Account Office",
+        "Conference Room", "1st Floor Residency", "2nd Floor Residency",
       ],
     },
   },
