@@ -46,7 +46,7 @@ export async function GET(request) {
 
 // POST /api/maintenance-logs -> create a new maintenance log entry.
 export async function POST(request) {
-  const auth = await requireSession(ROLES.ADMIN, ROLES.OPERATOR);
+  const auth = await requireSession(ROLES.ADMIN, ROLES.ENGINEER);
   if (auth.error) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }

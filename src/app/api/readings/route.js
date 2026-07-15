@@ -51,7 +51,7 @@ export async function GET(request) {
 
 // POST /api/readings  -> upsert a single day's reading.
 export async function POST(request) {
-  const auth = await requireSession(ROLES.ADMIN, ROLES.OPERATOR);
+  const auth = await requireSession(ROLES.ADMIN, ROLES.ENGINEER);
   if (auth.error) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }

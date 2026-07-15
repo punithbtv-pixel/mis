@@ -1,17 +1,17 @@
 export const ROLES = {
   ADMIN: "ADMIN",
-  OPERATOR: "OPERATOR",
+  ENGINEER: "ENGINEER",
   ZYN: "ZYN",
 };
 
 // Pages each role may visit.
 export const PAGE_ACCESS = {
-  "/": [ROLES.ADMIN, ROLES.OPERATOR, ROLES.ZYN],
-  "/entry": [ROLES.ADMIN, ROLES.OPERATOR],
-  "/data": [ROLES.ADMIN, ROLES.OPERATOR, ROLES.ZYN],
-  "/diesel-log": [ROLES.ADMIN, ROLES.OPERATOR, ROLES.ZYN],
-  "/log-entry": [ROLES.ADMIN, ROLES.OPERATOR],
-  "/log-data": [ROLES.ADMIN, ROLES.OPERATOR, ROLES.ZYN],
+  "/": [ROLES.ADMIN, ROLES.ENGINEER, ROLES.ZYN],
+  "/entry": [ROLES.ADMIN, ROLES.ENGINEER],
+  "/data": [ROLES.ADMIN, ROLES.ENGINEER, ROLES.ZYN],
+  "/diesel-log": [ROLES.ADMIN, ROLES.ENGINEER, ROLES.ZYN],
+  "/log-entry": [ROLES.ADMIN, ROLES.ENGINEER],
+  "/log-data": [ROLES.ADMIN, ROLES.ENGINEER, ROLES.ZYN],
   "/settings": [ROLES.ADMIN],
 };
 
@@ -27,17 +27,17 @@ export function canAccessPage(role, pathname) {
 }
 
 export function canWriteEntry(role) {
-  return role === ROLES.ADMIN || role === ROLES.OPERATOR;
+  return role === ROLES.ADMIN || role === ROLES.ENGINEER;
 }
 
 export function canWriteSettings(role) {
   return role === ROLES.ADMIN;
 }
 
-// Admin and Operator can log new maintenance activity; only Admin may edit
+// Admin and Engineer can log new maintenance activity; only Admin may edit
 // an entry once it has been saved.
 export function canCreateMaintenanceLog(role) {
-  return role === ROLES.ADMIN || role === ROLES.OPERATOR;
+  return role === ROLES.ADMIN || role === ROLES.ENGINEER;
 }
 
 export function canEditMaintenanceLog(role) {
@@ -46,7 +46,7 @@ export function canEditMaintenanceLog(role) {
 
 export function roleLabel(role) {
   if (role === ROLES.ADMIN) return "Admin";
-  if (role === ROLES.OPERATOR) return "Operator";
+  if (role === ROLES.ENGINEER) return "Engineer";
   if (role === ROLES.ZYN) return "ZYN";
   return role ?? "";
 }

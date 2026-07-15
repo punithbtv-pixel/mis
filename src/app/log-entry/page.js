@@ -80,7 +80,7 @@ function LogEntryForm() {
       .then((d) => {
         const r = d.user?.role;
         setRole(r);
-        const canCreate = r === "ADMIN" || r === "OPERATOR";
+        const canCreate = r === "ADMIN" || r === "ENGINEER";
         const canEdit = r === "ADMIN";
         if (!canCreate || (editId && !canEdit)) {
           router.replace("/log-data");

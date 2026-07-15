@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ROLES, roleLabel } from "@/lib/roles";
 
 function emptyNewUser() {
-  return { username: "", password: "", role: ROLES.OPERATOR };
+  return { username: "", password: "", role: ROLES.ENGINEER };
 }
 
 export default function UserManager() {

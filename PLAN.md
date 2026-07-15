@@ -1,7 +1,7 @@
 # PowerHouse MIS Webapp
 
 ## What we're building
-A web app that replaces `Jun_2026.xlsx` for ZYN Electrical's power house. Operators enter **daily meter readings** (the `PowerHouse Data` sheet), and the app derives all consumption, run-hours and service-due numbers (the `Summary`, `Compressor`, `Diesel`, `EB`, `Flowmeter` sheets) and shows them on a dashboard.
+A web app that replaces `Jun_2026.xlsx` for ZYN Electrical's power house. Engineers enter **daily meter readings** (the `PowerHouse Data` sheet), and the app derives all consumption, run-hours and service-due numbers (the `Summary`, `Compressor`, `Diesel`, `EB`, `Flowmeter` sheets) and shows them on a dashboard.
 
 ## Stack (free, Vercel-ready)
 - **Next.js (App Router) + TypeScript + React** — one project = React frontend + Node serverless API, deploys to Vercel in one click.

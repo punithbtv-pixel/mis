@@ -67,7 +67,7 @@ export default function DataPage() {
   const allColumnsSelected = selectedColumns.size === SELECTABLE_REPORT_COLUMNS.length;
   const allSelected = allRowsSelected && allColumnsSelected;
 
-  const canAddEntry = user?.role === "ADMIN" || user?.role === "OPERATOR";
+  const canAddEntry = user?.role === "ADMIN" || user?.role === "ENGINEER";
   const canEdit = user?.role === "ADMIN";
 
   function onMonthChange(nextMonth) {

@@ -35,7 +35,7 @@ function EntryForm() {
       .then((r) => r.json())
       .then((d) => {
         const role = d.user?.role;
-        if (role !== "ADMIN" && role !== "OPERATOR") {
+        if (role !== "ADMIN" && role !== "ENGINEER") {
           setForbidden(true);
           router.replace("/");
         }

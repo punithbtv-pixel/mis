@@ -1,7 +1,7 @@
 # PowerHouse MIS
 
 Web app that replaces the monthly Excel MIS (`Jun_2026.xlsx`) for ZYN Electrical's
-power house. Operators record **daily meter readings**; the app derives all
+power house. Engineers record **daily meter readings**; the app derives all
 consumption, run-hours and service-due figures and shows them on a dashboard.
 
 Built with **Next.js (App Router, JavaScript)**, **Prisma + PostgreSQL** (Neon),
@@ -15,10 +15,10 @@ Built with **Next.js (App Router, JavaScript)**, **Prisma + PostgreSQL** (Neon),
   EB power), daily diesel/power charts, per-equipment run-hour charts, and
   **service-due alerts**.
 - **Data** (`/data`) — the month spreadsheet view (raw + computed columns).
-- **Log Entry** (`/log-entry`, Admin/Operator) — record a maintenance activity
+- **Log Entry** (`/log-entry`, Admin/Engineer) — record a maintenance activity
   (plant/section/equipment, start–end time with calculated duration, type of
   maintenance, detail, spare parts used, attended by).
-- **Log Data** (`/log-data`, Admin/Operator/ZYN) — browse and filter logged
+- **Log Data** (`/log-data`, Admin/Engineer/ZYN) — browse and filter logged
   maintenance activities. Only Admin can edit a saved entry.
 - **Settings** (`/settings`) — next-service hour target per equipment.
 - **Login** — single shared password.
