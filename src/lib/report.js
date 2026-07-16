@@ -7,6 +7,7 @@ export const REPORT_COLUMNS = [
   { key: "dieselReceived", header: "Received (L)", width: 12, category: "diesel" },
   { key: "closingLitres", header: "Main Tank Stock (L)", width: 16, category: "diesel" },
   { key: "serviceTankLitres", header: "Service Tank Stock (L)", width: 16, category: "diesel" },
+  { key: "totalStockLitres", header: "Current Total Stock (L)", width: 18, category: "diesel" },
   { key: "dieselDipAfterReceiveMm", header: "Dip After (mm)", width: 14, from: "raw", category: "diesel" },
   { key: "dieselFlowMeterReading", header: "Flow", width: 10, from: "raw", category: "diesel" },
   { key: "dieselIssued", header: "Issued (L)", width: 10, from: "raw", category: "diesel" },
