@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import MonthPicker from "@/components/MonthPicker";
 import { currentMonth } from "@/lib/dates";
@@ -39,22 +39,26 @@ export default function LogDataPage() {
   const cellRefs = useRef(new Map());
   const loading = !hasLoaded;
 
-  const visibleRows = rows.filter((r) => {
-    const q = search.trim().toLowerCase();
-    if (!q) return true;
-    const haystack = [
-      r.plant,
-      r.section,
-      r.equipment,
-      r.detail,
-      ...(r.spareParts ?? []),
-      ...(r.attendedBy ?? []),
-    ]
-      .filter(Boolean)
-      .join(" ")
-      .toLowerCase();
-    return haystack.includes(q);
-  });
+  const visibleRows = useMemo(
+    () =>
+      rows.filter((r) => {
+        const q = search.trim().toLowerCase();
+        if (!q) return true;
+        const haystack = [
+          r.plant,
+          r.section,
+          r.equipment,
+          r.detail,
+          ...(r.spareParts ?? []),
+          ...(r.attendedBy ?? []),
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        return haystack.includes(q);
+      }),
+    [rows, search]
+  );
 
   const canEdit = user?.role === "ADMIN";
   const canCreate = user?.role === "ADMIN" || user?.role === "ENGINEER";
