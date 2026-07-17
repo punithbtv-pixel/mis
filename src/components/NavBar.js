@@ -37,7 +37,7 @@ export default function NavBar() {
   }
 
   return (
-    <header className="bg-slate-900 text-white">
+    <header className="sticky top-0 z-40 bg-slate-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-6">
         <span className="font-semibold tracking-tight whitespace-nowrap">
           ZYN ELECTRICAL <span className="text-sky-400">MIS</span>

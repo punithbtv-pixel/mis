@@ -109,21 +109,23 @@ function EntryForm() {
 
   return (
     <div className="space-y-5 max-w-4xl">
-      <EntryTabs date={date} />
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold text-slate-900">Daily Entry</h1>
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-500">Date</label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => {
-              if (!e.target.value) return;
-              setLoading(true);
-              setDate(e.target.value);
-            }}
-            className="h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm"
-          />
+      <div className="sticky top-14 z-30 space-y-5 bg-background pb-4">
+        <EntryTabs date={date} />
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="text-xl font-semibold text-slate-900">Daily Entry</h1>
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-slate-500">Date</label>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => {
+                if (!e.target.value) return;
+                setLoading(true);
+                setDate(e.target.value);
+              }}
+              className="h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm"
+            />
+          </div>
         </div>
       </div>
 

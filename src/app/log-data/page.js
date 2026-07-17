@@ -99,67 +99,69 @@ export default function LogDataPage() {
 
   return (
     <div className="space-y-5">
-      <DataTabs />
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold text-slate-900">Monthly Data</h1>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <MonthPicker month={month} onChange={onMonthChange} />
-          <button
-            type="button"
-            onClick={() => downloadReport("excel")}
-            disabled={!!exporting || loading}
-            className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
-          >
-            {exporting === "excel" ? "Exporting…" : "Excel"}
-          </button>
-          <button
-            type="button"
-            onClick={() => downloadReport("pdf")}
-            disabled={!!exporting || loading}
-            className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
-          >
-            {exporting === "pdf" ? "Exporting…" : "PDF"}
-          </button>
-          {canCreate && (
-            <Link
-              href="/log-entry"
-              className="h-9 inline-flex items-center rounded-lg bg-slate-900 text-white px-4 text-sm font-medium hover:bg-slate-800"
+      <div className="sticky top-14 z-30 space-y-5 bg-background pb-4">
+        <DataTabs />
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 className="text-xl font-semibold text-slate-900">Monthly Data</h1>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <MonthPicker month={month} onChange={onMonthChange} />
+            <button
+              type="button"
+              onClick={() => downloadReport("excel")}
+              disabled={!!exporting || loading}
+              className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
             >
-              + Log Entry
-            </Link>
-          )}
+              {exporting === "excel" ? "Exporting…" : "Excel"}
+            </button>
+            <button
+              type="button"
+              onClick={() => downloadReport("pdf")}
+              disabled={!!exporting || loading}
+              className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+            >
+              {exporting === "pdf" ? "Exporting…" : "PDF"}
+            </button>
+            {canCreate && (
+              <Link
+                href="/log-entry"
+                className="h-9 inline-flex items-center rounded-lg bg-slate-900 text-white px-4 text-sm font-medium hover:bg-slate-800"
+              >
+                + Log Entry
+              </Link>
+            )}
+          </div>
         </div>
-      </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <button
-          onClick={() => setType("All")}
-          className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${
-            type === "All" ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-600 border-slate-300"
-          }`}
-        >
-          All types
-        </button>
-        {MAINTENANCE_TYPES.map((t) => (
+        <div className="flex flex-wrap items-center gap-2">
           <button
-            key={t.value}
-            onClick={() => setType(t.value)}
+            onClick={() => setType("All")}
             className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${
-              type === t.value ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-600 border-slate-300"
+              type === "All" ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-600 border-slate-300"
             }`}
           >
-            {t.label}
+            All types
           </button>
-        ))}
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search plant, section, equipment, detail, parts, staff…"
-          className="h-9 flex-1 min-w-[220px] max-w-sm rounded-lg border border-slate-300 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
-        />
+          {MAINTENANCE_TYPES.map((t) => (
+            <button
+              key={t.value}
+              onClick={() => setType(t.value)}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${
+                type === t.value ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-600 border-slate-300"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search plant, section, equipment, detail, parts, staff…"
+            className="h-9 flex-1 min-w-[220px] max-w-sm rounded-lg border border-slate-300 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+          />
+        </div>
       </div>
 
       {loading && <p className="text-slate-500">Loading…</p>}
@@ -171,19 +173,19 @@ export default function LogDataPage() {
       )}
 
       {!loading && visibleRows.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-auto max-h-[70vh]">
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wide">
-                <th className="sticky left-0 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Date</th>
-                <th className="px-3 py-2 text-left">Plant / Section / Equipment</th>
-                <th className="px-3 py-2 text-left whitespace-nowrap">Start–End</th>
-                <th className="px-3 py-2 text-left whitespace-nowrap">Duration</th>
-                <th className="px-3 py-2 text-left">Type</th>
-                <th className="px-3 py-2 text-left">Detail</th>
-                <th className="px-3 py-2 text-left">Spare parts</th>
-                <th className="px-3 py-2 text-left">Attended by</th>
-                {canEdit && <th className="px-3 py-2"></th>}
+                <th className="sticky left-0 top-0 z-20 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Date</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left">Plant / Section / Equipment</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Start–End</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Duration</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left">Type</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left">Detail</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left">Spare parts</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left">Attended by</th>
+                {canEdit && <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2"></th>}
               </tr>
             </thead>
             <tbody>

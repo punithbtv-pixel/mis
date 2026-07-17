@@ -53,22 +53,20 @@ export default function DieselLogPage() {
 
   return (
     <div className="space-y-5">
-      <DataTabs />
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold text-slate-900">Diesel Issued</h1>
-        <MonthPicker month={month} onChange={onMonthChange} />
+      <div className="sticky top-14 z-30 space-y-5 bg-background pb-4">
+        <DataTabs />
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-baseline gap-3">
+            <h1 className="text-xl font-semibold text-slate-900">Diesel Issued</h1>
+            {!loading && (
+              <span className="text-xl font-semibold text-amber-600">{fmt(total, 0)} L</span>
+            )}
+          </div>
+          <MonthPicker month={month} onChange={onMonthChange} />
+        </div>
       </div>
 
       {loading && <p className="text-slate-500">Loading…</p>}
-
-      {!loading && (
-        <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 inline-block">
-          <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
-            Total issued
-          </div>
-          <div className="text-xl font-semibold text-amber-600">{fmt(total, 0)} L</div>
-        </div>
-      )}
 
       {!loading && issuances.length === 0 && (
         <div className="bg-white rounded-xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
@@ -77,14 +75,14 @@ export default function DieselLogPage() {
       )}
 
       {!loading && issuances.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-auto max-h-[70vh]">
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wide">
-                <th className="px-3 py-2 text-left">Date</th>
-                <th className="px-3 py-2 text-left">Issued To</th>
-                <th className="px-3 py-2 text-left">Comment</th>
-                <th className="px-3 py-2 text-right">Liters</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left">Date</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left">Issued To</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left">Comment</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-right">Liters</th>
               </tr>
             </thead>
             <tbody>

@@ -223,25 +223,27 @@ function LogEntryForm() {
 
   return (
     <div className="space-y-5 max-w-4xl">
-      <EntryTabs />
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold text-slate-900">
-          {editId ? "Edit Log Entry" : "Daily Log Entry"}
-        </h1>
+      <div className="sticky top-14 z-30 space-y-5 bg-background pb-4">
+        <EntryTabs date={form.date} />
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="text-xl font-semibold text-slate-900">
+            {editId ? "Edit Log Entry" : "Daily Log Entry"}
+          </h1>
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-slate-500">Date</label>
+            <input
+              type="date"
+              value={form.date}
+              onChange={(e) => set("date", e.target.value)}
+              className="h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm"
+            />
+          </div>
+        </div>
       </div>
 
       <form onSubmit={save} className="space-y-4">
         <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">Date</label>
-              <input
-                type="date"
-                value={form.date}
-                onChange={(e) => set("date", e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
-              />
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">Plant</label>
               <select

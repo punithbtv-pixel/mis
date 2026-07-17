@@ -23,7 +23,7 @@ const ACCENT_CLASS = {
 function ColumnHeader({ colKey, label, align = "right", sticky, selectedColumns, toggleColumn }) {
   return (
     <th
-      className={`px-2 py-2 text-center align-top ${sticky ? "sticky left-0 bg-slate-50" : ""}`}
+      className={`px-2 py-2 text-center align-top sticky top-0 bg-slate-50 ${sticky ? "left-0 z-20" : "z-10"}`}
     >
       <label className="flex flex-col items-center gap-1 cursor-pointer">
         <input
@@ -155,61 +155,63 @@ export default function DataPage() {
 
   return (
     <div className="space-y-5">
-      <DataTabs />
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-xl font-semibold text-slate-900">Monthly Data</h1>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"
-          >
-            {DATA_CATEGORIES.map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
-              </option>
-            ))}
-          </select>
-          <Link
-            href="/diesel-log"
-            className="h-9 inline-flex items-center rounded-lg border border-sky-300 bg-sky-50 px-3 text-sm font-medium text-sky-700 hover:bg-sky-100"
-          >
-            Diesel Issued
-          </Link>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <MonthPicker month={month} onChange={onMonthChange} />
-          <button
-            type="button"
-            onClick={toggleAllColumns}
-            className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
-          >
-            {allColumnsSelected ? "Uncheck all columns" : "Check all columns"} ({selectedColumns.size}/{SELECTABLE_REPORT_COLUMNS.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => downloadReport("excel")}
-            disabled={!!exporting || loading || selected.size === 0 || selectedColumns.size === 0}
-            className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
-          >
-            {exporting === "excel" ? "Exporting…" : `Excel${selected.size ? ` (${selected.size})` : ""}`}
-          </button>
-          <button
-            type="button"
-            onClick={() => downloadReport("pdf")}
-            disabled={!!exporting || loading || selected.size === 0 || selectedColumns.size === 0}
-            className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
-          >
-            {exporting === "pdf" ? "Exporting…" : `PDF${selected.size ? ` (${selected.size})` : ""}`}
-          </button>
-          {canAddEntry && (
-            <Link
-              href="/entry"
-              className="h-9 inline-flex items-center rounded-lg bg-slate-900 text-white px-4 text-sm font-medium hover:bg-slate-800"
+      <div className="sticky top-14 z-30 space-y-5 bg-background pb-4">
+        <DataTabs />
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-xl font-semibold text-slate-900">Monthly Data</h1>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500"
             >
-              + Entry
+              {DATA_CATEGORIES.map((c) => (
+                <option key={c.value} value={c.value}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+            <Link
+              href="/diesel-log"
+              className="h-9 inline-flex items-center rounded-lg border border-sky-300 bg-sky-50 px-3 text-sm font-medium text-sky-700 hover:bg-sky-100"
+            >
+              Diesel Issued
             </Link>
-          )}
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <MonthPicker month={month} onChange={onMonthChange} />
+            <button
+              type="button"
+              onClick={toggleAllColumns}
+              className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              {allColumnsSelected ? "Uncheck all columns" : "Check all columns"} ({selectedColumns.size}/{SELECTABLE_REPORT_COLUMNS.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => downloadReport("excel")}
+              disabled={!!exporting || loading || selected.size === 0 || selectedColumns.size === 0}
+              className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+            >
+              {exporting === "excel" ? "Exporting…" : `Excel${selected.size ? ` (${selected.size})` : ""}`}
+            </button>
+            <button
+              type="button"
+              onClick={() => downloadReport("pdf")}
+              disabled={!!exporting || loading || selected.size === 0 || selectedColumns.size === 0}
+              className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+            >
+              {exporting === "pdf" ? "Exporting…" : `PDF${selected.size ? ` (${selected.size})` : ""}`}
+            </button>
+            {canAddEntry && (
+              <Link
+                href="/entry"
+                className="h-9 inline-flex items-center rounded-lg bg-slate-900 text-white px-4 text-sm font-medium hover:bg-slate-800"
+              >
+                + Entry
+              </Link>
+            )}
+          </div>
         </div>
       </div>
 
@@ -222,11 +224,11 @@ export default function DataPage() {
       )}
 
       {!loading && rows.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-auto max-h-[70vh]">
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wide">
-                <th className="px-3 py-2 text-left">
+                <th className="px-3 py-2 text-left sticky top-0 z-10 bg-slate-50">
                   <input
                     type="checkbox"
                     checked={allSelected}
@@ -245,7 +247,7 @@ export default function DataPage() {
                   />
                 ))}
                 <ColumnHeader colKey="remarks" label="Remarks" align="left" selectedColumns={selectedColumns} toggleColumn={toggleColumn} />
-                {canEdit && <th className="px-3 py-2"></th>}
+                {canEdit && <th className="px-3 py-2 sticky top-0 z-10 bg-slate-50"></th>}
               </tr>
             </thead>
             <tbody>

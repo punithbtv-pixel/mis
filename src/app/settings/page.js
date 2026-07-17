@@ -64,30 +64,32 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-5 max-w-2xl">
-      <h1 className="text-xl font-semibold text-slate-900">Settings</h1>
+      <div className="sticky top-14 z-30 space-y-5 bg-background pb-4 pt-1">
+        <h1 className="text-xl font-semibold text-slate-900">Settings</h1>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setShowStaff((v) => !v)}
-          className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
-        >
-          {showStaff ? "Hide staff roster" : "Staff Roster"}
-        </button>
-        <button
-          type="button"
-          onClick={() => setShowThreshold((v) => !v)}
-          className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
-        >
-          {showThreshold ? "Hide service threshold" : "Service Threshold"}
-        </button>
-        <button
-          type="button"
-          onClick={() => setShowUsers((v) => !v)}
-          className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
-        >
-          {showUsers ? "Hide user settings" : "User settings"}
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowStaff((v) => !v)}
+            className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            {showStaff ? "Hide staff roster" : "Staff Roster"}
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowThreshold((v) => !v)}
+            className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            {showThreshold ? "Hide service threshold" : "Service Threshold"}
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowUsers((v) => !v)}
+            className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            {showUsers ? "Hide user settings" : "User settings"}
+          </button>
+        </div>
       </div>
 
       {showStaff && <StaffManager />}
