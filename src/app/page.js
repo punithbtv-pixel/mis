@@ -464,7 +464,7 @@ export default function DashboardPage() {
                         <span className="font-medium text-slate-700">{a.label}</span>
                         <span className={a.due ? "text-red-600 font-semibold" : "text-slate-500"}>
                           {fmt(a.remaining)} hrs
-                          {days != null && <span> = {fmt(days, 1)} days</span>}
+                          {days != null && <span> = {fmt(days, 0)} days</span>}
                         </span>
                       </div>
                       <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
