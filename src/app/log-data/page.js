@@ -98,8 +98,8 @@ export default function LogDataPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <div className="sticky top-14 z-30 space-y-5 bg-background pb-4">
+    <div className="flex flex-col h-[calc(100vh-6.5rem)]">
+      <div className="shrink-0 space-y-5 pb-4">
         <DataTabs />
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -173,7 +173,7 @@ export default function LogDataPage() {
       )}
 
       {!loading && visibleRows.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-auto max-h-[70vh]">
+        <div className="flex-1 min-h-0 bg-white rounded-xl border border-slate-200 shadow-sm overflow-auto">
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wide">

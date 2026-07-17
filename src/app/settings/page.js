@@ -63,8 +63,8 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-5 max-w-2xl">
-      <div className="sticky top-14 z-30 space-y-5 bg-background pb-4 pt-1">
+    <div className="flex flex-col h-[calc(100vh-6.5rem)] max-w-2xl">
+      <div className="shrink-0 space-y-5 pb-4 pt-1">
         <h1 className="text-xl font-semibold text-slate-900">Settings</h1>
 
         <div className="flex flex-wrap items-center gap-2">
@@ -92,6 +92,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
+      <div className="flex-1 min-h-0 overflow-auto space-y-5 pr-1 pb-4">
       {showStaff && <StaffManager />}
 
       {showThreshold && (
@@ -230,6 +231,7 @@ export default function SettingsPage() {
       )}
 
       {showUsers && <UserManager />}
+      </div>
     </div>
   );
 }

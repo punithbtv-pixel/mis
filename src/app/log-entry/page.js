@@ -222,8 +222,8 @@ function LogEntryForm() {
   }
 
   return (
-    <div className="space-y-5 max-w-4xl">
-      <div className="sticky top-14 z-30 space-y-5 bg-background pb-4">
+    <div className="flex flex-col h-[calc(100vh-6.5rem)] max-w-4xl">
+      <div className="shrink-0 space-y-5 pb-4">
         <EntryTabs date={form.date} />
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-xl font-semibold text-slate-900">
@@ -241,7 +241,8 @@ function LogEntryForm() {
         </div>
       </div>
 
-      <form onSubmit={save} className="space-y-4">
+      <div className="flex-1 min-h-0 overflow-auto pr-1">
+      <form onSubmit={save} className="space-y-4 pb-4">
         <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -460,6 +461,7 @@ function LogEntryForm() {
           </span>
         </div>
       </form>
+      </div>
     </div>
   );
 }
