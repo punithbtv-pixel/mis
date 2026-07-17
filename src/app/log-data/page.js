@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import MonthPicker from "@/components/MonthPicker";
 import { currentMonth } from "@/lib/dates";
@@ -33,6 +33,10 @@ export default function LogDataPage() {
   const [user, setUser] = useState(null);
   const [exporting, setExporting] = useState("");
   const [search, setSearch] = useState("");
+  const [expandedRows, setExpandedRows] = useState(() => new Set());
+  const [overflowRows, setOverflowRows] = useState(() => new Set());
+  const [chipHeights, setChipHeights] = useState({});
+  const cellRefs = useRef(new Map());
   const loading = !hasLoaded;
 
   const visibleRows = rows.filter((r) => {
@@ -78,6 +82,65 @@ export default function LogDataPage() {
       active = false;
     };
   }, [month, type]);
+
+  function setCellRef(rowId, key) {
+    return (el) => {
+      const entry = cellRefs.current.get(rowId) ?? {};
+      entry[key] = el;
+      cellRefs.current.set(rowId, entry);
+    };
+  }
+
+  function toggleRow(id) {
+    setExpandedRows((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  // Every column clamps to 1 line by default; this measures each row's
+  // clamped cells once the rows are in the DOM and records which rows have
+  // more to show (overflowRows) plus the exact 1-row height for the two
+  // chip-list columns (chipHeights), so the row's single More/Less toggle —
+  // living in Detail — knows whether to appear and can expand every cell in
+  // that row together.
+  useLayoutEffect(() => {
+    const currentIds = new Set(visibleRows.map((r) => r.id));
+    cellRefs.current.forEach((_, id) => {
+      if (!currentIds.has(id)) cellRefs.current.delete(id);
+    });
+
+    const nextOverflow = new Set();
+    const nextHeights = {};
+    cellRefs.current.forEach((refs, rowId) => {
+      let overflow = false;
+      ["equip", "detail"].forEach((key) => {
+        const el = refs[key];
+        if (el && el.scrollHeight > el.clientHeight + 1) overflow = true;
+      });
+      const heights = {};
+      ["parts", "attended"].forEach((key) => {
+        const el = refs[key];
+        if (!el) return;
+        const prevMax = el.style.maxHeight;
+        el.style.maxHeight = "none";
+        const items = Array.from(el.children);
+        const tops = [...new Set(items.map((c) => c.offsetTop))].sort((a, b) => a - b);
+        if (tops.length > 1) overflow = true;
+        const firstRowItems = items.filter((c) => c.offsetTop === tops[0]);
+        heights[key] = firstRowItems.length
+          ? Math.max(...firstRowItems.map((c) => c.offsetTop + c.offsetHeight))
+          : 0;
+        el.style.maxHeight = prevMax;
+      });
+      nextHeights[rowId] = heights;
+      if (overflow) nextOverflow.add(rowId);
+    });
+    setOverflowRows(nextOverflow);
+    setChipHeights(nextHeights);
+  }, [visibleRows]);
 
   async function downloadReport(format) {
     setExporting(format);
@@ -174,62 +237,111 @@ export default function LogDataPage() {
 
       {!loading && visibleRows.length > 0 && (
         <div className="flex-1 min-h-0 bg-white rounded-xl border border-slate-200 shadow-sm overflow-auto">
-          <table className="w-full text-sm border-collapse">
+          <table className="w-full table-fixed text-sm border-collapse">
+            <colgroup>
+              <col style={{ width: "104px" }} />
+              <col style={{ width: "190px" }} />
+              <col style={{ width: "96px" }} />
+              <col style={{ width: "64px" }} />
+              <col style={{ width: "110px" }} />
+              <col />
+              <col style={{ width: "120px" }} />
+              <col style={{ width: "190px" }} />
+              {canEdit && <col style={{ width: "56px" }} />}
+            </colgroup>
             <thead>
               <tr className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wide">
                 <th className="sticky left-0 top-0 z-20 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Date</th>
-                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left">Plant / Section / Equipment</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Plant / Section / Equipment</th>
                 <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Start–End</th>
                 <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Duration</th>
-                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left">Type</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Type</th>
                 <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left">Detail</th>
-                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left">Spare parts</th>
-                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left">Attended by</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Spare parts</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Attended by</th>
                 {canEdit && <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2"></th>}
               </tr>
             </thead>
             <tbody>
-              {visibleRows.map((r) => (
-                <tr key={r.id} className="border-t border-slate-100 hover:bg-slate-50 align-top">
-                  <td className="sticky left-0 bg-white px-3 py-2 font-medium text-slate-700 whitespace-nowrap">
-                    {r.date}
-                  </td>
-                  <td className="px-3 py-2">
-                    <div className="font-medium text-slate-800">{r.equipment}</div>
-                    <div className="text-xs text-slate-500">{r.plant} / {r.section}</div>
-                  </td>
-                  <td className="px-3 py-2 whitespace-nowrap">{r.startTime}–{r.endTime}</td>
-                  <td className="px-3 py-2 whitespace-nowrap">
-                    {formatDuration(durationMinutes(r.startTime, r.endTime))}
-                  </td>
-                  <td className="px-3 py-2">
-                    <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${TYPE_BADGE[r.type] ?? "bg-slate-100 text-slate-700"}`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${TYPE_DOT[r.type] ?? "bg-slate-400"}`} />
-                      {typeLabel(r.type)}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2 text-slate-600 max-w-[16rem]">{r.detail || ""}</td>
-                  <td className="px-3 py-2 text-slate-600">
-                    {r.spareParts?.length ? r.spareParts.join(", ") : "—"}
-                  </td>
-                  <td className="px-3 py-2">
-                    <div className="flex flex-wrap gap-1">
-                      {(r.attendedBy ?? []).map((name) => (
-                        <span key={name} className="bg-slate-100 border border-slate-200 rounded px-1.5 py-0.5 text-[11px] whitespace-nowrap">
-                          {name}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
-                  {canEdit && (
-                    <td className="px-3 py-2 text-right whitespace-nowrap">
-                      <Link href={`/log-entry?id=${r.id}`} className="text-sky-600 hover:underline">
-                        Edit
-                      </Link>
+              {visibleRows.map((r) => {
+                const expanded = expandedRows.has(r.id);
+                const clamp = expanded ? "line-clamp-none" : "line-clamp-1";
+                return (
+                  <tr key={r.id} className="border-t border-slate-100 hover:bg-slate-50 align-top">
+                    <td className="sticky left-0 bg-white px-3 py-2 font-medium text-slate-700 whitespace-nowrap">
+                      {r.date}
                     </td>
-                  )}
-                </tr>
-              ))}
+                    <td className="px-3 py-2">
+                      <div ref={setCellRef(r.id, "equip")} className={clamp}>
+                        <span className="font-medium text-slate-800">{r.equipment}</span>
+                        <br />
+                        <span className="text-xs text-slate-500">{r.plant} / {r.section}</span>
+                      </div>
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap">{r.startTime}–{r.endTime}</td>
+                    <td className="px-3 py-2 whitespace-nowrap">
+                      {formatDuration(durationMinutes(r.startTime, r.endTime))}
+                    </td>
+                    <td className="px-3 py-2">
+                      <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${TYPE_BADGE[r.type] ?? "bg-slate-100 text-slate-700"}`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${TYPE_DOT[r.type] ?? "bg-slate-400"}`} />
+                        {typeLabel(r.type)}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 text-slate-600">
+                      <p ref={setCellRef(r.id, "detail")} className={`m-0 ${clamp}`}>
+                        {r.detail || ""}
+                      </p>
+                      {overflowRows.has(r.id) && (
+                        <button
+                          type="button"
+                          onClick={() => toggleRow(r.id)}
+                          className="mt-1 text-xs font-semibold text-sky-600 hover:underline"
+                        >
+                          {expanded ? "Less" : "More"}
+                        </button>
+                      )}
+                    </td>
+                    <td className="px-3 py-2">
+                      <div
+                        ref={setCellRef(r.id, "parts")}
+                        className="flex flex-wrap gap-1 overflow-hidden"
+                        style={{ maxHeight: expanded ? "none" : `${chipHeights[r.id]?.parts ?? 0}px` }}
+                      >
+                        {r.spareParts?.length ? (
+                          r.spareParts.map((p) => (
+                            <span key={p} className="bg-slate-100 border border-slate-200 rounded px-1.5 py-0.5 text-[11px] whitespace-nowrap">
+                              {p}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-slate-400">—</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-3 py-2">
+                      <div
+                        ref={setCellRef(r.id, "attended")}
+                        className="flex flex-wrap gap-1 overflow-hidden"
+                        style={{ maxHeight: expanded ? "none" : `${chipHeights[r.id]?.attended ?? 0}px` }}
+                      >
+                        {(r.attendedBy ?? []).map((name) => (
+                          <span key={name} className="bg-slate-100 border border-slate-200 rounded px-1.5 py-0.5 text-[11px] whitespace-nowrap">
+                            {name}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    {canEdit && (
+                      <td className="px-3 py-2 text-right whitespace-nowrap">
+                        <Link href={`/log-entry?id=${r.id}`} className="text-sky-600 hover:underline">
+                          Edit
+                        </Link>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
