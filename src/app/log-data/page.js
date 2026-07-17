@@ -246,8 +246,8 @@ export default function LogDataPage() {
               <col style={{ width: "104px" }} />
               <col style={{ width: "190px" }} />
               <col style={{ width: "96px" }} />
-              <col style={{ width: "64px" }} />
-              <col style={{ width: "110px" }} />
+              <col style={{ width: "72px" }} />
+              <col style={{ width: "130px" }} />
               <col />
               <col style={{ width: "120px" }} />
               <col style={{ width: "190px" }} />
@@ -255,14 +255,14 @@ export default function LogDataPage() {
             </colgroup>
             <thead>
               <tr className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wide">
-                <th className="sticky left-0 top-0 z-20 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Date</th>
-                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Plant / Section / Equipment</th>
-                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Start–End</th>
-                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Duration</th>
-                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Type</th>
-                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left">Detail</th>
-                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Spare parts</th>
-                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left whitespace-nowrap">Attended by</th>
+                <th className="sticky left-0 top-0 z-20 bg-slate-50 px-3 py-2 text-left align-top overflow-hidden leading-tight">Date</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left align-top overflow-hidden leading-tight">Plant / Section / Equipment</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left align-top overflow-hidden leading-tight">Start–End</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left align-top overflow-hidden leading-tight">Duration</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left align-top overflow-hidden leading-tight">Type</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left align-top overflow-hidden leading-tight">Detail</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left align-top overflow-hidden leading-tight">Spare parts</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left align-top overflow-hidden leading-tight">Attended by</th>
                 {canEdit && <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2"></th>}
               </tr>
             </thead>
@@ -272,27 +272,27 @@ export default function LogDataPage() {
                 const clamp = expanded ? "line-clamp-none" : "line-clamp-1";
                 return (
                   <tr key={r.id} className="border-t border-slate-100 hover:bg-slate-50 align-top">
-                    <td className="sticky left-0 bg-white px-3 py-2 font-medium text-slate-700 whitespace-nowrap">
+                    <td className="sticky left-0 bg-white px-3 py-2 font-medium text-slate-700 whitespace-nowrap overflow-hidden">
                       {r.date}
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="px-3 py-2 overflow-hidden">
                       <div ref={setCellRef(r.id, "equip")} className={clamp}>
                         <span className="font-medium text-slate-800">{r.equipment}</span>
                         <br />
                         <span className="text-xs text-slate-500">{r.plant} / {r.section}</span>
                       </div>
                     </td>
-                    <td className="px-3 py-2 whitespace-nowrap">{r.startTime}–{r.endTime}</td>
-                    <td className="px-3 py-2 whitespace-nowrap">
+                    <td className="px-3 py-2 whitespace-nowrap overflow-hidden">{r.startTime}–{r.endTime}</td>
+                    <td className="px-3 py-2 whitespace-nowrap overflow-hidden">
                       {formatDuration(durationMinutes(r.startTime, r.endTime))}
                     </td>
-                    <td className="px-3 py-2">
-                      <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${TYPE_BADGE[r.type] ?? "bg-slate-100 text-slate-700"}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${TYPE_DOT[r.type] ?? "bg-slate-400"}`} />
-                        {typeLabel(r.type)}
+                    <td className="px-3 py-2 overflow-hidden">
+                      <span className={`inline-flex max-w-full items-start gap-1.5 px-2 py-1 rounded-md text-xs font-semibold ${TYPE_BADGE[r.type] ?? "bg-slate-100 text-slate-700"}`}>
+                        <span className={`mt-0.5 w-1.5 h-1.5 rounded-full flex-none ${TYPE_DOT[r.type] ?? "bg-slate-400"}`} />
+                        <span className="leading-tight">{typeLabel(r.type)}</span>
                       </span>
                     </td>
-                    <td className="px-3 py-2 text-slate-600">
+                    <td className="px-3 py-2 text-slate-600 overflow-hidden">
                       <p ref={setCellRef(r.id, "detail")} className={`m-0 ${clamp}`}>
                         {r.detail || ""}
                       </p>
@@ -306,7 +306,7 @@ export default function LogDataPage() {
                         </button>
                       )}
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="px-3 py-2 overflow-hidden">
                       <div
                         ref={setCellRef(r.id, "parts")}
                         className="flex flex-wrap gap-1 overflow-hidden"
@@ -323,7 +323,7 @@ export default function LogDataPage() {
                         )}
                       </div>
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="px-3 py-2 overflow-hidden">
                       <div
                         ref={setCellRef(r.id, "attended")}
                         className="flex flex-wrap gap-1 overflow-hidden"
@@ -337,7 +337,7 @@ export default function LogDataPage() {
                       </div>
                     </td>
                     {canEdit && (
-                      <td className="px-3 py-2 text-right whitespace-nowrap">
+                      <td className="px-3 py-2 text-right whitespace-nowrap overflow-hidden">
                         <Link href={`/log-entry?id=${r.id}`} className="text-sky-600 hover:underline">
                           Edit
                         </Link>
