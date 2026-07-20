@@ -216,6 +216,7 @@ export const DEFAULT_STAFF = [
 
 export const MAINTENANCE_TYPES = [
   { value: "PREVENTIVE", label: "Preventive", description: "Scheduled / routine check" },
+  { value: "CORRECTIVE", label: "Corrective", description: "Fix found defect / degraded condition" },
   { value: "BREAKDOWN", label: "Breakdown", description: "Unplanned failure" },
   { value: "PROJECT", label: "Project", description: "New install / upgrade work" },
   { value: "IMPROVEMENT", label: "Monitoring / Observations", description: "Routine checks / notes" },

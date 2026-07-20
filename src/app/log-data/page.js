@@ -9,6 +9,7 @@ import DataTabs from "@/components/DataTabs";
 
 const TYPE_BADGE = {
   PREVENTIVE: "bg-emerald-50 text-emerald-700",
+  CORRECTIVE: "bg-sky-50 text-sky-700",
   BREAKDOWN: "bg-rose-50 text-rose-700",
   PROJECT: "bg-violet-50 text-violet-700",
   IMPROVEMENT: "bg-amber-50 text-amber-700",
@@ -16,6 +17,7 @@ const TYPE_BADGE = {
 
 const TYPE_DOT = {
   PREVENTIVE: "bg-emerald-500",
+  CORRECTIVE: "bg-sky-500",
   BREAKDOWN: "bg-rose-500",
   PROJECT: "bg-violet-500",
   IMPROVEMENT: "bg-amber-500",

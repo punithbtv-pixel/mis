@@ -27,6 +27,10 @@ const TYPE_STYLES = {
     sel: "border-emerald-500 bg-emerald-50 text-emerald-700",
     dot: "bg-emerald-500",
   },
+  CORRECTIVE: {
+    sel: "border-sky-500 bg-sky-50 text-sky-700",
+    dot: "bg-sky-500",
+  },
   BREAKDOWN: {
     sel: "border-rose-500 bg-rose-50 text-rose-700",
     dot: "bg-rose-500",
