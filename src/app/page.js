@@ -62,7 +62,7 @@ function trendTooltipLabel(_label, payload) {
   return date ? fullDateLabel(date) : _label;
 }
 
-const STOCK_GAUGE_MAX = 45000;
+const STOCK_GAUGE_MAX = 50000;
 const STOCK_GAUGE_BANDS = [
   { from: 0, to: 0.15, base: "#dc2626", light: "#f87171" },
   { from: 0.15, to: 0.35, base: "#ea580c", light: "#fb923c" },
