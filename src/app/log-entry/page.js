@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   PLANTS,
   MAINTENANCE_TYPES,
+  SHIFTS,
   sectionsForPlant,
   categoriesForSection,
   equipmentForSection,
@@ -52,6 +53,7 @@ function emptyForm() {
   const equipment = equipmentForSection(plant, section, category)[0] ?? "";
   return {
     date: todayStr(),
+    shift: SHIFTS[0].value,
     plant,
     section,
     category,
@@ -112,6 +114,7 @@ function LogEntryForm() {
         if (!active || !d.log) return;
         setForm({
           date: d.log.date,
+          shift: d.log.shift ?? SHIFTS[0].value,
           plant: d.log.plant,
           section: d.log.section,
           category: categoryForEquipment(d.log.plant, d.log.section, d.log.equipment),
@@ -206,7 +209,7 @@ function LogEntryForm() {
       setStatus("saved");
       setTimeout(() => setStatus(""), 2500);
       if (!editId) {
-        setForm((f) => ({ ...emptyForm(), date: f.date }));
+        setForm((f) => ({ ...emptyForm(), date: f.date, shift: f.shift }));
         setPartInput("");
       }
     } else {
@@ -233,14 +236,31 @@ function LogEntryForm() {
           <h1 className="text-xl font-semibold text-slate-900">
             {editId ? "Edit Log Entry" : "Daily Log Entry"}
           </h1>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-slate-500">Date</label>
-            <input
-              type="date"
-              value={form.date}
-              onChange={(e) => set("date", e.target.value)}
-              className="h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm"
-            />
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-slate-500">Shift</label>
+              <div className="flex items-center gap-3">
+                {SHIFTS.map((s) => (
+                  <label key={s.value} className="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={form.shift === s.value}
+                      onChange={() => set("shift", s.value)}
+                    />
+                    {s.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-slate-500">Date</label>
+              <input
+                type="date"
+                value={form.date}
+                onChange={(e) => set("date", e.target.value)}
+                className="h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm"
+              />
+            </div>
           </div>
         </div>
       </div>

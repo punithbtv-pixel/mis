@@ -9,7 +9,7 @@ import {
   SCALE_SETTING_KEYS,
   DEFAULT_SERVICE_SCALE,
 } from "@/lib/equipment";
-import { MAINTENANCE_TYPE_VALUES, isValidTimeStr, DEFAULT_STAFF } from "@/lib/maintenanceLog";
+import { MAINTENANCE_TYPE_VALUES, SHIFT_VALUES, isValidTimeStr, DEFAULT_STAFF } from "@/lib/maintenanceLog";
 
 function toDateStr(d) {
   return d.toISOString().slice(0, 10);
@@ -79,10 +79,10 @@ function toSettingsRows(map) {
 
 function makeInitialMaintenanceLogs() {
   const rows = [
-    { date: "2026-07-09", plant: "Milling", section: "Milling Section", equipment: "CC1 / Chain conveyor", startTime: "09:00", endTime: "10:30", type: "PREVENTIVE", detail: "Bearing noise on drive-end, replaced bearing and re-aligned belt.", spareParts: ["Bearing 6205", "V-belt A47"], attendedBy: ["Lucky", "Bakari Lawal"] },
-    { date: "2026-07-09", plant: "Powerhouse", section: "Powerhouse Section", equipment: "AIR Compressor E75 - 2", startTime: "14:10", endTime: "16:40", type: "BREAKDOWN", detail: "Tripped on high discharge temp; cleaned cooler fins, reset overload.", spareParts: ["Air filter", "Overload relay"], attendedBy: ["Gideon Micah", "James"] },
-    { date: "2026-07-08", plant: "Boiler", section: "Boiler Section", equipment: "FD Fan - 1", startTime: "08:00", endTime: "08:45", type: "PREVENTIVE", detail: "Monthly vibration check and grease top-up.", spareParts: ["Grease NLGI-2"], attendedBy: ["Anthony I. Amedu"] },
-    { date: "2026-07-05", plant: "Milling", section: "Sorting Section", equipment: "Sortex-Spark Pro 10_A", startTime: "15:00", endTime: "18:20", type: "PROJECT", detail: "Installed upgraded ejector valve bank as part of capacity project.", spareParts: ["Ejector valve bank v2"], attendedBy: ["Abdulmajid Abdulraham", "Anthony Inuwa", "Joseph F Matthew"] },
+    { date: "2026-07-09", shift: "DAY", plant: "Milling", section: "Milling Section", equipment: "CC1 / Chain conveyor", startTime: "09:00", endTime: "10:30", type: "PREVENTIVE", detail: "Bearing noise on drive-end, replaced bearing and re-aligned belt.", spareParts: ["Bearing 6205", "V-belt A47"], attendedBy: ["Lucky", "Bakari Lawal"] },
+    { date: "2026-07-09", shift: "NIGHT", plant: "Powerhouse", section: "Powerhouse Section", equipment: "AIR Compressor E75 - 2", startTime: "14:10", endTime: "16:40", type: "BREAKDOWN", detail: "Tripped on high discharge temp; cleaned cooler fins, reset overload.", spareParts: ["Air filter", "Overload relay"], attendedBy: ["Gideon Micah", "James"] },
+    { date: "2026-07-08", shift: "DAY", plant: "Boiler", section: "Boiler Section", equipment: "FD Fan - 1", startTime: "08:00", endTime: "08:45", type: "PREVENTIVE", detail: "Monthly vibration check and grease top-up.", spareParts: ["Grease NLGI-2"], attendedBy: ["Anthony I. Amedu"] },
+    { date: "2026-07-05", shift: "NIGHT", plant: "Milling", section: "Sorting Section", equipment: "Sortex-Spark Pro 10_A", startTime: "15:00", endTime: "18:20", type: "PROJECT", detail: "Installed upgraded ejector valve bank as part of capacity project.", spareParts: ["Ejector valve bank v2"], attendedBy: ["Abdulmajid Abdulraham", "Anthony Inuwa", "Joseph F Matthew"] },
   ];
   return rows.map((r, i) => ({
     id: i + 1,
@@ -272,12 +272,16 @@ function validateMaintenanceLogBody(body) {
   if (!MAINTENANCE_TYPE_VALUES.includes(body.type)) {
     return { error: "Invalid maintenance type" };
   }
+  if (!SHIFT_VALUES.includes(body.shift)) {
+    return { error: "Invalid shift" };
+  }
   const attendedBy = normalizeStringArray(body.attendedBy);
   if (attendedBy.length === 0) {
     return { error: "At least one person must be selected in Attended by" };
   }
   return {
     dateStr: date.toISOString().slice(0, 10),
+    shift: body.shift,
     plant: String(body.plant),
     section: String(body.section),
     equipment: String(body.equipment),
@@ -313,6 +317,7 @@ export function createMockMaintenanceLog(body, session) {
   const row = {
     id: state.nextMaintenanceLogId++,
     date: parsed.dateStr,
+    shift: parsed.shift,
     plant: parsed.plant,
     section: parsed.section,
     equipment: parsed.equipment,
@@ -341,6 +346,7 @@ export function updateMockMaintenanceLog(id, body) {
   const row = {
     ...state.maintenanceLogs[idx],
     date: parsed.dateStr,
+    shift: parsed.shift,
     plant: parsed.plant,
     section: parsed.section,
     equipment: parsed.equipment,

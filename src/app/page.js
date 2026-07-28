@@ -280,6 +280,25 @@ export default function DashboardPage() {
     [data]
   );
 
+  // dieselConsumption is the total drawn from the tank (opening - closing +
+  // received), which already includes any diesel issued out that day. The
+  // trend chart shows "Issued" as its own segment, so the "Consumed" segment
+  // must be netted down to the non-issued remainder to avoid double-counting
+  // issued litres in the stacked bar total.
+  const dieselTrendSeries = useMemo(
+    () =>
+      series.map((s) => ({
+        day: s.day,
+        date: s.date,
+        dieselIssued: s.dieselIssued,
+        dieselConsumedOnly:
+          s.dieselConsumption != null
+            ? Math.max(0, s.dieselConsumption - (s.dieselIssued ?? 0))
+            : null,
+      })),
+    [series]
+  );
+
   const t = data?.totals;
   const hasData = series.length > 0;
 
@@ -403,13 +422,13 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <Panel title="Daily Diesel Consumption (L)">
               <ResponsiveContainer width="100%" height={260}>
-                <BarChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+                <BarChart data={dieselTrendSeries} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
                   <XAxis dataKey="day" fontSize={11} />
                   <YAxis fontSize={11} />
                   <Tooltip labelFormatter={trendTooltipLabel} />
                   <Legend />
-                  <Bar dataKey="dieselConsumption" name="Consumed (L)" stackId="diesel" fill={TREND_COLORS.diesel} radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="dieselConsumedOnly" name="Consumed (L)" stackId="diesel" fill={TREND_COLORS.diesel} radius={[3, 3, 0, 0]} />
                   <Bar dataKey="dieselIssued" name="Issued (L)" stackId="diesel" fill={TREND_COLORS.dieselIssued} radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>

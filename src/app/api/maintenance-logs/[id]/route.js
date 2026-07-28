@@ -5,7 +5,7 @@ import { isUiOnlyMode } from "@/lib/mode";
 import { getMockMaintenanceLog, updateMockMaintenanceLog } from "@/lib/mockData";
 import { requireSession } from "@/lib/apiAuth";
 import { ROLES } from "@/lib/roles";
-import { MAINTENANCE_TYPE_VALUES, isValidTimeStr } from "@/lib/maintenanceLog";
+import { MAINTENANCE_TYPE_VALUES, SHIFT_VALUES, isValidTimeStr } from "@/lib/maintenanceLog";
 
 function toDateStr(d) {
   return d.toISOString().slice(0, 10);
@@ -71,6 +71,9 @@ export async function PUT(request, { params }) {
   if (!MAINTENANCE_TYPE_VALUES.includes(body.type)) {
     return NextResponse.json({ error: "Invalid maintenance type" }, { status: 400 });
   }
+  if (!SHIFT_VALUES.includes(body.shift)) {
+    return NextResponse.json({ error: "Invalid shift" }, { status: 400 });
+  }
   const attendedBy = normalizeStringArray(body.attendedBy);
   if (attendedBy.length === 0) {
     return NextResponse.json({ error: "At least one person must be selected in Attended by" }, { status: 400 });
@@ -81,6 +84,7 @@ export async function PUT(request, { params }) {
       where: { id: Number(id) },
       data: {
         date,
+        shift: body.shift,
         plant: String(body.plant),
         section: String(body.section),
         equipment: String(body.equipment),

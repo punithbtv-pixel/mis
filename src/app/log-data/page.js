@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import MonthPicker from "@/components/MonthPicker";
 import { currentMonth } from "@/lib/dates";
-import { MAINTENANCE_TYPES, durationMinutes, formatDuration } from "@/lib/maintenanceLog";
+import { MAINTENANCE_TYPES, durationMinutes, formatDuration, shiftLabel } from "@/lib/maintenanceLog";
 import DataTabs from "@/components/DataTabs";
 
 const TYPE_BADGE = {
@@ -246,6 +246,7 @@ export default function LogDataPage() {
           <table className="w-full table-fixed text-sm border-collapse">
             <colgroup>
               <col style={{ width: "104px" }} />
+              <col style={{ width: "72px" }} />
               <col style={{ width: "190px" }} />
               <col style={{ width: "96px" }} />
               <col style={{ width: "72px" }} />
@@ -258,6 +259,7 @@ export default function LogDataPage() {
             <thead>
               <tr className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wide">
                 <th className="sticky left-0 top-0 z-20 bg-slate-50 px-3 py-2 text-left align-top overflow-hidden leading-tight">Date</th>
+                <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left align-top overflow-hidden leading-tight">Shift</th>
                 <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left align-top overflow-hidden leading-tight">Plant / Section / Equipment</th>
                 <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left align-top overflow-hidden leading-tight">Start–End</th>
                 <th className="sticky top-0 z-10 bg-slate-50 px-3 py-2 text-left align-top overflow-hidden leading-tight">Duration</th>
@@ -277,6 +279,7 @@ export default function LogDataPage() {
                     <td className="sticky left-0 bg-white px-3 py-2 font-medium text-slate-700 whitespace-nowrap overflow-hidden">
                       {r.date}
                     </td>
+                    <td className="px-3 py-2 whitespace-nowrap overflow-hidden">{shiftLabel(r.shift)}</td>
                     <td className="px-3 py-2 overflow-hidden">
                       <div ref={setCellRef(r.id, "equip")} className={clamp}>
                         <span className="font-medium text-slate-800">{r.equipment}</span>

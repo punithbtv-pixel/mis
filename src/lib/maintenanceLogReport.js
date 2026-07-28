@@ -1,7 +1,8 @@
-import { durationMinutes, formatDuration, maintenanceTypeLabel } from "@/lib/maintenanceLog";
+import { durationMinutes, formatDuration, maintenanceTypeLabel, shiftLabel } from "@/lib/maintenanceLog";
 
 export const LOG_REPORT_COLUMNS = [
   { key: "date", header: "Date" },
+  { key: "shift", header: "Shift" },
   { key: "plant", header: "Plant" },
   { key: "section", header: "Section" },
   { key: "equipment", header: "Equipment" },
@@ -21,6 +22,7 @@ export function logReportHeaders() {
 export function rowToLogReportCells(row) {
   return [
     row.date,
+    shiftLabel(row.shift),
     row.plant,
     row.section,
     row.equipment,

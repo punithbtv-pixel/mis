@@ -214,6 +214,17 @@ export const DEFAULT_STAFF = [
   { name: "Joseph Peter", designation: "Gen Operator" },
 ];
 
+export const SHIFTS = [
+  { value: "DAY", label: "Day" },
+  { value: "NIGHT", label: "Night" },
+];
+
+export const SHIFT_VALUES = SHIFTS.map((s) => s.value);
+
+export function shiftLabel(value) {
+  return SHIFTS.find((s) => s.value === value)?.label ?? value;
+}
+
 export const MAINTENANCE_TYPES = [
   { value: "PREVENTIVE", label: "Preventive", description: "Scheduled / routine check" },
   { value: "CORRECTIVE", label: "Corrective", description: "Fix found defect / degraded condition" },
