@@ -48,6 +48,7 @@ const CARD_THEMES = {
 // Trend colors stay in lockstep with the KPI card colors above.
 const TREND_COLORS = {
   diesel: "#f59e0b",
+  dieselIssued: "#14b8a6",
   nepa: "#f43f5e",
   milling: "#d946ef",
   utility: "#3b82f6",
@@ -407,7 +408,9 @@ export default function DashboardPage() {
                   <XAxis dataKey="day" fontSize={11} />
                   <YAxis fontSize={11} />
                   <Tooltip labelFormatter={trendTooltipLabel} />
-                  <Bar dataKey="dieselConsumption" name="Diesel (L)" fill={TREND_COLORS.diesel} radius={[3, 3, 0, 0]} />
+                  <Legend />
+                  <Bar dataKey="dieselConsumption" name="Consumed (L)" stackId="diesel" fill={TREND_COLORS.diesel} radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="dieselIssued" name="Issued (L)" stackId="diesel" fill={TREND_COLORS.dieselIssued} radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </Panel>
