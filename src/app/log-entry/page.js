@@ -96,7 +96,7 @@ function LogEntryForm() {
         const r = d.user?.role;
         setRole(r);
         const canCreate = r === "ADMIN" || r === "ENGINEER";
-        const canEdit = r === "ADMIN";
+        const canEdit = r === "ADMIN" || r === "ENGINEER";
         if (!canCreate || (editId && !canEdit)) {
           router.replace("/log-data");
           return;
@@ -479,9 +479,9 @@ function LogEntryForm() {
           {status === "saved" && <span className="text-sm text-green-600">Saved ✓</span>}
           {error && <span className="text-sm text-red-600">{error}</span>}
           <span className="text-xs text-slate-500">
-            {role === "ADMIN"
-              ? "As Admin, you can also edit this entry later from Daily Log Data."
-              : "Once saved, this entry is view-only in Daily Log Data — only Admin can edit it."}
+            {role === "ADMIN" || role === "ENGINEER"
+              ? "You can also edit this entry later from Daily Log Data."
+              : "Once saved, this entry is view-only in Daily Log Data."}
           </span>
         </div>
       </form>

@@ -19,7 +19,7 @@ Built with **Next.js (App Router, JavaScript)**, **Prisma + PostgreSQL** (Neon),
   (plant/section/equipment, start–end time with calculated duration, type of
   maintenance, detail, spare parts used, attended by).
 - **Log Data** (`/log-data`, Admin/Engineer/ZYN) — browse and filter logged
-  maintenance activities. Only Admin can edit a saved entry.
+  maintenance activities. Admin and Engineer can edit a saved entry.
 - **Settings** (`/settings`) — next-service hour target per equipment.
 - **Login** — single shared password.
 

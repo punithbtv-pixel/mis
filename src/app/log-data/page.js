@@ -62,7 +62,7 @@ export default function LogDataPage() {
     [rows, search]
   );
 
-  const canEdit = user?.role === "ADMIN";
+  const canEdit = user?.role === "ADMIN" || user?.role === "ENGINEER";
   const canCreate = user?.role === "ADMIN" || user?.role === "ENGINEER";
 
   function onMonthChange(next) {

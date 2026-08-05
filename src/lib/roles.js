@@ -34,14 +34,14 @@ export function canWriteSettings(role) {
   return role === ROLES.ADMIN;
 }
 
-// Admin and Engineer can log new maintenance activity; only Admin may edit
+// Admin and Engineer can log new maintenance activity, and both may edit
 // an entry once it has been saved.
 export function canCreateMaintenanceLog(role) {
   return role === ROLES.ADMIN || role === ROLES.ENGINEER;
 }
 
 export function canEditMaintenanceLog(role) {
-  return role === ROLES.ADMIN;
+  return role === ROLES.ADMIN || role === ROLES.ENGINEER;
 }
 
 export function roleLabel(role) {
