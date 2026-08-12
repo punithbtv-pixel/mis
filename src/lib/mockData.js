@@ -31,6 +31,8 @@ function makeReading(id, date, prev = null) {
     dieselDipAfterReceiveMm: null,
     dieselFlowMeterReading: 6000 + n * 32,
     dieselIssued: n % 3 === 0 ? 42 : 0,
+    dieselIssuances:
+      n % 2 === 0 ? [{ to: n % 4 === 0 ? "Milling DG" : "Parboiling DG", comment: "", liters: 400 + (n % 5) * 80 }] : [],
     nepaMeterKwh: (prev?.nepaMeterKwh ?? 145000) + 220 + (n % 20),
     ebMillingKwh: (prev?.ebMillingKwh ?? 50100) + 122 + (n % 12),
     ebUtilityKwh: (prev?.ebUtilityKwh ?? 38200) + 90 + (n % 8),

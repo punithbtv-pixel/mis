@@ -98,6 +98,12 @@ export function computeRows(readings, settings, calibration) {
       dieselConsumption = openingLitres - closingLitres + received;
     }
 
+    // Diesel issued out to equipment that day (sum of the day's line items).
+    const dieselIssuedTotal = (r.dieselIssuances ?? []).reduce(
+      (sum, it) => sum + (Number(it.liters) || 0),
+      0
+    );
+
     // Service Tank is entered occasionally and held constant until the next entry.
     if (r.serviceTankLitres != null) lastServiceTankLitres = r.serviceTankLitres;
     const serviceTankLitres = lastServiceTankLitres;
@@ -134,6 +140,7 @@ export function computeRows(readings, settings, calibration) {
       raw: r,
       dieselConsumption: roundDiesel(dieselConsumption),
       dieselReceived: r.dieselReceivedLitres ?? null,
+      dieselIssuedTotal: roundDiesel(dieselIssuedTotal),
       closingLitres: roundDiesel(closingLitres),
       serviceTankLitres: roundDiesel(serviceTankLitres),
       totalStockLitres: roundDiesel(totalStockLitres),
@@ -172,6 +179,7 @@ export function buildSummary(rows, settings) {
   const totals = {
     dieselConsumed: sum(rows.map((r) => r.dieselConsumption), roundDiesel),
     dieselReceived: sum(rows.map((r) => r.dieselReceived), roundDiesel),
+    dieselIssued: sum(rows.map((r) => r.dieselIssuedTotal), roundDiesel),
     nepaKwh: sum(rows.map((r) => r.nepaConsumption)),
     ebMilling: sum(rows.map((r) => r.ebMilling)),
     ebUtility: sum(rows.map((r) => r.ebUtility)),
@@ -235,6 +243,8 @@ export function buildSummary(rows, settings) {
     date: r.date,
     dieselConsumption: r.dieselConsumption,
     dieselReceived: r.dieselReceived,
+    dieselIssued: r.dieselIssuedTotal,
+    serviceTankLitres: r.serviceTankLitres,
     nepaConsumption: r.nepaConsumption,
     ebMilling: r.ebMilling,
     ebUtility: r.ebUtility,

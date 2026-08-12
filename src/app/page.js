@@ -7,6 +7,7 @@ import {
   Bar,
   LineChart,
   Line,
+  ComposedChart,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -48,6 +49,8 @@ const CARD_THEMES = {
 // Trend colors stay in lockstep with the KPI card colors above.
 const TREND_COLORS = {
   diesel: "#f59e0b",
+  issued: "#6366f1",
+  stock: "#14b8a6",
   nepa: "#f43f5e",
   milling: "#d946ef",
   utility: "#3b82f6",
@@ -250,6 +253,7 @@ export default function DashboardPage() {
   const [user, setUser] = useState(null);
   const loading = data == null;
   const isAdmin = user?.role === ROLES.ADMIN;
+  const canViewMillingUtilityTrend = isAdmin || user?.role === ROLES.ZYN;
 
   useEffect(() => {
     fetch("/api/me")
@@ -328,18 +332,12 @@ export default function DashboardPage() {
               logo={<img src="/icons/main-tank.png" alt="" className={`h-[65px] w-[65px] ${LOGO_CLASS}`} />}
             />
             <Card
-              label={<>Service Tank<br />Stock</>}
-              value={fmt(data.latestServiceTank)}
+              label={<>Diesel<br />Issued</>}
+              value={fmt(t.dieselIssued)}
               unit="Liters"
-              color="cyan"
-              logo={
-                <div className="flex items-center">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/icons/service-tank.png" alt="" className={`h-[47px] w-[47px] ${LOGO_CLASS}`} />
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/icons/service-tank.png" alt="" className={`-ml-[19px] h-[47px] w-[47px] ${LOGO_CLASS}`} />
-                </div>
-              }
+              color="indigo"
+              // eslint-disable-next-line @next/next/no-img-element
+              logo={<img src="/icons/diesel-issued.png" alt="" className={`h-[54px] w-[54px] ${LOGO_CLASS}`} />}
             />
             <Card
               label={<>Current Total<br />Stock</>}
@@ -401,14 +399,47 @@ export default function DashboardPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <Panel title="Daily Diesel Consumption (L)">
-              <ResponsiveContainer width="100%" height={260}>
-                <BarChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+              <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 mb-1">
+                Service tank stock (L)
+              </div>
+              <ResponsiveContainer width="100%" height={90}>
+                <LineChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
+                  <XAxis dataKey="day" fontSize={11} />
+                  <YAxis fontSize={11} domain={["auto", "auto"]} />
+                  <Tooltip labelFormatter={trendTooltipLabel} />
+                  <Line
+                    type="stepAfter"
+                    dataKey="serviceTankLitres"
+                    name="Service tank (L)"
+                    stroke={TREND_COLORS.stock}
+                    dot={{ r: 3 }}
+                    strokeWidth={2}
+                    connectNulls
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+
+              <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 mb-1 mt-3">
+                Daily consumption &amp; issued (L)
+              </div>
+              <ResponsiveContainer width="100%" height={220}>
+                <ComposedChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
                   <XAxis dataKey="day" fontSize={11} />
                   <YAxis fontSize={11} />
                   <Tooltip labelFormatter={trendTooltipLabel} />
-                  <Bar dataKey="dieselConsumption" name="Diesel (L)" fill={TREND_COLORS.diesel} radius={[3, 3, 0, 0]} />
-                </BarChart>
+                  <Legend />
+                  <Bar dataKey="dieselConsumption" name="Consumption (L)" fill={TREND_COLORS.diesel} radius={[3, 3, 0, 0]} />
+                  <Line
+                    type="monotone"
+                    dataKey="dieselIssued"
+                    name="Issued (L)"
+                    stroke={TREND_COLORS.issued}
+                    dot={{ r: 3 }}
+                    strokeWidth={2}
+                  />
+                </ComposedChart>
               </ResponsiveContainer>
             </Panel>
 
@@ -421,8 +452,8 @@ export default function DashboardPage() {
                   <Tooltip labelFormatter={trendTooltipLabel} />
                   <Legend />
                   <Line type="monotone" dataKey="nepaConsumption" name="NEPA" stroke={TREND_COLORS.nepa} dot={false} strokeWidth={2} />
-                  {isAdmin && <Line type="monotone" dataKey="ebMilling" name="Milling" stroke={TREND_COLORS.milling} dot={false} strokeWidth={2} />}
-                  {isAdmin && <Line type="monotone" dataKey="ebUtility" name="Utility" stroke={TREND_COLORS.utility} dot={false} strokeWidth={2} />}
+                  {canViewMillingUtilityTrend && <Line type="monotone" dataKey="ebMilling" name="Milling" stroke={TREND_COLORS.milling} dot={false} strokeWidth={2} />}
+                  {canViewMillingUtilityTrend && <Line type="monotone" dataKey="ebUtility" name="Utility" stroke={TREND_COLORS.utility} dot={false} strokeWidth={2} />}
                 </LineChart>
               </ResponsiveContainer>
             </Panel>
