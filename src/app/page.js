@@ -316,6 +316,14 @@ export default function DashboardPage() {
               logo={<img src="/icons/fuel-gun.png" alt="" className={`h-[54px] w-[54px] ${LOGO_CLASS}`} />}
             />
             <Card
+              label={<>Diesel<br />Issued</>}
+              value={fmt(t.dieselIssued)}
+              unit="Liters"
+              color="indigo"
+              // eslint-disable-next-line @next/next/no-img-element
+              logo={<img src="/icons/diesel-issued.png" alt="" className={`h-[54px] w-[54px] ${LOGO_CLASS}`} />}
+            />
+            <Card
               label={<>Diesel<br />Received</>}
               value={fmt(t.dieselReceived)}
               unit="Liters"
@@ -330,14 +338,6 @@ export default function DashboardPage() {
               color="teal"
               // eslint-disable-next-line @next/next/no-img-element
               logo={<img src="/icons/main-tank.png" alt="" className={`h-[65px] w-[65px] ${LOGO_CLASS}`} />}
-            />
-            <Card
-              label={<>Diesel<br />Issued</>}
-              value={fmt(t.dieselIssued)}
-              unit="Liters"
-              color="indigo"
-              // eslint-disable-next-line @next/next/no-img-element
-              logo={<img src="/icons/diesel-issued.png" alt="" className={`h-[54px] w-[54px] ${LOGO_CLASS}`} />}
             />
             <Card
               label={<>Current Total<br />Stock</>}
