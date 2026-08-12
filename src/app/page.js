@@ -444,7 +444,7 @@ export default function DashboardPage() {
             </Panel>
 
             <Panel title="Daily Power Consumption (KWH)">
-              <ResponsiveContainer width="100%" height={260}>
+              <ResponsiveContainer width="100%" height={354}>
                 <LineChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
                   <XAxis dataKey="day" fontSize={11} />
