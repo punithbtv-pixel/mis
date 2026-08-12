@@ -253,7 +253,7 @@ export default function DashboardPage() {
   const [user, setUser] = useState(null);
   const loading = data == null;
   const isAdmin = user?.role === ROLES.ADMIN;
-  const canViewMillingUtilityTrend = isAdmin || user?.role === ROLES.ZYN;
+  const canViewMillingUtility = isAdmin || user?.role === ROLES.ZYN;
 
   useEffect(() => {
     fetch("/api/me")
@@ -354,7 +354,7 @@ export default function DashboardPage() {
               // eslint-disable-next-line @next/next/no-img-element
               logo={<img src="/icons/nepa-power.png" alt="" className={`h-[77px] w-[77px] ${LOGO_CLASS}`} />}
             />
-            {isAdmin && (
+            {canViewMillingUtility && (
               <>
                 <Card
                   label={<>Milling Power<br />Consumption</>}
@@ -452,8 +452,8 @@ export default function DashboardPage() {
                   <Tooltip labelFormatter={trendTooltipLabel} />
                   <Legend />
                   <Line type="monotone" dataKey="nepaConsumption" name="NEPA" stroke={TREND_COLORS.nepa} dot={false} strokeWidth={2} />
-                  {canViewMillingUtilityTrend && <Line type="monotone" dataKey="ebMilling" name="Milling" stroke={TREND_COLORS.milling} dot={false} strokeWidth={2} />}
-                  {canViewMillingUtilityTrend && <Line type="monotone" dataKey="ebUtility" name="Utility" stroke={TREND_COLORS.utility} dot={false} strokeWidth={2} />}
+                  {canViewMillingUtility && <Line type="monotone" dataKey="ebMilling" name="Milling" stroke={TREND_COLORS.milling} dot={false} strokeWidth={2} />}
+                  {canViewMillingUtility && <Line type="monotone" dataKey="ebUtility" name="Utility" stroke={TREND_COLORS.utility} dot={false} strokeWidth={2} />}
                 </LineChart>
               </ResponsiveContainer>
             </Panel>
