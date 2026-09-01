@@ -42,6 +42,8 @@ function makeReading(id, date, prev = null) {
     compE55Hours: (prev?.compE55Hours ?? 5480) + 5.1,
     millingDgHours: (prev?.millingDgHours ?? 6110) + 4.9,
     parboilingDgHours: (prev?.parboilingDgHours ?? 12370) + 5.7,
+    utilityDgHours: (prev?.utilityDgHours ?? 380) + 3.1,
+    adminDgHours: (prev?.adminDgHours ?? 82) + 1.2,
     serviceTankLitres: n % 8 === 0 ? 4200 + (n % 5) * 150 : null,
     remarks: n % 9 === 0 ? "Fuel delivery and routine checks completed." : "",
   };

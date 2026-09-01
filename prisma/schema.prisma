@@ -36,6 +36,8 @@ model DailyReading {
   // Diesel generators (hour-meter readings)
   millingDgHours    Float?
   parboilingDgHours Float?
+  utilityDgHours    Float?
+  adminDgHours      Float?
 
   remarks String?
 

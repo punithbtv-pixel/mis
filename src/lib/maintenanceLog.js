@@ -133,7 +133,7 @@ export const PLANT_TREE = {
     utility: ["Electric supply", "Water", "Compressor Air"],
     categories: {
       "PCC": ["PCC Panels", "PDB Panels", "RMU", "HT Meetring", "33/11KV Transformer", "11/0.415 KV Transformer", "NEPA GOS", "Milling Stabilizer", "Parboiling Stabilizer", "Cable / Wiring", "Sensor"],
-      "Generator": ["Milling DG", "Parboiling DG", "Admin DG", "Diesel Storage", "Cable / Wiring", "Sensor"],
+      "Generator": ["Milling DG", "Parboiling DG", "Admin DG", "Utility DG", "Diesel Storage", "Cable / Wiring", "Sensor"],
       "Air Compressor": ["AIR Compressor E75 - 1", "AIR Compressor E75 - 2", "AIR Compressor E75 - 3", "AIR Compressor E55 - 1", "Air Dryer - 1", "Air Dryer - 2", "Air Dryer - 3", "Cable / Wiring", "Sensor"],
     },
   },

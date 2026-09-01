@@ -93,16 +93,17 @@ export function computeRows(readings, settings, calibration) {
     const closingLitres = litresFromDip(r.dieselDipMm);
     const openingLitres = prev ? litresFromDip(prev.dieselDipMm) : null;
     const received = r.dieselReceivedLitres ?? 0;
-    let dieselConsumption = null;
-    if (openingLitres != null && closingLitres != null) {
-      dieselConsumption = openingLitres - closingLitres + received;
-    }
 
     // Diesel issued out to equipment that day (sum of the day's line items).
     const dieselIssuedTotal = (r.dieselIssuances ?? []).reduce(
       (sum, it) => sum + (Number(it.liters) || 0),
       0
     );
+
+    let dieselConsumption = null;
+    if (openingLitres != null && closingLitres != null) {
+      dieselConsumption = openingLitres - closingLitres + received;
+    }
 
     // Service Tank is entered occasionally and held constant until the next entry.
     if (r.serviceTankLitres != null) lastServiceTankLitres = r.serviceTankLitres;

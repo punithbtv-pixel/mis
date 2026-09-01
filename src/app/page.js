@@ -27,10 +27,12 @@ const EQ_COLORS = [
   "#f59e0b",
   "#ef4444",
   "#8b5cf6",
+  "#f97316",
+  "#10b981",
 ];
 
 // Card `color` theme per equipment, in lockstep with EQ_COLORS above.
-const EQ_CARD_THEMES = ["sky", "indigo", "teal", "amber", "rose", "violet"];
+const EQ_CARD_THEMES = ["sky", "indigo", "teal", "amber", "rose", "violet", "orange", "emerald"];
 
 const CARD_THEMES = {
   amber: { bar: "bg-amber-300", value: "text-amber-600" },
@@ -365,7 +367,7 @@ export default function DashboardPage() {
                   logo={<img src="/icons/milling.png" alt="" className={`h-[52px] w-[83px] ${LOGO_CLASS}`} />}
                 />
                 <Card
-                  label={<>Utility Power<br />Consumption</>}
+                  label={<>Parboil &amp; Utility<br />Power Consumption</>}
                   value={fmt(t.ebUtility)}
                   unit="KWH"
                   color="blue"
@@ -453,7 +455,7 @@ export default function DashboardPage() {
                   <Legend />
                   <Line type="monotone" dataKey="nepaConsumption" name="NEPA" stroke={TREND_COLORS.nepa} dot={false} strokeWidth={2} />
                   {canViewMillingUtility && <Line type="monotone" dataKey="ebMilling" name="Milling" stroke={TREND_COLORS.milling} dot={false} strokeWidth={2} />}
-                  {canViewMillingUtility && <Line type="monotone" dataKey="ebUtility" name="Utility" stroke={TREND_COLORS.utility} dot={false} strokeWidth={2} />}
+                  {canViewMillingUtility && <Line type="monotone" dataKey="ebUtility" name="Parboil & Utility" stroke={TREND_COLORS.utility} dot={false} strokeWidth={2} />}
                 </LineChart>
               </ResponsiveContainer>
             </Panel>
@@ -512,7 +514,7 @@ export default function DashboardPage() {
           </div>
 
           <Panel title="Total Run Hours This Month">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {RUN_HOUR_EQUIPMENT.map((eq, i) => {
                 const theme = EQ_CARD_THEMES[i % EQ_CARD_THEMES.length];
                 return (

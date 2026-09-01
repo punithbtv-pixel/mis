@@ -9,6 +9,8 @@ export const RUN_HOUR_EQUIPMENT = [
   { field: "compE55Hours", label: "Comp E55", serviceKey: "nextSer_compE55", category: "comp" },
   { field: "millingDgHours", label: "Milling DG", serviceKey: "nextSer_millingDg", category: "dg" },
   { field: "parboilingDgHours", label: "Parboiling DG", serviceKey: "nextSer_parboilingDg", category: "dg" },
+  { field: "utilityDgHours", label: "Utility DG", serviceKey: "nextSer_utilityDg", category: "dg" },
+  { field: "adminDgHours", label: "Admin DG", serviceKey: "nextSer_adminDg", category: "dg" },
 ];
 
 // Default service interval target (hours) used when a Setting is missing.
@@ -19,6 +21,8 @@ export const DEFAULT_SERVICE_HOURS = {
   nextSer_compE55: 6000,
   nextSer_millingDg: 5824,
   nextSer_parboilingDg: 12643.5,
+  nextSer_utilityDg: 0,
+  nextSer_adminDg: 0,
 };
 
 // Remaining-hours threshold below which we raise a "service due" alert, kept
@@ -93,6 +97,8 @@ export const INPUT_GROUPS = [
     fields: [
       { field: "millingDgHours", label: "Milling DG", unit: "hrs" },
       { field: "parboilingDgHours", label: "Parboiling DG", unit: "hrs" },
+      { field: "utilityDgHours", label: "Utility DG", unit: "hrs" },
+      { field: "adminDgHours", label: "Admin DG", unit: "hrs" },
     ],
   },
 ];
@@ -110,6 +116,7 @@ export const DIESEL_ISSUE_TO_OPTIONS = [
   "Truck",
   "Forklift",
   "Admin DG",
+  "Utility DG",
   "Fire Hydrant DG (WTP)",
   "Fire Hydrant system (ETP)",
   "Boiler",
