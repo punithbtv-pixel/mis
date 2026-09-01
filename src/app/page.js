@@ -349,7 +349,7 @@ export default function DashboardPage() {
               logo={<StockGauge value={data.latestTotalStock} />}
             />
             <Card
-              label={<>NEPA Power<br />Consumption</>}
+              label={<>NEPA <br />Consumption</>}
               value={fmt(t.nepaKwh)}
               unit="KWH"
               color="rose"
@@ -359,7 +359,7 @@ export default function DashboardPage() {
             {canViewMillingUtility && (
               <>
                 <Card
-                  label={<>Milling Power<br />Consumption</>}
+                  label={<>Milling <br />Consumption</>}
                   value={fmt(t.ebMilling)}
                   unit="KWH"
                   color="fuchsia"
@@ -367,7 +367,7 @@ export default function DashboardPage() {
                   logo={<img src="/icons/milling.png" alt="" className={`h-[52px] w-[83px] ${LOGO_CLASS}`} />}
                 />
                 <Card
-                  label={<>Parboil &amp; Utility<br />Power Consumption</>}
+                  label={<>Parboil &amp; Utility<br />Consumption</>}
                   value={fmt(t.ebUtility)}
                   unit="KWH"
                   color="blue"
