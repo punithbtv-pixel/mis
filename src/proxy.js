@@ -4,7 +4,7 @@ import { parseSessionToken } from "@/lib/session";
 import { canAccessPage } from "@/lib/roles";
 import { isUiOnlyMode } from "@/lib/mode";
 
-const PUBLIC_PATHS = ["/login", "/api/login"];
+const PUBLIC_PATHS = ["/login", "/api/login", "/zyn-logo.jpg"];
 
 export async function proxy(request) {
   const { pathname } = request.nextUrl;

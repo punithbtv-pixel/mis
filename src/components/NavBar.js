@@ -39,8 +39,11 @@ export default function NavBar() {
   return (
     <header className="sticky top-0 z-40 bg-slate-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-6">
-        <span className="font-semibold tracking-tight whitespace-nowrap">
-          ZYN ELECTRICAL <span className="text-sky-400">MIS</span>
+        <span className="flex items-center gap-2 whitespace-nowrap">
+          <img src="/zyn-logo.jpg" alt="" className="h-7 w-auto rounded" />
+          <span className="font-semibold tracking-tight">
+            ZYN ELECTRICAL <span className="text-sky-400">MIS</span>
+          </span>
         </span>
         <nav className="flex items-center gap-1 flex-1">
           {links.map((l) => {

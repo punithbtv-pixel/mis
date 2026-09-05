@@ -37,8 +37,15 @@ function LoginForm() {
         onSubmit={submit}
         className="w-full max-w-sm bg-white rounded-xl shadow-sm border border-slate-200 p-8"
       >
-        <h1 className="text-xl font-semibold text-slate-900">ZYN ELECTRICAL MIS</h1>
-        <p className="text-sm text-slate-500 mt-1 mb-6">
+        <img
+          src="/zyn-logo.jpg"
+          alt="ZYN"
+          className="h-14 w-auto mx-auto mb-4 rounded"
+        />
+        <h1 className="text-xl font-semibold text-slate-900 text-center">
+          ZYN ELECTRICAL MIS
+        </h1>
+        <p className="text-sm text-slate-500 mt-1 mb-6 text-center">
           Sign in with your account.
         </p>
         <label className="block text-sm font-medium text-slate-700 mb-1">
