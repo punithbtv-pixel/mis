@@ -359,6 +359,14 @@ export default function DashboardPage() {
               />
             )}
             <Card
+              label={<>NEPA<br />Consumption</>}
+              value={fmt(t.nepaKwh)}
+              unit="KWH"
+              color="rose"
+              // eslint-disable-next-line @next/next/no-img-element
+              logo={<img src="/icons/meter.png" alt="" className={`max-h-full max-w-full ${LOGO_CLASS}`} />}
+            />
+            <Card
               wide
               label={<>NEPA Availability</>}
               value={fmt(t.nepaAvailabilityAvg, 1)}
