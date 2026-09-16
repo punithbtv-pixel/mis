@@ -13,7 +13,6 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ReferenceLine,
 } from "recharts";
 import MonthPicker from "@/components/MonthPicker";
 import { RUN_HOUR_EQUIPMENT } from "@/lib/equipment";
@@ -201,29 +200,25 @@ function Card({ label, value, unit, color = "sky", logo, compact = false, wide =
 
   if (wide) {
     return (
-      <div
-        className="relative col-span-2 min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow"
-        style={{ minHeight: 150 }}
-      >
+      <div className="relative col-span-2 aspect-[2/1] min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow">
         <div className={`absolute inset-x-0 top-0 h-1 z-10 ${theme.bar}`} />
-        <div className="flex h-16 items-start justify-center pt-[10px]">{logo}</div>
-        <div className="flex flex-col items-center px-2 pb-3 text-center">
-          <div className="mb-1 text-[11px] font-semibold uppercase leading-[1.3] tracking-wide text-slate-500">
+        <div className="absolute inset-x-0 top-[10px] flex h-24 items-start justify-center">
+          {logo}
+        </div>
+        <div className="absolute inset-x-0 bottom-[10px] flex flex-col items-center px-2 text-center">
+          <div className="mb-0.5 text-[11px] font-semibold uppercase leading-[1.35] tracking-wide text-slate-500">
             {label}
           </div>
           <div className="flex items-center justify-center gap-6">
-            <div className="flex flex-col items-center">
+            <div className="flex items-baseline gap-1">
               <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{value}</span>
-              {unit && <span className="mt-0.5 text-[12.5px] font-medium text-slate-400">{unit}</span>}
+              {unit && <span className="text-[12.5px] font-medium text-slate-400">{unit}</span>}
             </div>
             {secondaryValue != null && (
-              <>
-                <div className="self-stretch w-px bg-slate-200" />
-                <div className="flex flex-col items-center">
-                  <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{secondaryValue}</span>
-                  {secondaryUnit && <span className="mt-0.5 text-[12.5px] font-medium text-slate-400">{secondaryUnit}</span>}
-                </div>
-              </>
+              <div className="flex items-baseline gap-1 border-l border-slate-200 pl-6">
+                <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{secondaryValue}</span>
+                {secondaryUnit && <span className="text-[12.5px] font-medium text-slate-400">{secondaryUnit}</span>}
+              </div>
             )}
           </div>
         </div>
@@ -351,30 +346,6 @@ export default function DashboardPage() {
               logo={<img src="/icons/fuel-gun.png" alt="" className={`h-[54px] w-[54px] ${LOGO_CLASS}`} />}
             />
             <Card
-              label={<>Diesel<br />Issued</>}
-              value={fmt(t.dieselIssued)}
-              unit="Liters"
-              color="indigo"
-              // eslint-disable-next-line @next/next/no-img-element
-              logo={<img src="/icons/diesel-issued.png" alt="" className={`h-[54px] w-[54px] ${LOGO_CLASS}`} />}
-            />
-            <Card
-              label={<>Diesel<br />Received</>}
-              value={fmt(t.dieselReceived)}
-              unit="Liters"
-              color="orange"
-              // eslint-disable-next-line @next/next/no-img-element
-              logo={<img src="/icons/diesel-received.png" alt="" className={`h-[48px] w-[86px] ${LOGO_CLASS}`} />}
-            />
-            <Card
-              label={<>Main Tank<br />Stock</>}
-              value={fmt(data.latestDieselStock)}
-              unit="Liters"
-              color="teal"
-              // eslint-disable-next-line @next/next/no-img-element
-              logo={<img src="/icons/main-tank.png" alt="" className={`h-[65px] w-[65px] ${LOGO_CLASS}`} />}
-            />
-            <Card
               label={<>Current Total<br />Stock</>}
               value={fmt(data.latestTotalStock)}
               unit="Liters"
@@ -400,7 +371,7 @@ export default function DashboardPage() {
               secondaryUnit="hrs"
               color="rose"
               // eslint-disable-next-line @next/next/no-img-element
-              logo={<img src="/icons/nepa-power.png" alt="" className={`h-[56px] w-[56px] ${LOGO_CLASS}`} />}
+              logo={<img src="/icons/nepa-power.png" alt="" className={`h-[73px] w-[73px] ${LOGO_CLASS}`} />}
             />
           </div>
 
@@ -426,32 +397,6 @@ export default function DashboardPage() {
           )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <Panel title="NEPA Availability (hrs/day)">
-              <ResponsiveContainer width="100%" height={280}>
-                <LineChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
-                  <XAxis dataKey="day" fontSize={11} />
-                  <YAxis fontSize={11} domain={[0, 24]} />
-                  <Tooltip labelFormatter={trendTooltipLabel} />
-                  <ReferenceLine y={24} stroke="#cbd5e1" strokeDasharray="3 3" label={{ value: "24 hrs", position: "insideTopRight", fontSize: 10, fill: "#94a3b8" }} />
-                  <Legend
-                    formatter={(value) =>
-                      `${value} (avg ${fmt(t.nepaAvailabilityAvg, 1)} · total ${fmt(t.nepaAvailabilityTotal, 1)})`
-                    }
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="nepaAvailabilityHours"
-                    name="NEPA Availability (hrs)"
-                    stroke={TREND_COLORS.nepa}
-                    dot={{ r: 3 }}
-                    strokeWidth={2}
-                    connectNulls
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </Panel>
-
             <Panel title="Daily Power Consumption (KWH)">
               <ResponsiveContainer width="100%" height={354}>
                 <LineChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
@@ -540,34 +485,7 @@ export default function DashboardPage() {
               </ResponsiveContainer>
             </Panel>
 
-            <Panel title="Total DG Run Hours">
-              <ResponsiveContainer width="100%" height={280}>
-                <BarChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
-                  <XAxis dataKey="day" fontSize={11} />
-                  <YAxis fontSize={11} />
-                  <Tooltip labelFormatter={trendTooltipLabel} />
-                  <Legend
-                    formatter={(value) => {
-                      const eq = RUN_HOUR_EQUIPMENT.find((e) => e.label === value);
-                      const mtd = eq ? data.runHoursTotal[eq.field] : null;
-                      return mtd != null ? `${value} (${fmt(mtd, 1)} hrs)` : value;
-                    }}
-                  />
-                  {RUN_HOUR_EQUIPMENT.filter((eq) => eq.category === "dg").map((eq) => (
-                    <Bar
-                      key={eq.field}
-                      dataKey={eq.field}
-                      name={eq.label}
-                      stackId="dg"
-                      fill={EQ_COLORS[RUN_HOUR_EQUIPMENT.indexOf(eq) % EQ_COLORS.length]}
-                    />
-                  ))}
-                </BarChart>
-              </ResponsiveContainer>
-            </Panel>
-
-            <Panel title="Daily Compressor Run Hours">
+            <Panel title="Daily Equipment Run Hours">
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
@@ -575,13 +493,13 @@ export default function DashboardPage() {
                   <YAxis fontSize={11} />
                   <Tooltip labelFormatter={trendTooltipLabel} />
                   <Legend />
-                  {RUN_HOUR_EQUIPMENT.filter((eq) => eq.category === "comp").map((eq) => (
+                  {RUN_HOUR_EQUIPMENT.map((eq, i) => (
                     <Bar
                       key={eq.field}
                       dataKey={eq.field}
                       name={eq.label}
                       stackId="rh"
-                      fill={EQ_COLORS[RUN_HOUR_EQUIPMENT.indexOf(eq) % EQ_COLORS.length]}
+                      fill={EQ_COLORS[i % EQ_COLORS.length]}
                     />
                   ))}
                 </BarChart>
