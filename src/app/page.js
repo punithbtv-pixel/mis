@@ -202,24 +202,22 @@ function Card({ label, value, unit, color = "sky", logo, compact = false, wide =
     return (
       <div className="relative col-span-2 min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow" style={{ height: 112 }}>
         <div className={`absolute inset-x-0 top-0 h-1 z-10 ${theme.bar}`} />
-        <div className="flex h-full items-center gap-3 px-4">
-          <div className="flex shrink-0 items-center justify-center">{logo}</div>
-          <div className="min-w-0">
-            <div className="mb-0.5 text-[11px] font-semibold uppercase leading-[1.35] tracking-wide text-slate-500">
-              {label}
+        <div className="flex h-full flex-col items-center justify-center gap-1 px-2 text-center">
+          <div className="flex items-center justify-center">{logo}</div>
+          <div className="text-[11px] font-semibold uppercase leading-[1.35] tracking-wide text-slate-500">
+            {label}
+          </div>
+          <div className="flex items-baseline justify-center gap-6">
+            <div className="flex items-baseline gap-1">
+              <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{value}</span>
+              {unit && <span className="text-[12.5px] font-medium text-slate-400">{unit}</span>}
             </div>
-            <div className="flex items-baseline gap-6">
-              <div className="flex items-baseline gap-1">
-                <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{value}</span>
-                {unit && <span className="text-[12.5px] font-medium text-slate-400">{unit}</span>}
+            {secondaryValue != null && (
+              <div className="flex items-baseline gap-1 border-l border-slate-200 pl-6">
+                <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{secondaryValue}</span>
+                {secondaryUnit && <span className="text-[12.5px] font-medium text-slate-400">{secondaryUnit}</span>}
               </div>
-              {secondaryValue != null && (
-                <div className="flex items-baseline gap-1 border-l border-slate-200 pl-6">
-                  <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{secondaryValue}</span>
-                  {secondaryUnit && <span className="text-[12.5px] font-medium text-slate-400">{secondaryUnit}</span>}
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -249,16 +247,14 @@ function Card({ label, value, unit, color = "sky", logo, compact = false, wide =
   return (
     <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow" style={{ height: 112 }}>
       <div className={`absolute inset-x-0 top-0 h-1 z-10 ${theme.bar}`} />
-      <div className="flex h-full items-center gap-3 px-4">
-        <div className="flex shrink-0 items-center justify-center">{logo}</div>
-        <div className="min-w-0">
-          <div className="mb-0.5 text-[11px] font-semibold uppercase leading-[1.35] tracking-wide text-slate-500">
-            {label}
-          </div>
-          <div className="flex items-baseline gap-1">
-            <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{value}</span>
-            {unit && <span className="text-[12.5px] font-medium text-slate-400">{unit}</span>}
-          </div>
+      <div className="flex h-full flex-col items-center justify-center gap-1 px-2 text-center">
+        <div className="flex items-center justify-center">{logo}</div>
+        <div className="text-[11px] font-semibold uppercase leading-[1.35] tracking-wide text-slate-500">
+          {label}
+        </div>
+        <div className="flex items-baseline gap-1">
+          <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{value}</span>
+          {unit && <span className="text-[12.5px] font-medium text-slate-400">{unit}</span>}
         </div>
       </div>
     </div>
@@ -343,7 +339,7 @@ export default function DashboardPage() {
               unit="Liters"
               color="amber"
               // eslint-disable-next-line @next/next/no-img-element
-              logo={<img src="/icons/fuel-gun.png" alt="" className={`h-[39px] w-[39px] ${LOGO_CLASS}`} />}
+              logo={<img src="/icons/fuel-gun.png" alt="" className={`h-[30px] w-[30px] ${LOGO_CLASS}`} />}
             />
             <Card
               label={<>Current Total<br />Stock</>}
@@ -359,7 +355,7 @@ export default function DashboardPage() {
                 unit="hrs"
                 color="fuchsia"
                 // eslint-disable-next-line @next/next/no-img-element
-                logo={<img src="/icons/DG.png" alt="" className={`h-[42px] w-[42px] ${LOGO_CLASS}`} />}
+                logo={<img src="/icons/DG.png" alt="" className={`h-[32px] w-[32px] ${LOGO_CLASS}`} />}
               />
             )}
             <Card
@@ -371,7 +367,7 @@ export default function DashboardPage() {
               secondaryUnit="hrs"
               color="rose"
               // eslint-disable-next-line @next/next/no-img-element
-              logo={<img src="/icons/nepa-power.png" alt="" className={`h-[44px] w-[44px] ${LOGO_CLASS}`} />}
+              logo={<img src="/icons/nepa-power.png" alt="" className={`h-[34px] w-[34px] ${LOGO_CLASS}`} />}
             />
           </div>
 
