@@ -34,9 +34,6 @@ export default function MonthPicker({ month, onChange }) {
       >
         ›
       </button>
-      <span className="ml-1 text-sm text-slate-500 hidden sm:inline">
-        {monthLabel(month)}
-      </span>
     </div>
   );
 }
