@@ -139,12 +139,6 @@ export default function DataPage() {
     });
   }
 
-  function toggleAllColumns() {
-    setSelectedColumns(
-      allColumnsSelected ? new Set() : new Set(SELECTABLE_REPORT_COLUMNS.map((c) => c.key))
-    );
-  }
-
   async function downloadReport(format) {
     setExportMenuOpen(false);
     setExporting(format);
@@ -193,13 +187,6 @@ export default function DataPage() {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <MonthPicker month={month} onChange={onMonthChange} />
-            <button
-              type="button"
-              onClick={toggleAllColumns}
-              className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
-            >
-              {allColumnsSelected ? "Uncheck all columns" : "Check all columns"} ({selectedColumns.size}/{SELECTABLE_REPORT_COLUMNS.length})
-            </button>
             <div className="relative" ref={exportMenuRef}>
               <button
                 type="button"
