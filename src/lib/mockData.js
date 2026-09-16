@@ -36,6 +36,7 @@ function makeReading(id, date, prev = null) {
     nepaMeterKwh: (prev?.nepaMeterKwh ?? 145000) + 220 + (n % 20),
     ebMillingKwh: (prev?.ebMillingKwh ?? 50100) + 122 + (n % 12),
     ebUtilityKwh: (prev?.ebUtilityKwh ?? 38200) + 90 + (n % 8),
+    nepaAvailabilityHours: 24 - [0.7, 1.3, 0, 0, 5.7, 0, 0, 5.7, 1.6, 3.7][n % 10],
     compE75_1Hours: (prev?.compE75_1Hours ?? 5870) + 7.5,
     compE75_2Hours: (prev?.compE75_2Hours ?? 5665) + 6.2,
     compE75_3Hours: (prev?.compE75_3Hours ?? 5925) + 6.8,

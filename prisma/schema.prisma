@@ -23,9 +23,10 @@ model DailyReading {
   serviceTankLitres       Float? // service tank stock (litres); entered occasionally, held constant between entries
 
   // Grid power
-  nepaMeterKwh Float? // NEPA (grid) main meter reading (KWH)
-  ebMillingKwh Float? // EB milling sub-meter reading (KWH)
-  ebUtilityKwh Float? // EB utility / parboiling sub-meter reading (KWH)
+  nepaMeterKwh          Float? // NEPA (grid) main meter reading (KWH)
+  ebMillingKwh          Float? // EB milling sub-meter reading (KWH)
+  ebUtilityKwh          Float? // EB utility / parboiling sub-meter reading (KWH)
+  nepaAvailabilityHours Float? // EB/NEPA grid availability that day (hours, 0-24; not cumulative)
 
   // Compressors (hour-meter readings)
   compE75_1Hours Float?

@@ -81,6 +81,7 @@ export const INPUT_GROUPS = [
       { field: "nepaMeterKwh", label: "NEPA main meter", unit: "KWH" },
       { field: "ebMillingKwh", label: "EB Milling meter", unit: "KWH" },
       { field: "ebUtilityKwh", label: "EB Utility / Parboiling meter", unit: "KWH" },
+      { field: "nepaAvailabilityHours", label: "EB Availability", unit: "hrs", cumulative: false },
     ],
   },
   {

@@ -145,7 +145,7 @@ function EntryForm() {
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {group.fields.map((f) => {
-                const d = delta(f.field);
+                const d = f.cumulative === false ? null : delta(f.field);
                 return (
                   <div key={f.field}>
                     <label className="block text-xs font-medium text-slate-600 mb-1">
@@ -157,13 +157,17 @@ function EntryForm() {
                     <input
                       type="number"
                       step="any"
+                      min={f.cumulative === false ? 0 : undefined}
+                      max={f.cumulative === false ? 24 : undefined}
                       value={values[f.field] ?? ""}
                       onChange={(e) => setField(f.field, e.target.value)}
                       disabled={loading}
                       className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
                     />
                     <div className="h-4 mt-0.5 text-[11px] text-slate-400">
-                      {d != null && <>Δ {fmt(d, 1)}</>}
+                      {f.cumulative === false
+                        ? "Hours available that day (0–24)"
+                        : d != null && <>Δ {fmt(d, 1)}</>}
                     </div>
                   </div>
                 );

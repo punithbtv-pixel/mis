@@ -124,6 +124,10 @@ export function computeRows(readings, settings, calibration) {
     const ebDifference =
       nepaConsumption != null && ebTotal != null ? nepaConsumption - ebTotal : null;
 
+    // EB/NEPA grid availability (hours) is entered directly, not cumulative.
+    const nepaAvailabilityHours =
+      r.nepaAvailabilityHours != null ? round(Number(r.nepaAvailabilityHours)) : null;
+
     // Run hours + remaining service per equipment.
     const runHours = {};
     const remaining = {};
@@ -150,6 +154,7 @@ export function computeRows(readings, settings, calibration) {
       ebUtility: round(ebUtility),
       ebTotal: round(ebTotal),
       ebDifference: round(ebDifference),
+      nepaAvailabilityHours,
       runHours,
       remaining,
     };
@@ -173,9 +178,21 @@ function sum(arr, roundFn = round) {
   return roundFn(vals.reduce((a, b) => a + b, 0));
 }
 
+function avg(arr, roundFn = round) {
+  const vals = arr.filter((v) => v != null && Number.isFinite(v));
+  if (vals.length === 0) return null;
+  return roundFn(vals.reduce((a, b) => a + b, 0) / vals.length);
+}
+
 // Build dashboard payload (KPIs, chart series, service alerts) from rows.
 export function buildSummary(rows, settings) {
   const svc = settingsToMap(settings);
+
+  const runHoursTotal = {};
+  for (const eq of RUN_HOUR_EQUIPMENT) {
+    runHoursTotal[eq.field] = sum(rows.map((r) => r.runHours[eq.field]));
+  }
+  const dgFields = RUN_HOUR_EQUIPMENT.filter((eq) => eq.category === "dg").map((eq) => eq.field);
 
   const totals = {
     dieselConsumed: sum(rows.map((r) => r.dieselConsumption), roundDiesel),
@@ -184,12 +201,11 @@ export function buildSummary(rows, settings) {
     nepaKwh: sum(rows.map((r) => r.nepaConsumption)),
     ebMilling: sum(rows.map((r) => r.ebMilling)),
     ebUtility: sum(rows.map((r) => r.ebUtility)),
+    // Total hours all 4 DGs ran this month (sum of their hour-meter diffs).
+    dgRunHours: round(dgFields.reduce((a, f) => a + (runHoursTotal[f] ?? 0), 0)),
+    nepaAvailabilityAvg: avg(rows.map((r) => r.nepaAvailabilityHours), (n) => round(n, 1)),
+    nepaAvailabilityTotal: sum(rows.map((r) => r.nepaAvailabilityHours), (n) => round(n, 1)),
   };
-
-  const runHoursTotal = {};
-  for (const eq of RUN_HOUR_EQUIPMENT) {
-    runHoursTotal[eq.field] = sum(rows.map((r) => r.runHours[eq.field]));
-  }
 
   // Latest known remaining-hours per equipment + alert flag.
   const alerts = [];
@@ -249,6 +265,7 @@ export function buildSummary(rows, settings) {
     nepaConsumption: r.nepaConsumption,
     ebMilling: r.ebMilling,
     ebUtility: r.ebUtility,
+    nepaAvailabilityHours: r.nepaAvailabilityHours,
     ...Object.fromEntries(
       RUN_HOUR_EQUIPMENT.map((eq) => [eq.field, r.runHours[eq.field]])
     ),

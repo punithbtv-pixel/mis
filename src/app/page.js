@@ -13,6 +13,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  ReferenceLine,
 } from "recharts";
 import MonthPicker from "@/components/MonthPicker";
 import { RUN_HOUR_EQUIPMENT } from "@/lib/equipment";
@@ -195,8 +196,34 @@ function StopwatchIcon({ className }) {
   );
 }
 
-function Card({ label, value, unit, color = "sky", logo, compact = false }) {
+function Card({ label, value, unit, color = "sky", logo, compact = false, wide = false, secondaryValue, secondaryUnit }) {
   const theme = CARD_THEMES[color] ?? CARD_THEMES.sky;
+
+  if (wide) {
+    return (
+      <div className="relative col-span-2 min-w-0 flex items-center gap-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow px-4 py-3">
+        <div className={`absolute inset-x-0 top-0 h-1 z-10 ${theme.bar}`} />
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center">{logo}</div>
+        <div className="min-w-0 flex-1">
+          <div className="mb-1 truncate text-[11px] font-semibold uppercase leading-[1.3] tracking-wide text-slate-500">
+            {label}
+          </div>
+          <div className="flex flex-wrap items-end gap-x-6 gap-y-1">
+            <div className="flex items-baseline gap-1">
+              <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{value}</span>
+              {unit && <span className="text-[12.5px] font-medium text-slate-400">{unit}</span>}
+            </div>
+            {secondaryValue != null && (
+              <div className="flex items-baseline gap-1 pl-6 border-l border-slate-200">
+                <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{secondaryValue}</span>
+                {secondaryUnit && <span className="text-[12.5px] font-medium text-slate-400">{secondaryUnit}</span>}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (compact) {
     return (
@@ -348,34 +375,27 @@ export default function DashboardPage() {
               color="emerald"
               logo={<StockGauge value={data.latestTotalStock} />}
             />
+            {canViewMillingUtility && (
+              <Card
+                label={<>DG Run<br />Hours</>}
+                value={fmt(t.dgRunHours, 1)}
+                unit="hrs"
+                color="fuchsia"
+                // eslint-disable-next-line @next/next/no-img-element
+                logo={<img src="/icons/DG.png" alt="" className={`h-[60px] w-[60px] ${LOGO_CLASS}`} />}
+              />
+            )}
             <Card
-              label={<>NEPA <br />Consumption</>}
-              value={fmt(t.nepaKwh)}
-              unit="KWH"
+              wide
+              label={<>NEPA Availability</>}
+              value={fmt(t.nepaAvailabilityAvg, 1)}
+              unit="hrs/day avg"
+              secondaryValue={fmt(t.nepaAvailabilityTotal, 1)}
+              secondaryUnit="hrs MTD"
               color="rose"
               // eslint-disable-next-line @next/next/no-img-element
-              logo={<img src="/icons/nepa-power.png" alt="" className={`h-[77px] w-[77px] ${LOGO_CLASS}`} />}
+              logo={<img src="/icons/nepa-power.png" alt="" className={`h-[56px] w-[56px] ${LOGO_CLASS}`} />}
             />
-            {canViewMillingUtility && (
-              <>
-                <Card
-                  label={<>Milling <br />Consumption</>}
-                  value={fmt(t.ebMilling)}
-                  unit="KWH"
-                  color="fuchsia"
-                  // eslint-disable-next-line @next/next/no-img-element
-                  logo={<img src="/icons/milling.png" alt="" className={`h-[52px] w-[83px] ${LOGO_CLASS}`} />}
-                />
-                <Card
-                  label={<>Parboil &amp; Utility<br />Consumption</>}
-                  value={fmt(t.ebUtility)}
-                  unit="KWH"
-                  color="blue"
-                  // eslint-disable-next-line @next/next/no-img-element
-                  logo={<img src="/icons/utility.png" alt="" className={`h-[45px] w-[110px] ${LOGO_CLASS}`} />}
-                />
-              </>
-            )}
           </div>
 
           {data.alerts?.some((a) => a.due) && (
@@ -452,10 +472,36 @@ export default function DashboardPage() {
                   <XAxis dataKey="day" fontSize={11} />
                   <YAxis fontSize={11} />
                   <Tooltip labelFormatter={trendTooltipLabel} />
-                  <Legend />
+                  <Legend
+                    formatter={(value) => {
+                      const mtd = { NEPA: t.nepaKwh, Milling: t.ebMilling, "Parboil & Utility": t.ebUtility }[value];
+                      return mtd != null ? `${value} (${fmt(mtd)} KWH MTD)` : value;
+                    }}
+                  />
                   <Line type="monotone" dataKey="nepaConsumption" name="NEPA" stroke={TREND_COLORS.nepa} dot={false} strokeWidth={2} />
                   {canViewMillingUtility && <Line type="monotone" dataKey="ebMilling" name="Milling" stroke={TREND_COLORS.milling} dot={false} strokeWidth={2} />}
                   {canViewMillingUtility && <Line type="monotone" dataKey="ebUtility" name="Parboil & Utility" stroke={TREND_COLORS.utility} dot={false} strokeWidth={2} />}
+                </LineChart>
+              </ResponsiveContainer>
+            </Panel>
+
+            <Panel title="NEPA Availability (hrs/day)">
+              <ResponsiveContainer width="100%" height={280}>
+                <LineChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
+                  <XAxis dataKey="day" fontSize={11} />
+                  <YAxis fontSize={11} domain={[0, 24]} />
+                  <Tooltip labelFormatter={trendTooltipLabel} />
+                  <ReferenceLine y={24} stroke="#cbd5e1" strokeDasharray="3 3" label={{ value: "24 hrs", position: "insideTopRight", fontSize: 10, fill: "#94a3b8" }} />
+                  <Line
+                    type="monotone"
+                    dataKey="nepaAvailabilityHours"
+                    name="NEPA Availability (hrs)"
+                    stroke={TREND_COLORS.nepa}
+                    dot={{ r: 3 }}
+                    strokeWidth={2}
+                    connectNulls
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </Panel>
