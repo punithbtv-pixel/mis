@@ -95,7 +95,7 @@ function StockGauge({ value, max = STOCK_GAUGE_MAX }) {
   const [bx1, by1] = pt(1, bezelR);
 
   return (
-    <svg width="90" height="56" viewBox="0 0 128 80">
+    <svg width="100%" height="100%" viewBox="0 0 128 80">
       <defs>
         {STOCK_GAUGE_BANDS.map((b, i) => (
           <linearGradient key={i} id={`stock-gauge-band${i}`} x1="0" y1="0" x2="0" y2="1">
@@ -203,7 +203,7 @@ function Card({ label, value, unit, color = "sky", logo, compact = false, wide =
       <div className="relative col-span-2 min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow" style={{ height: 112 }}>
         <div className={`absolute inset-x-0 top-0 h-1 z-10 ${theme.bar}`} />
         <div className="flex h-full flex-col items-center justify-center gap-1 px-2 text-center">
-          <div className="flex items-center justify-center">{logo}</div>
+          <div className="flex h-[50px] w-[50px] shrink-0 items-center justify-center">{logo}</div>
           <div className="text-[11px] font-semibold uppercase leading-[1.35] tracking-wide text-slate-500">
             {label}
           </div>
@@ -248,7 +248,7 @@ function Card({ label, value, unit, color = "sky", logo, compact = false, wide =
     <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow" style={{ height: 112 }}>
       <div className={`absolute inset-x-0 top-0 h-1 z-10 ${theme.bar}`} />
       <div className="flex h-full flex-col items-center justify-center gap-1 px-2 text-center">
-        <div className="flex items-center justify-center">{logo}</div>
+        <div className="flex h-[50px] w-[50px] shrink-0 items-center justify-center">{logo}</div>
         <div className="text-[11px] font-semibold uppercase leading-[1.35] tracking-wide text-slate-500">
           {label}
         </div>
@@ -339,7 +339,7 @@ export default function DashboardPage() {
               unit="Liters"
               color="amber"
               // eslint-disable-next-line @next/next/no-img-element
-              logo={<img src="/icons/fuel-gun.png" alt="" className={`h-[30px] w-[30px] ${LOGO_CLASS}`} />}
+              logo={<img src="/icons/fuel-gun.png" alt="" className={`max-h-full max-w-full ${LOGO_CLASS}`} />}
             />
             <Card
               label={<>Current Total<br />Stock</>}
@@ -355,7 +355,7 @@ export default function DashboardPage() {
                 unit="hrs"
                 color="fuchsia"
                 // eslint-disable-next-line @next/next/no-img-element
-                logo={<img src="/icons/DG.png" alt="" className={`h-[32px] w-[32px] ${LOGO_CLASS}`} />}
+                logo={<img src="/icons/DG.png" alt="" className={`max-h-full max-w-full ${LOGO_CLASS}`} />}
               />
             )}
             <Card
@@ -367,7 +367,7 @@ export default function DashboardPage() {
               secondaryUnit="hrs"
               color="rose"
               // eslint-disable-next-line @next/next/no-img-element
-              logo={<img src="/icons/nepa-power.png" alt="" className={`h-[34px] w-[34px] ${LOGO_CLASS}`} />}
+              logo={<img src="/icons/nepa-power.png" alt="" className={`max-h-full max-w-full ${LOGO_CLASS}`} />}
             />
           </div>
 
