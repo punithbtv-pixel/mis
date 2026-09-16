@@ -201,23 +201,29 @@ function Card({ label, value, unit, color = "sky", logo, compact = false, wide =
 
   if (wide) {
     return (
-      <div className="relative col-span-2 min-w-0 flex items-center gap-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow px-4 py-3">
+      <div
+        className="relative col-span-2 min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow"
+        style={{ minHeight: 150 }}
+      >
         <div className={`absolute inset-x-0 top-0 h-1 z-10 ${theme.bar}`} />
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center">{logo}</div>
-        <div className="min-w-0 flex-1">
-          <div className="mb-1 truncate text-[11px] font-semibold uppercase leading-[1.3] tracking-wide text-slate-500">
+        <div className="flex h-16 items-start justify-center pt-[10px]">{logo}</div>
+        <div className="flex flex-col items-center px-2 pb-3 text-center">
+          <div className="mb-1 text-[11px] font-semibold uppercase leading-[1.3] tracking-wide text-slate-500">
             {label}
           </div>
-          <div className="flex flex-wrap items-end gap-x-6 gap-y-1">
-            <div className="flex items-baseline gap-1">
+          <div className="flex items-center justify-center gap-6">
+            <div className="flex flex-col items-center">
               <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{value}</span>
-              {unit && <span className="text-[12.5px] font-medium text-slate-400">{unit}</span>}
+              {unit && <span className="mt-0.5 text-[12.5px] font-medium text-slate-400">{unit}</span>}
             </div>
             {secondaryValue != null && (
-              <div className="flex items-baseline gap-1 pl-6 border-l border-slate-200">
-                <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{secondaryValue}</span>
-                {secondaryUnit && <span className="text-[12.5px] font-medium text-slate-400">{secondaryUnit}</span>}
-              </div>
+              <>
+                <div className="self-stretch w-px bg-slate-200" />
+                <div className="flex flex-col items-center">
+                  <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{secondaryValue}</span>
+                  {secondaryUnit && <span className="mt-0.5 text-[12.5px] font-medium text-slate-400">{secondaryUnit}</span>}
+                </div>
+              </>
             )}
           </div>
         </div>
@@ -377,7 +383,7 @@ export default function DashboardPage() {
             />
             {canViewMillingUtility && (
               <Card
-                label={<>DG Run<br />Hours</>}
+                label={<>Total DG<br />Run Hours</>}
                 value={fmt(t.dgRunHours, 1)}
                 unit="hrs"
                 color="fuchsia"
@@ -428,6 +434,11 @@ export default function DashboardPage() {
                   <YAxis fontSize={11} domain={[0, 24]} />
                   <Tooltip labelFormatter={trendTooltipLabel} />
                   <ReferenceLine y={24} stroke="#cbd5e1" strokeDasharray="3 3" label={{ value: "24 hrs", position: "insideTopRight", fontSize: 10, fill: "#94a3b8" }} />
+                  <Legend
+                    formatter={(value) =>
+                      `${value} (avg ${fmt(t.nepaAvailabilityAvg, 1)} · total ${fmt(t.nepaAvailabilityTotal, 1)})`
+                    }
+                  />
                   <Line
                     type="monotone"
                     dataKey="nepaAvailabilityHours"
@@ -471,6 +482,24 @@ export default function DashboardPage() {
                   <XAxis dataKey="day" fontSize={11} />
                   <YAxis fontSize={11} domain={["auto", "auto"]} />
                   <Tooltip labelFormatter={trendTooltipLabel} />
+                  <Legend
+                    content={() => (
+                      <div className="mt-1 flex flex-wrap items-center gap-4 text-xs text-slate-600">
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: TREND_COLORS.stock }} />
+                          Service tank (L) ({fmt(data.latestServiceTank)} L)
+                        </span>
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="inline-block h-2.5 w-2.5 rounded-full bg-teal-600" />
+                          Main Tank Stock ({fmt(data.latestDieselStock)} L)
+                        </span>
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="inline-block h-2.5 w-2.5 rounded-full bg-emerald-600" />
+                          Current Total Stock ({fmt(data.latestTotalStock)} L)
+                        </span>
+                      </div>
+                    )}
+                  />
                   <Line
                     type="stepAfter"
                     dataKey="serviceTankLitres"
@@ -492,7 +521,12 @@ export default function DashboardPage() {
                   <XAxis dataKey="day" fontSize={11} />
                   <YAxis fontSize={11} />
                   <Tooltip labelFormatter={trendTooltipLabel} />
-                  <Legend />
+                  <Legend
+                    formatter={(value) => {
+                      const mtd = { "Consumption (L)": t.dieselConsumed, "Issued (L)": t.dieselIssued }[value];
+                      return mtd != null ? `${value} (${fmt(mtd)} L)` : value;
+                    }}
+                  />
                   <Bar dataKey="dieselConsumption" name="Consumption (L)" fill={TREND_COLORS.diesel} radius={[3, 3, 0, 0]} />
                   <Line
                     type="monotone"
@@ -533,7 +567,7 @@ export default function DashboardPage() {
               </ResponsiveContainer>
             </Panel>
 
-            <Panel title="Daily Equipment Run Hours">
+            <Panel title="Daily Compressor Run Hours">
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
@@ -541,13 +575,13 @@ export default function DashboardPage() {
                   <YAxis fontSize={11} />
                   <Tooltip labelFormatter={trendTooltipLabel} />
                   <Legend />
-                  {RUN_HOUR_EQUIPMENT.map((eq, i) => (
+                  {RUN_HOUR_EQUIPMENT.filter((eq) => eq.category === "comp").map((eq) => (
                     <Bar
                       key={eq.field}
                       dataKey={eq.field}
                       name={eq.label}
                       stackId="rh"
-                      fill={EQ_COLORS[i % EQ_COLORS.length]}
+                      fill={EQ_COLORS[RUN_HOUR_EQUIPMENT.indexOf(eq) % EQ_COLORS.length]}
                     />
                   ))}
                 </BarChart>
