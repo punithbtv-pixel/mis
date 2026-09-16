@@ -422,18 +422,49 @@ export default function DashboardPage() {
             </Panel>
 
             <Panel title="Daily Diesel Consumption (L)">
-              <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 mb-1">
-                Service tank stock (L)
+              <div className="hidden md:block">
+                <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 mb-1">
+                  Service tank stock (L)
+                </div>
+                <ResponsiveContainer width="100%" height={90}>
+                  <LineChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
+                    <XAxis dataKey="day" fontSize={11} />
+                    <YAxis fontSize={11} domain={["auto", "auto"]} />
+                    <Tooltip labelFormatter={trendTooltipLabel} />
+                    <Line
+                      type="stepAfter"
+                      dataKey="serviceTankLitres"
+                      name="Service tank (L)"
+                      stroke={TREND_COLORS.stock}
+                      dot={{ r: 3 }}
+                      strokeWidth={2}
+                      connectNulls
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
-              <ResponsiveContainer width="100%" height={90}>
-                <LineChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+
+              <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 mb-1 mt-3">
+                Daily consumption &amp; issued (L)
+              </div>
+              <ResponsiveContainer width="100%" height={220}>
+                <ComposedChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
                   <XAxis dataKey="day" fontSize={11} />
-                  <YAxis fontSize={11} domain={["auto", "auto"]} />
+                  <YAxis fontSize={11} />
                   <Tooltip labelFormatter={trendTooltipLabel} />
                   <Legend
                     content={() => (
-                      <div className="mt-1 flex flex-wrap items-center gap-4 text-xs text-slate-600">
+                      <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-600">
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: TREND_COLORS.diesel }} />
+                          Consumption (L) ({fmt(t.dieselConsumed)} L)
+                        </span>
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: TREND_COLORS.issued }} />
+                          Issued (L) ({fmt(t.dieselIssued)} L)
+                        </span>
                         <span className="inline-flex items-center gap-1.5">
                           <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: TREND_COLORS.stock }} />
                           Service tank (L) ({fmt(data.latestServiceTank)} L)
@@ -448,33 +479,6 @@ export default function DashboardPage() {
                         </span>
                       </div>
                     )}
-                  />
-                  <Line
-                    type="stepAfter"
-                    dataKey="serviceTankLitres"
-                    name="Service tank (L)"
-                    stroke={TREND_COLORS.stock}
-                    dot={{ r: 3 }}
-                    strokeWidth={2}
-                    connectNulls
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-
-              <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 mb-1 mt-3">
-                Daily consumption &amp; issued (L)
-              </div>
-              <ResponsiveContainer width="100%" height={220}>
-                <ComposedChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
-                  <XAxis dataKey="day" fontSize={11} />
-                  <YAxis fontSize={11} />
-                  <Tooltip labelFormatter={trendTooltipLabel} />
-                  <Legend
-                    formatter={(value) => {
-                      const mtd = { "Consumption (L)": t.dieselConsumed, "Issued (L)": t.dieselIssued }[value];
-                      return mtd != null ? `${value} (${fmt(mtd)} L)` : value;
-                    }}
                   />
                   <Bar dataKey="dieselConsumption" name="Consumption (L)" fill={TREND_COLORS.diesel} radius={[3, 3, 0, 0]} />
                   <Line
