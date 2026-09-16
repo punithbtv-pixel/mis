@@ -34,6 +34,8 @@ export default function LogDataPage() {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [user, setUser] = useState(null);
   const [exporting, setExporting] = useState("");
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  const exportMenuRef = useRef(null);
   const [search, setSearch] = useState("");
   const [expandedRows, setExpandedRows] = useState(() => new Set());
   const [overflowRows, setOverflowRows] = useState(() => new Set());
@@ -88,6 +90,17 @@ export default function LogDataPage() {
       active = false;
     };
   }, [month, type]);
+
+  useEffect(() => {
+    if (!exportMenuOpen) return;
+    function onClickOutside(e) {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(e.target)) {
+        setExportMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, [exportMenuOpen]);
 
   function setCellRef(rowId, key) {
     return (el) => {
@@ -149,6 +162,7 @@ export default function LogDataPage() {
   }, [visibleRows]);
 
   async function downloadReport(format) {
+    setExportMenuOpen(false);
     setExporting(format);
     try {
       const res = await fetch(`/api/maintenance-logs/export?month=${month}&type=${type}&format=${format}`);
@@ -176,22 +190,43 @@ export default function LogDataPage() {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <MonthPicker month={month} onChange={onMonthChange} />
-            <button
-              type="button"
-              onClick={() => downloadReport("excel")}
-              disabled={!!exporting || loading}
-              className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
-            >
-              {exporting === "excel" ? "Exporting…" : "Excel"}
-            </button>
-            <button
-              type="button"
-              onClick={() => downloadReport("pdf")}
-              disabled={!!exporting || loading}
-              className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
-            >
-              {exporting === "pdf" ? "Exporting…" : "PDF"}
-            </button>
+            <div className="relative" ref={exportMenuRef}>
+              <button
+                type="button"
+                onClick={() => setExportMenuOpen((v) => !v)}
+                disabled={!!exporting || loading}
+                className="h-9 inline-flex items-center gap-1.5 rounded-lg bg-slate-900 text-white px-4 text-sm font-medium hover:bg-slate-800 disabled:opacity-60"
+              >
+                {exporting ? "Exporting…" : "Export"}
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="mt-px">
+                  <path
+                    d="M2.5 4.5L6 8L9.5 4.5"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+              {exportMenuOpen && (
+                <div className="absolute right-0 z-30 mt-1.5 w-40 rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
+                  <button
+                    type="button"
+                    onClick={() => downloadReport("excel")}
+                    className="w-full px-3 py-2 text-left text-sm hover:bg-slate-50"
+                  >
+                    Excel (.xlsx)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => downloadReport("pdf")}
+                    className="w-full px-3 py-2 text-left text-sm hover:bg-slate-50"
+                  >
+                    PDF (.pdf)
+                  </button>
+                </div>
+              )}
+            </div>
             {canCreate && (
               <Link
                 href="/log-entry"
