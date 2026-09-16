@@ -391,7 +391,7 @@ export default function DashboardPage() {
               value={fmt(t.nepaAvailabilityAvg, 1)}
               unit="hrs/day avg"
               secondaryValue={fmt(t.nepaAvailabilityTotal, 1)}
-              secondaryUnit="hrs MTD"
+              secondaryUnit="hrs"
               color="rose"
               // eslint-disable-next-line @next/next/no-img-element
               logo={<img src="/icons/nepa-power.png" alt="" className={`h-[56px] w-[56px] ${LOGO_CLASS}`} />}
@@ -420,6 +420,47 @@ export default function DashboardPage() {
           )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <Panel title="NEPA Availability (hrs/day)">
+              <ResponsiveContainer width="100%" height={280}>
+                <LineChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
+                  <XAxis dataKey="day" fontSize={11} />
+                  <YAxis fontSize={11} domain={[0, 24]} />
+                  <Tooltip labelFormatter={trendTooltipLabel} />
+                  <ReferenceLine y={24} stroke="#cbd5e1" strokeDasharray="3 3" label={{ value: "24 hrs", position: "insideTopRight", fontSize: 10, fill: "#94a3b8" }} />
+                  <Line
+                    type="monotone"
+                    dataKey="nepaAvailabilityHours"
+                    name="NEPA Availability (hrs)"
+                    stroke={TREND_COLORS.nepa}
+                    dot={{ r: 3 }}
+                    strokeWidth={2}
+                    connectNulls
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </Panel>
+
+            <Panel title="Daily Power Consumption (KWH)">
+              <ResponsiveContainer width="100%" height={354}>
+                <LineChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
+                  <XAxis dataKey="day" fontSize={11} />
+                  <YAxis fontSize={11} />
+                  <Tooltip labelFormatter={trendTooltipLabel} />
+                  <Legend
+                    formatter={(value) => {
+                      const mtd = { NEPA: t.nepaKwh, Milling: t.ebMilling, "Parboil & Utility": t.ebUtility }[value];
+                      return mtd != null ? `${value} (${fmt(mtd)} KWH)` : value;
+                    }}
+                  />
+                  <Line type="monotone" dataKey="nepaConsumption" name="NEPA" stroke={TREND_COLORS.nepa} dot={false} strokeWidth={2} />
+                  {canViewMillingUtility && <Line type="monotone" dataKey="ebMilling" name="Milling" stroke={TREND_COLORS.milling} dot={false} strokeWidth={2} />}
+                  {canViewMillingUtility && <Line type="monotone" dataKey="ebUtility" name="Parboil & Utility" stroke={TREND_COLORS.utility} dot={false} strokeWidth={2} />}
+                </LineChart>
+              </ResponsiveContainer>
+            </Panel>
+
             <Panel title="Daily Diesel Consumption (L)">
               <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 mb-1">
                 Service tank stock (L)
@@ -465,44 +506,30 @@ export default function DashboardPage() {
               </ResponsiveContainer>
             </Panel>
 
-            <Panel title="Daily Power Consumption (KWH)">
-              <ResponsiveContainer width="100%" height={354}>
-                <LineChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+            <Panel title="Total DG Run Hours">
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
                   <XAxis dataKey="day" fontSize={11} />
                   <YAxis fontSize={11} />
                   <Tooltip labelFormatter={trendTooltipLabel} />
                   <Legend
                     formatter={(value) => {
-                      const mtd = { NEPA: t.nepaKwh, Milling: t.ebMilling, "Parboil & Utility": t.ebUtility }[value];
-                      return mtd != null ? `${value} (${fmt(mtd)} KWH MTD)` : value;
+                      const eq = RUN_HOUR_EQUIPMENT.find((e) => e.label === value);
+                      const mtd = eq ? data.runHoursTotal[eq.field] : null;
+                      return mtd != null ? `${value} (${fmt(mtd, 1)} hrs)` : value;
                     }}
                   />
-                  <Line type="monotone" dataKey="nepaConsumption" name="NEPA" stroke={TREND_COLORS.nepa} dot={false} strokeWidth={2} />
-                  {canViewMillingUtility && <Line type="monotone" dataKey="ebMilling" name="Milling" stroke={TREND_COLORS.milling} dot={false} strokeWidth={2} />}
-                  {canViewMillingUtility && <Line type="monotone" dataKey="ebUtility" name="Parboil & Utility" stroke={TREND_COLORS.utility} dot={false} strokeWidth={2} />}
-                </LineChart>
-              </ResponsiveContainer>
-            </Panel>
-
-            <Panel title="NEPA Availability (hrs/day)">
-              <ResponsiveContainer width="100%" height={280}>
-                <LineChart data={series} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
-                  <XAxis dataKey="day" fontSize={11} />
-                  <YAxis fontSize={11} domain={[0, 24]} />
-                  <Tooltip labelFormatter={trendTooltipLabel} />
-                  <ReferenceLine y={24} stroke="#cbd5e1" strokeDasharray="3 3" label={{ value: "24 hrs", position: "insideTopRight", fontSize: 10, fill: "#94a3b8" }} />
-                  <Line
-                    type="monotone"
-                    dataKey="nepaAvailabilityHours"
-                    name="NEPA Availability (hrs)"
-                    stroke={TREND_COLORS.nepa}
-                    dot={{ r: 3 }}
-                    strokeWidth={2}
-                    connectNulls
-                  />
-                </LineChart>
+                  {RUN_HOUR_EQUIPMENT.filter((eq) => eq.category === "dg").map((eq) => (
+                    <Bar
+                      key={eq.field}
+                      dataKey={eq.field}
+                      name={eq.label}
+                      stackId="dg"
+                      fill={EQ_COLORS[RUN_HOUR_EQUIPMENT.indexOf(eq) % EQ_COLORS.length]}
+                    />
+                  ))}
+                </BarChart>
               </ResponsiveContainer>
             </Panel>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import MonthPicker from "@/components/MonthPicker";
 import { currentMonth } from "@/lib/dates";
@@ -47,6 +47,8 @@ export default function DataPage() {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [user, setUser] = useState(null);
   const [exporting, setExporting] = useState("");
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  const exportMenuRef = useRef(null);
   const [selected, setSelected] = useState(new Set());
   const [selectedColumns, setSelectedColumns] = useState(
     new Set(SELECTABLE_REPORT_COLUMNS.map((c) => c.key))
@@ -67,7 +69,6 @@ export default function DataPage() {
   const allColumnsSelected = selectedColumns.size === SELECTABLE_REPORT_COLUMNS.length;
   const allSelected = allRowsSelected && allColumnsSelected;
 
-  const canAddEntry = user?.role === "ADMIN" || user?.role === "ENGINEER";
   const canEdit = user?.role === "ADMIN";
 
   function onMonthChange(nextMonth) {
@@ -98,6 +99,17 @@ export default function DataPage() {
       active = false;
     };
   }, [month]);
+
+  useEffect(() => {
+    if (!exportMenuOpen) return;
+    function onClickOutside(e) {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(e.target)) {
+        setExportMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, [exportMenuOpen]);
 
   function toggleRow(date) {
     setSelected((prev) => {
@@ -134,6 +146,7 @@ export default function DataPage() {
   }
 
   async function downloadReport(format) {
+    setExportMenuOpen(false);
     setExporting(format);
     try {
       const dates = encodeURIComponent(rows.map((r) => r.date).filter((d) => selected.has(d)).join(","));
@@ -187,30 +200,43 @@ export default function DataPage() {
             >
               {allColumnsSelected ? "Uncheck all columns" : "Check all columns"} ({selectedColumns.size}/{SELECTABLE_REPORT_COLUMNS.length})
             </button>
-            <button
-              type="button"
-              onClick={() => downloadReport("excel")}
-              disabled={!!exporting || loading || selected.size === 0 || selectedColumns.size === 0}
-              className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
-            >
-              {exporting === "excel" ? "Exporting…" : `Excel${selected.size ? ` (${selected.size})` : ""}`}
-            </button>
-            <button
-              type="button"
-              onClick={() => downloadReport("pdf")}
-              disabled={!!exporting || loading || selected.size === 0 || selectedColumns.size === 0}
-              className="h-9 inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
-            >
-              {exporting === "pdf" ? "Exporting…" : `PDF${selected.size ? ` (${selected.size})` : ""}`}
-            </button>
-            {canAddEntry && (
-              <Link
-                href="/entry"
-                className="h-9 inline-flex items-center rounded-lg bg-slate-900 text-white px-4 text-sm font-medium hover:bg-slate-800"
+            <div className="relative" ref={exportMenuRef}>
+              <button
+                type="button"
+                onClick={() => setExportMenuOpen((v) => !v)}
+                disabled={!!exporting || loading || selected.size === 0 || selectedColumns.size === 0}
+                className="h-9 inline-flex items-center gap-1.5 rounded-lg bg-slate-900 text-white px-4 text-sm font-medium hover:bg-slate-800 disabled:opacity-60"
               >
-                + Entry
-              </Link>
-            )}
+                {exporting ? "Exporting…" : `Export${selected.size ? ` (${selected.size})` : ""}`}
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="mt-px">
+                  <path
+                    d="M2.5 4.5L6 8L9.5 4.5"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+              {exportMenuOpen && (
+                <div className="absolute right-0 z-30 mt-1.5 w-40 rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
+                  <button
+                    type="button"
+                    onClick={() => downloadReport("excel")}
+                    className="w-full px-3 py-2 text-left text-sm hover:bg-slate-50"
+                  >
+                    Excel (.xlsx)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => downloadReport("pdf")}
+                    className="w-full px-3 py-2 text-left text-sm hover:bg-slate-50"
+                  >
+                    PDF (.pdf)
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
