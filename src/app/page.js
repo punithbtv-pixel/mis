@@ -378,12 +378,20 @@ export default function DashboardPage() {
         <>
           <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(130px,1fr))]">
             <Card
-              label={<>Diesel<br />Consumed</>}
+              label={<>Total Diesel<br />Consumed</>}
               value={fmt(t.dieselConsumed)}
               unit="Liters"
               color="amber"
               // eslint-disable-next-line @next/next/no-img-element
               logo={<img src="/icons/fuel-gun.png" alt="" className={`max-h-full max-w-full ${LOGO_CLASS}`} />}
+            />
+            <Card
+              label={<>Diesel<br />Issued</>}
+              value={fmt(t.dieselIssued)}
+              unit="Liters"
+              color="indigo"
+              // eslint-disable-next-line @next/next/no-img-element
+              logo={<img src="/icons/diesel-issued.png" alt="" className={`h-10 w-10 ${LOGO_CLASS}`} />}
             />
             <Card
               label={<>Current Total<br />Stock</>}
@@ -398,7 +406,7 @@ export default function DashboardPage() {
               unit="KWH"
               color="rose"
               // eslint-disable-next-line @next/next/no-img-element
-              logo={<img src="/icons/meter.png" alt="" className={`max-h-full max-w-full ${LOGO_CLASS}`} />}
+              logo={<img src="/icons/meter.png" alt="" className={`h-10 w-10 ${LOGO_CLASS}`} />}
             />
             <Card
               wide
@@ -424,7 +432,7 @@ export default function DashboardPage() {
               secondaryCaptionTop="Hrs/day avg"
               color="rose"
               // eslint-disable-next-line @next/next/no-img-element
-              logo={<img src="/icons/nepa-power.png" alt="" className={`max-h-full max-w-full ${LOGO_CLASS}`} />}
+              logo={<img src="/icons/nepa-power.png" alt="" className={`relative top-[11px] max-h-full max-w-full ${LOGO_CLASS}`} />}
             />
           </div>
 
