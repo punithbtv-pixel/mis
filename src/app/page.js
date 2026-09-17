@@ -195,7 +195,19 @@ function StopwatchIcon({ className }) {
   );
 }
 
-function Card({ label, value, unit, color = "sky", logo, compact = false, wide = false, secondaryValue, secondaryUnit }) {
+function Card({
+  label,
+  value,
+  unit,
+  color = "sky",
+  logo,
+  compact = false,
+  wide = false,
+  secondaryValue,
+  secondaryUnit,
+  captionTop,
+  secondaryCaptionTop,
+}) {
   const theme = CARD_THEMES[color] ?? CARD_THEMES.sky;
 
   if (wide) {
@@ -208,14 +220,24 @@ function Card({ label, value, unit, color = "sky", logo, compact = false, wide =
             {label}
           </div>
           <div className="flex items-baseline justify-center gap-6">
-            <div className="flex items-baseline gap-1">
-              <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{value}</span>
-              {unit && <span className="text-[12.5px] font-medium text-slate-400">{unit}</span>}
+            <div className="flex flex-col items-center gap-0.5">
+              {captionTop && (
+                <span className="text-[9px] font-bold uppercase leading-none tracking-wide text-slate-400">{captionTop}</span>
+              )}
+              <div className="flex items-baseline gap-1">
+                <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{value}</span>
+                {unit && <span className="text-[12.5px] font-medium text-slate-400">{unit}</span>}
+              </div>
             </div>
             {secondaryValue != null && (
-              <div className="flex items-baseline gap-1 border-l border-slate-200 pl-6">
-                <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{secondaryValue}</span>
-                {secondaryUnit && <span className="text-[12.5px] font-medium text-slate-400">{secondaryUnit}</span>}
+              <div className="flex flex-col items-center gap-0.5 border-l border-slate-200 pl-6">
+                {secondaryCaptionTop && (
+                  <span className="text-[9px] font-bold uppercase leading-none tracking-wide text-slate-400">{secondaryCaptionTop}</span>
+                )}
+                <div className="flex items-baseline gap-1">
+                  <span className={`text-[22px] font-bold leading-none ${theme.value}`}>{secondaryValue}</span>
+                  {secondaryUnit && <span className="text-[12.5px] font-medium text-slate-400">{secondaryUnit}</span>}
+                </div>
               </div>
             )}
           </div>
@@ -309,6 +331,28 @@ export default function DashboardPage() {
     [data]
   );
 
+  const dgFields = useMemo(
+    () => RUN_HOUR_EQUIPMENT.filter((eq) => eq.category === "dg").map((eq) => eq.field),
+    []
+  );
+
+  const lastDayDgRunHours = useMemo(() => {
+    for (let i = series.length - 1; i >= 0; i--) {
+      const vals = dgFields.map((f) => series[i][f]);
+      if (vals.some((v) => v != null)) {
+        return vals.reduce((a, v) => a + (v ?? 0), 0);
+      }
+    }
+    return null;
+  }, [series, dgFields]);
+
+  const lastDayEbAvailability = useMemo(() => {
+    for (let i = series.length - 1; i >= 0; i--) {
+      if (series[i].nepaAvailabilityHours != null) return series[i].nepaAvailabilityHours;
+    }
+    return null;
+  }, [series]);
+
   const t = data?.totals;
   const hasData = series.length > 0;
 
@@ -349,14 +393,6 @@ export default function DashboardPage() {
               logo={<StockGauge value={data.latestTotalStock} />}
             />
             <Card
-              label={<>Total DG<br />Run Hours</>}
-              value={fmt(t.dgRunHours, 1)}
-              unit="hrs"
-              color="fuchsia"
-              // eslint-disable-next-line @next/next/no-img-element
-              logo={<img src="/icons/DG.png" alt="" className={`max-h-full max-w-full ${LOGO_CLASS}`} />}
-            />
-            <Card
               label={<>NEPA<br />Consumption</>}
               value={fmt(t.nepaKwh)}
               unit="KWH"
@@ -366,11 +402,26 @@ export default function DashboardPage() {
             />
             <Card
               wide
-              label={<>NEPA Availability</>}
-              value={fmt(t.nepaAvailabilityAvg, 1)}
-              unit="hrs/day avg"
-              secondaryValue={fmt(t.nepaAvailabilityTotal, 1)}
+              label="Total DG Run Hours"
+              value={fmt(lastDayDgRunHours, 1)}
+              unit="hrs"
+              captionTop="Last day"
+              secondaryValue={fmt(t.dgRunHours, 1)}
               secondaryUnit="hrs"
+              secondaryCaptionTop="This month"
+              color="fuchsia"
+              // eslint-disable-next-line @next/next/no-img-element
+              logo={<img src="/icons/DG.png" alt="" className={`max-h-full max-w-full ${LOGO_CLASS}`} />}
+            />
+            <Card
+              wide
+              label="NEPA Availability"
+              value={fmt(lastDayEbAvailability, 1)}
+              unit="hrs"
+              captionTop="Last day"
+              secondaryValue={fmt(t.nepaAvailabilityAvg, 1)}
+              secondaryUnit="hrs"
+              secondaryCaptionTop="Hrs/day avg"
               color="rose"
               // eslint-disable-next-line @next/next/no-img-element
               logo={<img src="/icons/nepa-power.png" alt="" className={`max-h-full max-w-full ${LOGO_CLASS}`} />}
