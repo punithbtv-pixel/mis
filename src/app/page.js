@@ -348,16 +348,14 @@ export default function DashboardPage() {
               color="emerald"
               logo={<StockGauge value={data.latestTotalStock} />}
             />
-            {canViewMillingUtility && (
-              <Card
-                label={<>Total DG<br />Run Hours</>}
-                value={fmt(t.dgRunHours, 1)}
-                unit="hrs"
-                color="fuchsia"
-                // eslint-disable-next-line @next/next/no-img-element
-                logo={<img src="/icons/DG.png" alt="" className={`max-h-full max-w-full ${LOGO_CLASS}`} />}
-              />
-            )}
+            <Card
+              label={<>Total DG<br />Run Hours</>}
+              value={fmt(t.dgRunHours, 1)}
+              unit="hrs"
+              color="fuchsia"
+              // eslint-disable-next-line @next/next/no-img-element
+              logo={<img src="/icons/DG.png" alt="" className={`max-h-full max-w-full ${LOGO_CLASS}`} />}
+            />
             <Card
               label={<>NEPA<br />Consumption</>}
               value={fmt(t.nepaKwh)}
